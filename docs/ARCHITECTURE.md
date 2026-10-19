@@ -26,7 +26,7 @@ api/
 skyblock/            [planned] Shared game state (island, area, profile, purse...), parsed once
 ui/
   theme/             [partial] Theme color tokens + Gradient (OKLab LUT) done; spacing/font tokens planned
-  chat/              [done]    Chat.info/success/warning/error: the only way to print to chat
+  chat/              [done]    Chat (info/success/warning/error/block): only chat output; ChatLayout (rules, columns)
   hud/               [planned] HUD element system + editor (move/scale)
   component/         [planned] Reusable widgets
   render/            [planned] World render helpers with reused buffers

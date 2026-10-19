@@ -13,7 +13,7 @@ Private project (All Rights Reserved), author `tnozamas`, package `org.tnozamas.
 - `./gradlew runClient` / `runWorld` / `runHypixel` - launch the game at the title screen / dev world / Hypixel
   (see `docs/TESTING.md`).
 - `node tools/refs/sync.mjs` - clone/update reference mods into `references/` (git-ignored).
-- `node tools/agent/bridge.mjs chat "/skyatlaz" | screenshot out.png` - drive/see the `runWorld` dev world (agents;
+- `node tools/agent/bridge.mjs cmd skyatlaz | screenshot out.png` - drive/see the `runWorld` dev world (agents;
   see `docs/TESTING.md`). Never against Hypixel.
 
 ## Non-negotiable rules

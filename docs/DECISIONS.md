@@ -19,7 +19,8 @@ miziusLabs/Mod (no license), minecraft-driver-mcp (1.21.1 only).
 The owner wants a distinctive gradient look. Gradients mix stops in OKLab (keeps perceived lightness: red to
 green does not turn dark olive; CSS uses the same default) and bake a 256-entry table at construction, so
 sampling in render paths is an array read. Semantic gradients follow familiar hues (green success, amber
-warning, red error, blue info); the brand palette (cyan, violet, pink) is provisional. Gradient text is built in
+warning, red error, blue info). Revised the same day to a soft palette (aqua, lavender, rose; pastel semantics,
+message bodies fading into text) because the saturated version read as noisy in chat. Gradient text is built in
 `i18n` (`withGradient`) because only `i18n` may create components from strings; all chat output goes through
 `ui.chat.Chat`.
 

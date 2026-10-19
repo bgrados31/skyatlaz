@@ -43,7 +43,7 @@ class GradientTest {
     @Test
     fun `middle stops are hit exactly in multi stop gradients`() {
         val brand = Theme.BRAND_GRADIENT
-        assertTrue(channelDistance(Theme.BRAND_VIOLET, brand.colorAt(0.5f)) <= 2)
+        assertTrue(channelDistance(Theme.BRAND_LAVENDER, brand.colorAt(0.5f)) <= 2)
     }
 
     @Test
@@ -65,15 +65,14 @@ class GradientTest {
 
     @Test
     fun `oklab midpoint is brighter than the muddy rgb average`() {
-        // Red to green averaged in sRGB gives a dark olive; OKLab keeps perceived lightness.
-        fun brightness(rgb: Int) = (rgb shr 16 and 0xFF) + (rgb shr 8 and 0xFF) + (rgb and 0xFF)
-        val naive =
-            ((Theme.ERROR shr 16 and 0xFF) + (Theme.SUCCESS shr 16 and 0xFF)) / 2 +
-                ((Theme.ERROR shr 8 and 0xFF) + (Theme.SUCCESS shr 8 and 0xFF)) / 2 +
-                ((Theme.ERROR and 0xFF) + (Theme.SUCCESS and 0xFF)) / 2
-        val mid = Gradient.of(Theme.ERROR, Theme.SUCCESS).colorAt(0.5f)
+        // Pure red to pure green averaged in sRGB is dark olive (0x807F00); OKLab keeps perceived lightness.
+        // Uses fixed colors on purpose: this tests the math, not the palette.
+        val red = 0xFF0000
+        val green = 0x00FF00
+        val mid = Gradient.of(red, green).colorAt(0.5f)
+        val brightness = (mid shr 16 and 0xFF) + (mid shr 8 and 0xFF) + (mid and 0xFF)
 
-        assertTrue(brightness(mid) > naive + 30) { "midpoint ${Integer.toHexString(mid)} is not brighter" }
+        assertTrue(brightness > 0x80 + 0x7F + 60) { "midpoint ${Integer.toHexString(mid)} is not brighter" }
     }
 
     @Test

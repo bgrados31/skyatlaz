@@ -1,6 +1,7 @@
 // Direct client for the MCP Fabric HTTP bridge loaded by `./gradlew runWorld` (docs/TESTING.md).
 // Lets an agent drive the dev world even without the MCP server registered:
-//   node tools/agent/bridge.mjs chat "/skyatlaz debug theme"
+//   node tools/agent/bridge.mjs cmd skyatlaz debug theme      (runs /skyatlaz debug theme)
+//   node tools/agent/bridge.mjs chat hello
 //   node tools/agent/bridge.mjs screenshot out.png
 //   node tools/agent/bridge.mjs call ui.widgets '{}'
 // Reads host/port/token from run/config/mcpfabric.config.json and never prints the token.
@@ -37,6 +38,10 @@ switch (command) {
   case "chat":
     console.log(JSON.stringify(await call("chat.send", { message: args.join(" ") })));
     break;
+  // Adds the leading "/" itself: Git Bash on Windows rewrites "/skyatlaz" into a filesystem path.
+  case "cmd":
+    console.log(JSON.stringify(await call("chat.send", { message: "/" + args.join(" ") })));
+    break;
   case "screenshot": {
     const out = args[0] ?? "screenshot.png";
     const png = findBase64(await call("vision.screenshot"));
@@ -48,6 +53,6 @@ switch (command) {
     console.log(JSON.stringify(await call(args[0], JSON.parse(args[1] ?? "{}")), null, 1));
     break;
   default:
-    console.log("usage: bridge.mjs chat <text> | screenshot [out.png] | call <method> [jsonParams]");
+    console.log("usage: bridge.mjs cmd <command without /> | chat <text> | screenshot [out.png] | call <method> [json]");
     process.exitCode = 1;
 }

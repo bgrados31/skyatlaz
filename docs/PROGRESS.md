@@ -46,3 +46,6 @@ Update this file at the end of every session: what changed, what is next, open q
 - 2026-10-19 (Opus 5.5): `core.command` (declarative registry, generated clickable help, categories, module
   commands via `ctx.command`, debug-only commands), `ModuleServices`. MCP Fabric bridge in `runWorld` only;
   verified `/skyatlaz`, `/skyatlaz debug`, `debug theme`, `version` in game via screenshots. 62 tests.
+- 2026-10-19 (Opus 5.5): Chat redesign: soft palette, `SkyAtlaz › icon text` messages, `ChatLayout` (rules,
+  pixel-aligned columns), help with breadcrumb title, relative names, rich hover, click to open/run/type.
+  Game now runs on the RTX 4050 (Windows GPU preference for the toolchain java.exe).

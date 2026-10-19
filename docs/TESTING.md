@@ -49,7 +49,7 @@ An AI agent can see and drive the **singleplayer dev world** through [MCP Fabric
      `npm ci && npm run build`, then
      `claude mcp add mcpfabric --scope local -e MCPFABRIC_TOKEN=<token> -- node <path>/mcp-server/dist/index.js`.
      The token stays in your local Claude config, never in the repo.
-- Without the MCP server, `node tools/agent/bridge.mjs chat "/skyatlaz"` and
+- Without the MCP server, `node tools/agent/bridge.mjs cmd skyatlaz` and
   `node tools/agent/bridge.mjs screenshot out.png` talk to the bridge directly.
 
 ## 3. Offline sandbox [planned: core/debug]
@@ -76,6 +76,8 @@ API (already on the dev classpath) can automate these scenarios.
   login for an account opens the Microsoft login in the browser; tokens are cached in `~/.devauth/`.
   Verified working with DevAuth 1.2.2 on 26.2.
 - Prefer an **alt account** for testing new features.
+- Laptops with hybrid graphics: Windows may run the game on the integrated GPU. Set the toolchain `java.exe`
+  to "High performance" (Settings › Display › Graphics); the log line `using drivers: ... NVIDIA` confirms it.
 - Hot reload: use JetBrains Runtime 25 as the project JDK and debug mode; method body changes apply without restart.
 
 ## 5. Performance checks

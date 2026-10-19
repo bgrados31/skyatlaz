@@ -4,40 +4,40 @@ package org.tnozamas.skyatlaz.ui.theme
  * Every color in the mod lives here (enforced by the `no-hardcoded-color` rule). Change a token and the whole
  * UI follows. Colors are 0xRRGGBB.
  *
- * Semantic colors use the hues players already read without thinking: green = success, amber = warning,
- * red = error, blue = info. Each pairs a saturated base with a lighter companion for its gradient.
+ * The palette is deliberately soft (pastel, mid lightness) so SkyAtlaz output is recognizable without shouting
+ * over Hypixel's own colorful chat. Semantic colors keep the hues players read without thinking: green = success,
+ * amber = warning, red = error, blue = info.
  */
 object Theme {
-    // Brand. Provisional palette, adjust freely: cyan -> violet -> pink.
-    const val BRAND_CYAN = 0x38E1FF
-    const val BRAND_VIOLET = 0x8B5CF6
-    const val BRAND_PINK = 0xF472B6
+    // Brand: aqua -> lavender -> rose.
+    const val BRAND_AQUA = 0x7DD3FC
+    const val BRAND_LAVENDER = 0xB4A5FD
+    const val BRAND_ROSE = 0xF5B4D6
 
-    // Text
-    const val TEXT = 0xE6E8EF
-    const val TEXT_MUTED = 0x9AA0B4
+    // Text, from strongest to quietest.
+    const val TEXT = 0xE8EAF2
+    const val TEXT_MUTED = 0x9AA1B9
+    const val TEXT_SUBTLE = 0x5E6478
 
-    // Semantic
-    const val SUCCESS = 0x22C55E
-    const val SUCCESS_LIGHT = 0xA3E635
-    const val WARNING = 0xF59E0B
-    const val WARNING_LIGHT = 0xFDE047
-    const val ERROR = 0xEF4444
-    const val ERROR_LIGHT = 0xFB7185
-    const val INFO = 0x3B82F6
-    const val INFO_LIGHT = 0x22D3EE
+    // Semantic (soft).
+    const val SUCCESS = 0x6EE7A8
+    const val WARNING = 0xFCD34D
+    const val ERROR = 0xFB8A8A
+    const val INFO = 0x8CC8FF
 
-    /** The mod's signature gradient: chat prefix, titles, highlights. */
-    @JvmField val BRAND_GRADIENT = Gradient.of(BRAND_CYAN, BRAND_VIOLET, BRAND_PINK)
+    /** The mod's signature gradient: name, titles, highlights. */
+    @JvmField val BRAND_GRADIENT = Gradient.of(BRAND_AQUA, BRAND_LAVENDER, BRAND_ROSE)
 
     /** Cyclic version of the brand gradient for scrolling animations in screens and HUD. */
-    @JvmField val BRAND_GRADIENT_CYCLIC = Gradient.cyclic(BRAND_CYAN, BRAND_VIOLET, BRAND_PINK)
+    @JvmField val BRAND_GRADIENT_CYCLIC = Gradient.cyclic(BRAND_AQUA, BRAND_LAVENDER, BRAND_ROSE)
 
-    @JvmField val SUCCESS_GRADIENT = Gradient.of(SUCCESS, SUCCESS_LIGHT)
+    // Message bodies fade from their semantic color into regular text: the tone reads at a glance, the rest
+    // stays calm and legible.
+    @JvmField val SUCCESS_GRADIENT = Gradient.of(SUCCESS, TEXT)
 
-    @JvmField val WARNING_GRADIENT = Gradient.of(WARNING, WARNING_LIGHT)
+    @JvmField val WARNING_GRADIENT = Gradient.of(WARNING, TEXT)
 
-    @JvmField val ERROR_GRADIENT = Gradient.of(ERROR, ERROR_LIGHT)
+    @JvmField val ERROR_GRADIENT = Gradient.of(ERROR, TEXT)
 
-    @JvmField val INFO_GRADIENT = Gradient.of(INFO, INFO_LIGHT)
+    @JvmField val INFO_GRADIENT = Gradient.of(INFO, TEXT)
 }
