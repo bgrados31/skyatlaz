@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import org.tnozamas.skyatlaz.core.event.Event
 import org.tnozamas.skyatlaz.core.event.EventBus
 import org.tnozamas.skyatlaz.core.event.Registration
+import org.tnozamas.skyatlaz.core.scheduler.Scheduler
 
 class ModuleManagerTest {
     private class Tick : Event
@@ -44,7 +45,8 @@ class ModuleManagerTest {
 
     private val failures = ArrayList<Pair<String, Throwable>>()
     private val bus = EventBus { _, error -> throw AssertionError("unexpected unhandled error", error) }
-    private val manager = ModuleManager(bus) { module, error -> failures.add(module.id to error) }
+    private val scheduler = Scheduler({ it.run() }) { throw AssertionError("unexpected unhandled error", it) }
+    private val manager = ModuleManager(bus, scheduler) { module, error -> failures.add(module.id to error) }
     private val module = TestModule().also(manager::register)
 
     @Test
@@ -145,6 +147,31 @@ class ModuleManagerTest {
         assertNull(manager.failure(module.id))
         manager.setEnabled(module.id, true)
         assertTrue(manager.isRunning(module.id))
+    }
+
+    @Test
+    fun `scheduled tasks and late async results die with the module`() {
+        var ticks = 0
+        var results = 0
+        val timed =
+            object : Module("test.timed", FeatureCategory.MISC) {
+                override fun onEnable(ctx: ModuleContext) {
+                    ctx.every(1) { ticks++ }
+                    ctx.async({ 1 }) { results++ }
+                }
+            }
+        manager.register(timed)
+        manager.setEnabled(timed.id, true)
+        repeat(2) { scheduler.tick() }
+        assertEquals(1, ticks)
+
+        manager.setEnabled(timed.id, false)
+        manager.setEnabled(timed.id, true)
+        manager.setEnabled(timed.id, false)
+        repeat(3) { scheduler.tick() }
+
+        assertEquals(1, ticks)
+        assertEquals(1, results)
     }
 
     @Test
