@@ -12,11 +12,11 @@ Status markers: **[done]** exists in code, **[planned]** target design, implemen
 SkyAtlaz.kt          [done]    Client entrypoint. Only wires core services.
 i18n/                [done]    Tr: the only way to create user-facing text.
 core/
-  module/            [planned] Module, ModuleManager, FeatureCategory
-  event/             [planned] EventBus + event types
+  module/            [done]    Module, ModuleManager, ModuleContext, FeatureCategory
+  event/             [done]    EventBus, Event, CancellableEvent, Registration (event types: planned)
   config/            [planned] Typed config model, persistence, versioned migrations
   scheduler/         [planned] Tick tasks, throttling, the single async executor
-  error/             [planned] Error isolation per module
+  error/             [partial] Fatal-error rule done; isolation lives in EventBus/ModuleManager; chat notice planned
   debug/             [planned] /skyatlaz debug commands, fixture dumps
 api/
   hypixel/           [planned] Wrapper over Hypixel Mod API (subscriptions, cached responses)
@@ -33,24 +33,31 @@ mixin/ (Java)        [done]    Mixins: guard + forward to Kotlin, no logic
 feature/<category>/<feature>/  [planned] One Module per feature
 ```
 
-## Module system [planned]
+## Module system [done]
 ```kotlin
-abstract class Module(val id: String, val category: FeatureCategory) {
-    protected open fun onEnable(ctx: ModuleContext) {}   // register listeners, HUD elements, load data
+abstract class Module(val id: String, val category: FeatureCategory) {   // id: "dungeons.scorehud"
+    open fun isActive(): Boolean = true                  // activation condition, cheap, re-checked on state change
+    protected open fun onEnable(ctx: ModuleContext) {}   // ctx.on<Event> { }, ctx.track(registration)
     protected open fun onDisable() {}                    // release anything not tracked by ctx
 }
 ```
+- Global instances live in the entrypoint: `SkyAtlaz.EVENTS` (bus) and `SkyAtlaz.MODULES` (manager).
+  Both are client-thread only.
 - `ModuleManager` owns lifecycle. Enabling calls `onEnable` with a `ModuleContext`; every registration made
   through the context (events, HUD elements, commands, scheduled tasks) is tracked and **automatically removed on
   disable**. Modules never register directly with global systems.
 - Modules are only enabled when their config toggle is on **and** their activation condition holds
   (e.g. "only on SkyBlock", "only in Dungeons"). Leaving the condition disables listeners again.
 - Data is loaded lazily on first enable, never at startup.
-- Any exception thrown by a module is caught by `core.error`, logged once, and the module is disabled with a
+- Any exception thrown by a module (enable, disable, a listener, its activation condition) is caught, reported
+  once through the manager's failure handler, and the module is stopped and marked failed until the user toggles
+  it off and on. `VirtualMachineError` still propagates (`core.error.rethrowIfFatal`). Planned: a
   translated chat notice. The game never crashes because of a feature.
 
-## Event bus [planned]
-- Typed events, listeners stored per event type in arrays (copy-on-write on register, plain loop on post).
+## Event bus [done]
+- Typed events matched by **exact class** (no subtype dispatch). Listeners stored per event type in arrays
+  (copy-on-write on register, plain loop on post), ordered by priority (lower first). A listener removed during a
+  post is skipped for the rest of that post.
   No reflection, no annotations scanning at dispatch time.
 - `EventBus.hasListeners(type)` is O(1). Mixins check it before building an event object, so unused hooks
   cost one boolean check.

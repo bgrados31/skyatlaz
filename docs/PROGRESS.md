@@ -2,7 +2,7 @@
 
 Update this file at the end of every session: what changed, what is next, open questions.
 
-## Current phase: 0 - Environment (done), next: 1 - Core
+## Current phase: 1 - Core (in progress: event + module done)
 
 ## Roadmap
 - [x] **Phase 0 - Environment**: Gradle/Loom/Kotlin on MC 26.2, single client source set, Spotless (ktlint),
@@ -17,7 +17,8 @@ Update this file at the end of every session: what changed, what is next, open q
 - [ ] **Phase 4 - First features** (vertical slice) to validate the base, then grow by category.
 
 ## Next steps
-1. Phase 1, starting with `core.event` and `core.module` (see `docs/ARCHITECTURE.md`).
+1. Phase 1 next: `core.scheduler`, then `core.error` (translated chat notice on module failure, wire into
+   `SkyAtlaz.MODULES`), `core.config` (toggles drive `ModuleManager.setEnabled`), `core.debug`, first mixins.
    Plan `core.debug` (dump / load / chat / open) early: the offline sandbox in `docs/TESTING.md` depends on it.
 2. (Done) runClient + DevAuth + Hypixel Mod API verified on Hypixel (hello + location packets received).
 
@@ -33,3 +34,6 @@ Update this file at the end of every session: what changed, what is next, open q
 - 2026-10-19 (Opus 5.5): DevAuth wired into the client run (opt-in via user gradle.properties, default account
   `main`); verified login on 26.2. Documented the layered testing strategy (unit + fixtures, offline sandbox,
   Hypixel last) in TESTING/DECISIONS.
+- 2026-10-19 (Opus 5.5): Quick play runs (`runWorld`, `runHypixel`). Phase 1 started: `core.event` (EventBus with
+  priorities, hasListeners, per-listener error routing) and `core.module` (Module, ModuleContext auto-unregister,
+  ModuleManager with activation conditions and failure isolation), 17 unit tests.
