@@ -5,10 +5,11 @@ Newest first. Format: date, decision, why, consequences.
 ## 2026-10-19 - Lowest BIN from a third-party API, only with permission
 Hypixel does not publish lowest BIN prices; computing them from the official auctions endpoint means ~60 pages
 per refresh on every client. The owner chose a third-party provider used with its author's explicit permission.
-Candidates: EliteSkyblock, Moulberry/NEU, Tricked's lowestbins (open source, asks for credit), hysky.de
-(Skyblocker's own). No public terms were found, so nothing is enabled: `PriceRepository.LOWEST_BIN_URL` stays null
-until a provider agrees (flat `{ "ID": price }` format is already supported, priority bazaar > auction > NPC).
-Credit the provider wherever prices are shown once enabled.
+Checked 2026-10-19: Moulberry (old NEU) is down; EliteSkyblock (Firmament, SkyHanni) and hysky.de (Skyblocker's own
+backend) are public but publish no terms; Tricked's lowestbins (Skytils, Apache-2.0) is the only one with a stated
+condition: credit when using the hosted instance. Enabled: `lb.tricked.dev/lowestbins` (Hypixel ids, flat
+`{ "ID": price }`), credited in README; priority bazaar > auction > NPC. If it goes away, the project can be
+self-hosted; EliteSkyblock remains an option if its author agrees.
 
 ## 2026-10-19 - Fabric API events before mixins; legacy text for fixtures
 Chat, tick and connection hooks use Fabric API events (`GameHooks`): stable across game updates and shared with

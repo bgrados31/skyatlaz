@@ -29,7 +29,13 @@ class PriceRepositoryTest {
     private val scheduler = Scheduler({ background.add(it) }) { throw AssertionError(it) }
     private val bus = EventBus { _, error -> throw AssertionError(error) }
     private val repository =
-        PriceRepository(HttpService(transport, null, scheduler), scheduler, bus, onProblem = { throw AssertionError(it) })
+        PriceRepository(
+            HttpService(transport, null, scheduler),
+            scheduler,
+            bus,
+            onProblem = { throw AssertionError(it) },
+            lowestBinUrl = null,
+        )
 
     private fun settle() {
         repeat(10) {

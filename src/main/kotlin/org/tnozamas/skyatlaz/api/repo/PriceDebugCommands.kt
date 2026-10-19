@@ -75,6 +75,10 @@ class PriceDebugCommands(
                 )
             }
 
+            value?.source == ItemValue.Source.AUCTION -> {
+                Chat.info(Tr.tr("debug.price.auction", name, Tr.verbatim(Numbers.compact(value.coins))))
+            }
+
             value != null -> {
                 Chat.info(Tr.tr("debug.price.npc", name, Tr.verbatim(Numbers.compact(value.coins))))
             }

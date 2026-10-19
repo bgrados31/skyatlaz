@@ -32,8 +32,7 @@ Update this file at the end of every session: what changed, what is next, open q
   update checker, release pipeline (Modrinth/GitHub).
 - Config screen: own UI vs YACL behind an adapter.
 - GitHub repository for CI.
-- Lowest BIN: decided third-party API with permission (DECISIONS). Owner contacts providers; when one agrees, set
-  `PriceRepository.LOWEST_BIN_URL` and credit them.
+- Lowest BIN: Tricked lowestbins enabled with README credit (DECISIONS). Optional: ask EliteSkyblock for averages.
 
 ## Session log
 - 2026-10-19 (Opus 5.5): Phase 0 setup. Fixed template build error (`project.property` nullable types).

@@ -146,10 +146,11 @@ class PriceRepository(
         const val CATALOG_RECHECK_TICKS = 20 * 60 * 60
 
         /**
-         * Third-party lowest BIN endpoint (flat `{ "ID": price }`). Null until a provider grants permission; see the
-         * "Lowest BIN source" decision in docs/DECISIONS.md. Enabling it is this one line.
+         * Third-party lowest BIN endpoint (flat `{ "ID": price }` with Hypixel ids): Tricked's hosted lowestbins
+         * (https://github.com/Tricked-dev/lowestbins), used with the credit its author asks for (README). Set to null
+         * to disable; see the "Lowest BIN" decision in docs/DECISIONS.md.
          */
-        val LOWEST_BIN_URL: String? = null
+        val LOWEST_BIN_URL: String? = "https://lb.tricked.dev/lowestbins"
 
         private const val PROBLEM_COOLDOWN_TICKS = 20 * 60 * 5
     }

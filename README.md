@@ -19,3 +19,10 @@ All-in-one quality of life mod for Hypixel SkyBlock. Fabric, Kotlin, Minecraft 2
 
 ## Docs
 Start with [CLAUDE.md](CLAUDE.md) (rules) and [docs/PROGRESS.md](docs/PROGRESS.md) (status).
+
+## Data sources and credits
+| Data | Source |
+|---|---|
+| Bazaar prices, item catalog | [Hypixel Public API](https://api.hypixel.net/) (keyless endpoints) |
+| Location, party | [Hypixel Mod API](https://github.com/HypixelDev/ModAPI) |
+| Lowest BIN auction prices | [lowestbins](https://github.com/Tricked-dev/lowestbins) by **Tricked**, hosted instance `lb.tricked.dev`. Thank you! |
