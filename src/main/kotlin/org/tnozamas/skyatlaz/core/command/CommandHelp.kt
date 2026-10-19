@@ -32,6 +32,8 @@ object CommandHelp {
     private const val BULLET = "▸ "
     private const val SPARKLE = "✦ "
     private const val SPARKLE_END = " ✦"
+    private const val HOVER_RULE = "─"
+    private const val SUBCOMMANDS = "↳ "
 
     fun show(
         registry: CommandRegistry,
@@ -52,7 +54,12 @@ object CommandHelp {
         } else {
             val nameColumn = sections.maxOf { section -> section.commands.maxOf { ChatLayout.width(name(it)) } }
             for (section in sections) {
-                lines.add(ChatLayout.pad(CATEGORY_INDENT).append(Tr.tr(section.category.translationKey).withStyle(CATEGORY)))
+                lines.add(
+                    ChatLayout
+                        .pad(CATEGORY_INDENT)
+                        .append(Tr.verbatim(section.category.icon + " ").withStyle(ACCENT))
+                        .append(Tr.tr(section.category.translationKey).withStyle(CATEGORY)),
+                )
                 for (command in section.commands) lines.add(entry(registry, command, nameColumn))
             }
         }
@@ -114,42 +121,54 @@ object CommandHelp {
         description: Component,
         action: Action,
     ): Component {
+        val usage = Tr.verbatim(command.usage).withGradient(Theme.BRAND_GRADIENT)
         val hover =
             Tr
-                .verbatim(command.usage)
-                .withGradient(Theme.BRAND_GRADIENT)
+                .verbatim(command.category.icon + " ")
+                .withStyle(ACCENT)
+                .append(usage)
                 .append(NEWLINE)
+                .append(
+                    Tr
+                        .verbatim(
+                            HOVER_RULE.repeat(ChatLayout.width(usage) / ChatLayout.width(Tr.verbatim(HOVER_RULE)) + 2),
+                        ).withStyle(SUBTLE),
+                ).append(NEWLINE)
                 .append(description.copy().withStyle(TEXT))
         val children = command.childMap.values.filter(registry::isAvailable)
         if (children.isNotEmpty()) {
             val names = children.joinToString(" · ") { if (it.isArgument) "<${it.name}>" else it.name }
-            hover.append(NEWLINE).append(Tr.verbatim(names).withStyle(MUTED))
+            hover
+                .append(NEWLINE)
+                .append(Tr.verbatim(SUBCOMMANDS).withStyle(SUBTLE))
+                .append(Tr.verbatim(names).withStyle(MUTED))
         }
         return hover
             .append(NEWLINE)
             .append(NEWLINE)
-            .append(Tr.verbatim(BULLET).withStyle(SUBTLE))
+            .append(Tr.verbatim(action.icon + " ").withStyle(ACCENT))
             .append(Tr.tr(action.hintKey).withStyle(HINT))
     }
 
     private class Action(
         val click: ClickEvent,
         val hintKey: String,
+        val icon: String,
     )
 
     /** Groups open their page, runnable commands run, commands that need input are typed for the player. */
     private fun action(command: CommandNode): Action =
         when {
             isGroup(command) -> {
-                Action(ClickEvent.RunCommand(command.suggestion), "command.help.click_open")
+                Action(ClickEvent.RunCommand(command.suggestion), "command.help.click_open", "➜")
             }
 
             command.isExecutable && !command.isArgument -> {
-                Action(ClickEvent.RunCommand(command.suggestion), "command.help.click_run")
+                Action(ClickEvent.RunCommand(command.suggestion), "command.help.click_run", "➤")
             }
 
             else -> {
-                Action(ClickEvent.SuggestCommand(command.suggestion + " "), "command.help.click_type")
+                Action(ClickEvent.SuggestCommand(command.suggestion + " "), "command.help.click_type", "✎")
             }
         }
 

@@ -23,7 +23,7 @@ object Chat {
         val color: Int,
         val gradient: Gradient,
     ) {
-        INFO("✦", Theme.INFO, Theme.INFO_GRADIENT),
+        INFO("ⓘ", Theme.INFO, Theme.INFO_GRADIENT),
         SUCCESS("✔", Theme.SUCCESS, Theme.SUCCESS_GRADIENT),
         WARNING("⚠", Theme.WARNING, Theme.WARNING_GRADIENT),
         ERROR("✖", Theme.ERROR, Theme.ERROR_GRADIENT),

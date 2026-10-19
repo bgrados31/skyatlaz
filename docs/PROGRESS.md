@@ -49,3 +49,5 @@ Update this file at the end of every session: what changed, what is next, open q
 - 2026-10-19 (Opus 5.5): Chat redesign: soft palette, `SkyAtlaz › icon text` messages, `ChatLayout` (rules,
   pixel-aligned columns), help with breadcrumb title, relative names, rich hover, click to open/run/type.
   Game now runs on the RTX 4050 (Windows GPU preference for the toolchain java.exe).
+- 2026-10-19 (Opus 5.5): Semantic gradients deepen within their hue; icons (ⓘ ✔ ⚠ ✖, category icons, hover
+  action icons, ─ rule); `/skyatlaz debug glyphs`; runWorld window 1280x720 for legible agent screenshots.

@@ -64,7 +64,8 @@ loom {
         register("world") {
             inherit(getByName("client"))
             displayName.set("Minecraft World")
-            programArguments.addAll("--quickPlaySingleplayer", devWorld)
+            // 1280x720 so agent screenshots are legible.
+            programArguments.addAll("--quickPlaySingleplayer", devWorld, "--width", "1280", "--height", "720")
             if (agentModsEnabled) systemProperties.put("fabric.addMods", agentModsDir.absolutePath)
         }
         register("hypixel") {

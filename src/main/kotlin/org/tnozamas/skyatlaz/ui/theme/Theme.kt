@@ -19,11 +19,15 @@ object Theme {
     const val TEXT_MUTED = 0x9AA1B9
     const val TEXT_SUBTLE = 0x5E6478
 
-    // Semantic (soft).
+    // Semantic: a soft tone for icons and gradient starts, a deeper tone of the same hue for gradient ends.
     const val SUCCESS = 0x6EE7A8
+    const val SUCCESS_DEEP = 0x22B566
     const val WARNING = 0xFCD34D
+    const val WARNING_DEEP = 0xF08C00
     const val ERROR = 0xFB8A8A
+    const val ERROR_DEEP = 0xE5383B
     const val INFO = 0x8CC8FF
+    const val INFO_DEEP = 0x3D7EF0
 
     /** The mod's signature gradient: name, titles, highlights. */
     @JvmField val BRAND_GRADIENT = Gradient.of(BRAND_AQUA, BRAND_LAVENDER, BRAND_ROSE)
@@ -31,13 +35,13 @@ object Theme {
     /** Cyclic version of the brand gradient for scrolling animations in screens and HUD. */
     @JvmField val BRAND_GRADIENT_CYCLIC = Gradient.cyclic(BRAND_AQUA, BRAND_LAVENDER, BRAND_ROSE)
 
-    // Message bodies fade from their semantic color into regular text: the tone reads at a glance, the rest
-    // stays calm and legible.
-    @JvmField val SUCCESS_GRADIENT = Gradient.of(SUCCESS, TEXT)
+    // Message bodies deepen within their own hue: the tone stays obvious from start to end and stands out from
+    // the white of regular chat, without a rainbow.
+    @JvmField val SUCCESS_GRADIENT = Gradient.of(SUCCESS, SUCCESS_DEEP)
 
-    @JvmField val WARNING_GRADIENT = Gradient.of(WARNING, TEXT)
+    @JvmField val WARNING_GRADIENT = Gradient.of(WARNING, WARNING_DEEP)
 
-    @JvmField val ERROR_GRADIENT = Gradient.of(ERROR, TEXT)
+    @JvmField val ERROR_GRADIENT = Gradient.of(ERROR, ERROR_DEEP)
 
-    @JvmField val INFO_GRADIENT = Gradient.of(INFO, TEXT)
+    @JvmField val INFO_GRADIENT = Gradient.of(INFO, INFO_DEEP)
 }

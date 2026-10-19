@@ -5,6 +5,7 @@
   "skyatlaz.command.category.general": "General",
   "skyatlaz.command.category.tools": "Tools",
   "skyatlaz.command.debug": "Developer and offline testing tools",
+  "skyatlaz.command.debug.glyphs": "Preview decoration glyphs and their widths",
   "skyatlaz.command.debug.theme": "Preview every chat message style",
   "skyatlaz.command.failed": "That command failed. Details are in the log.",
   "skyatlaz.command.help": "List every available command",

@@ -25,8 +25,8 @@ object ChatLayout {
 
     fun width(text: Component): Int = Minecraft.getInstance().font.width(text)
 
-    /** A quiet horizontal line [pixels] wide. */
-    fun rule(pixels: Int): MutableComponent = Tr.verbatim(spaces(pixels)).withStyle(RULE)
+    /** A quiet horizontal line at most [pixels] wide (rounded down, so a full-width rule never wraps). */
+    fun rule(pixels: Int): MutableComponent = Tr.verbatim(spaces(pixels, roundUp = false)).withStyle(RULE)
 
     /** Full-width line with [title] centered on it. */
     fun titledRule(title: Component): MutableComponent {
@@ -42,16 +42,20 @@ object ChatLayout {
     }
 
     /** Spaces filling [pixels] (rounded up to whole spaces), for aligning columns. */
-    fun pad(pixels: Int): MutableComponent = Tr.verbatim(spaces(pixels))
+    fun pad(pixels: Int): MutableComponent = Tr.verbatim(spaces(pixels, roundUp = true))
 
-    private fun spaces(pixels: Int): String {
+    private fun spaces(
+        pixels: Int,
+        roundUp: Boolean,
+    ): String {
         val space =
             Minecraft
                 .getInstance()
                 .font
                 .width(SPACE)
                 .coerceAtLeast(1)
-        return SPACE.repeat(((pixels + space - 1) / space).coerceAtLeast(0))
+        val count = if (roundUp) (pixels + space - 1) / space else pixels / space
+        return SPACE.repeat(count.coerceAtLeast(0))
     }
 
     private val RULE: Style = Style.EMPTY.withColor(Theme.TEXT_SUBTLE).withStrikethrough(true)
