@@ -1,5 +1,19 @@
 # Testing
 
+## Strategy
+Hypixel cannot run locally, so test in layers and go to Hypixel as late as possible:
+
+| Layer | What it proves | Speed | Share of testing |
+|---|---|---|---|
+| 1. Unit tests + fixtures | Parsers, calculators, state machines are correct | ms | Most of it |
+| 2. Offline sandbox (singleplayer + injected state) | Rendering, layout, HUD editor, screen overlays, module on/off | seconds, hot reload | UI work |
+| 3. Hypixel | Real data, timing, edge cases we did not capture | minutes | Capture fixtures + final check |
+
+Loop for a feature (e.g. a HOTM overlay): open the real menu on Hypixel once, dump it (layer 3), turn the dump into
+fixtures + parser tests (layer 1), iterate the overlay offline against the same dump (layer 2), confirm on Hypixel.
+This only works because features read **shared SkyBlock state and core events**, never Minecraft directly: the
+sandbox feeds the same state from fixtures.
+
 ## 1. Fast tests (always)
 `./gradlew test` (part of `./gradlew check`). Must stay under ~10 s.
 - **Architecture tests** (`architecture/ArchitectureTest`): rules from `config/source-rules.json` + structure rules.
@@ -8,24 +22,37 @@
   tested with plain inputs.
 
 ## 2. Fixtures from the real game [planned: core/debug]
-Hypixel cannot run locally, so we capture reality:
-1. In game, run `/skyatlaz debug dump <name>`: writes current scoreboard, tab list, recent chat and held item
-   data to `run/skyatlaz-dumps/<name>.json`.
+1. In game, run `/skyatlaz debug dump <name>`: writes current scoreboard, tab list, recent chat, held item and
+   the **open container** (title, slots, item names, lore, components) to `run/skyatlaz-dumps/<name>.json`.
 2. Copy useful dumps to `src/test/resources/fixtures/<area>/` and write a test against them.
 3. Every bug found in game becomes a fixture + failing test first, then the fix.
 
-## 3. Running on Hypixel
+## 3. Offline sandbox [planned: core/debug]
+`./gradlew runClient`, open a singleplayer world, then load a dump instead of joining Hypixel:
+- `/skyatlaz debug load <name>`: pushes the dump's scoreboard/tab/location into SkyBlock state (fires the same
+  change events as on Hypixel).
+- `/skyatlaz debug chat <text>`: injects a chat line through the normal chat pipeline.
+- `/skyatlaz debug open <name>`: opens a local container screen filled with the dumped items, so container
+  overlays (HOTM tree, menus, solvers) render exactly as on Hypixel.
+
+Debug commands are only registered in a dev environment or with debug mode on. Later, the Fabric client gametest
+API (already on the dev classpath) can automate these scenarios.
+
+## 4. Running on Hypixel
 - `./gradlew runClient` (or the "Minecraft Client" run config in IntelliJ).
 - The Hypixel Mod API Fabric mod is added to the dev runtime automatically.
-- **Login:** enable DevAuth by adding to your user-level `~/.gradle/gradle.properties` (never the repo):
+- **Login (DevAuth):** opt in per machine in your user-level `~/.gradle/gradle.properties` (never the repo):
   ```
   skyatlaz.devauth=true
+  # optional, default "main" (accounts are defined in ~/.devauth/config.toml)
+  skyatlaz.devauth.account=alt
   ```
-  then run with VM option `-Ddevauth.enabled=true`. First launch asks you to log in with Microsoft in the browser.
-  If DevAuth fails on this Minecraft version, disable it and report it in `docs/PROGRESS.md`.
+  The build then adds DevAuth and sets `-Ddevauth.enabled` / `-Ddevauth.account` on the client run. The first
+  login for an account opens the Microsoft login in the browser; tokens are cached in `~/.devauth/`.
+  Verified working with DevAuth 1.2.2 on 26.2.
 - Prefer an **alt account** for testing new features.
 - Hot reload: use JetBrains Runtime 25 as the project JDK and debug mode; method body changes apply without restart.
 
-## 4. Performance checks
+## 5. Performance checks
 - Spark profiler mod in dev runtime for sampling sessions (when needed).
 - [planned] per-module timing overlay in debug mode.

@@ -2,6 +2,16 @@
 
 Newest first. Format: date, decision, why, consequences.
 
+## 2026-10-19 - Test offline first, Hypixel last
+Joining Hypixel is slow, needs a login and can't reproduce rare states on demand. Most logic is tested with
+fixture-based unit tests; UI is iterated in a singleplayer sandbox fed by dumps of real Hypixel state
+(`core.debug`). Hypixel is used to capture dumps and for the final check. Consequence: features must depend
+only on shared SkyBlock state and events, so the sandbox can drive them. See `docs/TESTING.md`.
+
+## 2026-10-19 - DevAuth opt-in from user gradle.properties
+`skyatlaz.devauth=true` in `~/.gradle/gradle.properties` adds DevAuth and its JVM flags to the client run, so
+nobody needs IDE-specific VM options and the repo never holds account settings.
+
 ## 2026-10-19 - Text-based rule tests instead of Konsist/ArchUnit/detekt
 Pattern rules live in `config/source-rules.json`, read by both `ArchitectureTest` and the Claude Code
 `guard-edit` hook, so a rule is defined once. Text scanning runs in milliseconds. detekt stable (1.23.x) does not

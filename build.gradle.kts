@@ -12,6 +12,12 @@ fun prop(name: String): String = providers.gradleProperty(name).get()
 val targetJavaVersion = 25
 val modId = "skyatlaz"
 
+// DevAuth: log in with a real Microsoft account in runClient. Opt-in per machine via ~/.gradle/gradle.properties
+// (never in this repo): `skyatlaz.devauth=true`, optional `skyatlaz.devauth.account=<name>` (default `main`,
+// an account defined in ~/.devauth/config.toml). See docs/TESTING.md.
+val devAuthEnabled = providers.gradleProperty("skyatlaz.devauth").orNull == "true"
+val devAuthAccount = providers.gradleProperty("skyatlaz.devauth.account").orNull ?: "main"
+
 version = prop("mod_version")
 group = prop("maven_group")
 
@@ -36,6 +42,14 @@ loom {
     mods {
         register(modId) {
             sourceSet("main")
+        }
+    }
+    runs {
+        named("client") {
+            if (devAuthEnabled) {
+                systemProperties.put("devauth.enabled", "true")
+                systemProperties.put("devauth.account", devAuthAccount)
+            }
         }
     }
 }
@@ -63,9 +77,7 @@ dependencies {
     compileOnly("net.hypixel:mod-api:${prop("hypixel_mod_api_version")}")
     localRuntime("maven.modrinth:hypixel-mod-api:${prop("hypixel_mod_api_fabric_version")}")
 
-    // DevAuth: log in with a real Microsoft account in runClient. Opt-in via `skyatlaz.devauth=true`
-    // in ~/.gradle/gradle.properties (never in this repo). See docs/TESTING.md.
-    if (providers.gradleProperty("skyatlaz.devauth").orNull == "true") {
+    if (devAuthEnabled) {
         localRuntime("me.djtheredstoner:DevAuth-fabric:${prop("devauth_version")}")
     }
 

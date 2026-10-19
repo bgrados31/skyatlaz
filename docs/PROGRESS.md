@@ -18,7 +18,8 @@ Update this file at the end of every session: what changed, what is next, open q
 
 ## Next steps
 1. Phase 1, starting with `core.event` and `core.module` (see `docs/ARCHITECTURE.md`).
-2. Verify `./gradlew runClient` launches 26.2 with the Hypixel Mod API mod, and test DevAuth.
+   Plan `core.debug` (dump / load / chat / open) early: the offline sandbox in `docs/TESTING.md` depends on it.
+2. (Done) runClient + DevAuth + Hypixel Mod API verified on Hypixel (hello + location packets received).
 
 ## Open questions for the owner
 - Optional extras not yet confirmed: remote kill-switch, per-module profiling overlay, config migrations,
@@ -29,3 +30,6 @@ Update this file at the end of every session: what changed, what is next, open q
 ## Session log
 - 2026-10-19 (Opus 5.5): Phase 0 setup. Fixed template build error (`project.property` nullable types).
   Moved target from 26.3 to 26.2 (see DECISIONS). Added rules, hooks, docs, skills, reference repos.
+- 2026-10-19 (Opus 5.5): DevAuth wired into the client run (opt-in via user gradle.properties, default account
+  `main`); verified login on 26.2. Documented the layered testing strategy (unit + fixtures, offline sandbox,
+  Hypixel last) in TESTING/DECISIONS.
