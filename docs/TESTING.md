@@ -27,8 +27,16 @@ sandbox feeds the same state from fixtures.
 2. Copy useful dumps to `src/test/resources/fixtures/<area>/` and write a test against them.
 3. Every bug found in game becomes a fixture + failing test first, then the fix.
 
+## Run tasks
+All inherit the client run (DevAuth included). IntelliJ gets matching run configs after a Gradle sync.
+| Task | Starts at |
+|---|---|
+| `./gradlew runClient` | Title screen |
+| `./gradlew runWorld` | Singleplayer world `run/saves/Development` (override: `skyatlaz.dev.world=<folder>` in `~/.gradle/gradle.properties`) |
+| `./gradlew runHypixel` | Joined to `play.hypixel.net` |
+
 ## 3. Offline sandbox [planned: core/debug]
-`./gradlew runClient`, open a singleplayer world, then load a dump instead of joining Hypixel:
+`./gradlew runWorld`, then load a dump instead of joining Hypixel:
 - `/skyatlaz debug load <name>`: pushes the dump's scoreboard/tab/location into SkyBlock state (fires the same
   change events as on Hypixel).
 - `/skyatlaz debug chat <text>`: injects a chat line through the normal chat pipeline.

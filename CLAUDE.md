@@ -10,7 +10,8 @@ Private project (All Rights Reserved), author `tnozamas`, package `org.tnozamas.
 ## Commands
 - `./gradlew check` - format check, compile, unit + architecture tests. Must be green before finishing.
 - `./gradlew spotlessApply` - auto-format (ktlint for Kotlin, palantir for Java mixins).
-- `./gradlew runClient` - launch the game (see `docs/TESTING.md` for Hypixel login).
+- `./gradlew runClient` / `runWorld` / `runHypixel` - launch the game at the title screen / dev world / Hypixel
+  (see `docs/TESTING.md`).
 - `node tools/refs/sync.mjs` - clone/update reference mods into `references/` (git-ignored).
 
 ## Non-negotiable rules

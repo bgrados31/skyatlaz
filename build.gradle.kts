@@ -18,6 +18,9 @@ val modId = "skyatlaz"
 val devAuthEnabled = providers.gradleProperty("skyatlaz.devauth").orNull == "true"
 val devAuthAccount = providers.gradleProperty("skyatlaz.devauth.account").orNull ?: "main"
 
+// Folder name in run/saves opened by `runWorld`; override with `skyatlaz.dev.world` in ~/.gradle/gradle.properties.
+val devWorld = providers.gradleProperty("skyatlaz.dev.world").orNull ?: "Development"
+
 version = prop("mod_version")
 group = prop("maven_group")
 
@@ -50,6 +53,18 @@ loom {
                 systemProperties.put("devauth.enabled", "true")
                 systemProperties.put("devauth.account", devAuthAccount)
             }
+        }
+        // Quick play: skip the title screen. `runWorld` opens the singleplayer world in run/saves (offline sandbox,
+        // see docs/TESTING.md); `runHypixel` joins Hypixel directly.
+        register("world") {
+            inherit(getByName("client"))
+            displayName.set("Minecraft World")
+            programArguments.addAll("--quickPlaySingleplayer", devWorld)
+        }
+        register("hypixel") {
+            inherit(getByName("client"))
+            displayName.set("Minecraft Hypixel")
+            programArguments.addAll("--quickPlayMultiplayer", "play.hypixel.net")
         }
     }
 }
