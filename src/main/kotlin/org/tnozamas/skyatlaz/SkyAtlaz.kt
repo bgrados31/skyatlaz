@@ -6,6 +6,10 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.loader.api.FabricLoader
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.tnozamas.skyatlaz.api.http.HttpCache
+import org.tnozamas.skyatlaz.api.http.HttpDebugCommands
+import org.tnozamas.skyatlaz.api.http.HttpService
+import org.tnozamas.skyatlaz.api.http.JdkHttpTransport
 import org.tnozamas.skyatlaz.api.hypixel.HypixelDebugCommands
 import org.tnozamas.skyatlaz.api.hypixel.HypixelModApi
 import org.tnozamas.skyatlaz.core.command.BuiltinCommands
@@ -74,6 +78,31 @@ object SkyAtlaz : ClientModInitializer {
             },
         )
 
+    /** Installed mod version, e.g. `0.1.0`. */
+    val VERSION: String by lazy {
+        FabricLoader
+            .getInstance()
+            .getModContainer(MOD_ID)
+            .map { it.metadata.version.friendlyString }
+            .orElse("dev")
+    }
+
+    /** All downloads: shared client, disk cache in `<game dir>/skyatlaz/cache`, results on the client thread. */
+    @JvmField
+    val HTTP =
+        HttpService(
+            transport = JdkHttpTransport("SkyAtlaz/$VERSION (Hypixel SkyBlock mod)"),
+            cache =
+                HttpCache(
+                    FabricLoader
+                        .getInstance()
+                        .gameDir
+                        .resolve(MOD_ID)
+                        .resolve("cache"),
+                ),
+            scheduler = SCHEDULER,
+        )
+
     /** The Hypixel Mod API owner; read `HYPIXEL.session` for location and party. */
     @JvmField
     val HYPIXEL = HypixelModApi(EVENTS, SCHEDULER) { message -> LOGGER.warn(message) }
@@ -113,5 +142,6 @@ object SkyAtlaz : ClientModInitializer {
             )
         DebugCommands(SCHEDULER, recorder, dumps).register(COMMANDS)
         HypixelDebugCommands(HYPIXEL, EVENTS).register(COMMANDS)
+        HttpDebugCommands(HTTP).register(COMMANDS)
     }
 }

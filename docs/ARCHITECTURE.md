@@ -22,7 +22,7 @@ core/
   debug/             [done]    dump / chat / open / theme, Snapshot fixtures, ChatRecorder (load: phase 2)
 api/
   hypixel/           [done]    HypixelModApi (only Mod API user) -> HypixelSession (location, party), events
-  http/              [planned] Shared HTTP client: async, disk cache, ETag, rate limits
+  http/              [done]    HttpService (SkyAtlaz.HTTP): async, disk cache + ETag/304, stale fallback, dedupe
   repo/              [planned] Item/static data (Hypixel resources endpoints, NEU-REPO)
 skyblock/            [planned] Shared game state (island, area, profile, purse...), parsed once
 ui/
@@ -130,7 +130,9 @@ ctx.command {                                   // module commands exist only wh
   are cached and shared.
 - **Public API v2**: SkyBlock resources, bazaar and auctions endpoints need no key. Endpoints needing a key
   (profiles) cannot be used from a distributed mod with a dev key; we do not ship keys.
-- All network calls go through `api.http` and run off the client thread.
+- All network calls go through `SkyAtlaz.HTTP` (`api.http.HttpService`): `get(url, maxAge, parse) { result }`. Fresh
+  cache = no request; expired = conditional request (304 reuses the body); network failure = last copy marked
+  `stale`; one download per URL at a time; parsing off the client thread. Cache in `<game dir>/skyatlaz/cache`.
 
 ## Rendering [planned]
 - HUD elements re-compute their content when their data changes, not every frame. Rendering only draws.

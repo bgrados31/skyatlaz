@@ -17,7 +17,7 @@ Update this file at the end of every session: what changed, what is next, open q
 - [ ] **Phase 4 - First features** (vertical slice) to validate the base, then grow by category.
 
 ## Next steps
-1. Phase 2 (`api.hypixel` done): scoreboard/tab/chat parsers on `Snapshot` fixtures,
+1. Phase 2 (`api.hypixel`, `util`, `api.http` done): `api.repo` (bazaar/auction prices, NEU-REPO items), parsers on `Snapshot` fixtures,
    `skyblock` state + change events, `debug load`. Capture real dumps on Hypixel first (hub, dungeon, mines, HOTM).
    Render hooks arrive with `ui.hud` (phase 3). Config screen: own UI recommended vs YACL adapter (phase 3).
 2. UI sounds (amethyst chimes at musical pitches, cut short via the scheduler, volume + toggle) for command and
@@ -65,3 +65,6 @@ Update this file at the end of every session: what changed, what is next, open q
   exact. 82 tests.
 - 2026-10-19 (Opus 5.5): `api.hypixel` (Mod API wrapper: location events, throttled party requests, session state
   cleared on disconnect), `core.scheduler.Cooldown`, `/skyatlaz debug hypixel`. 90 tests. Needs a check on Hypixel.
+- 2026-10-19 (Opus 5.5): `util` (Numbers, ChatPattern + ctx.onChat, RarityLine, SkyBlockItemData) and `api.http`
+  (HttpService with disk cache, ETag/304, stale fallback, dedupe; JdkHttpTransport with gzip). Verified in game:
+  bazaar 3.6M chars from network in 677 ms, then from cache in 69 ms. 131 tests.
