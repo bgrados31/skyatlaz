@@ -2,6 +2,19 @@
 
 Newest first. Format: date, decision, why, consequences.
 
+## 2026-10-19 - Declarative command registry with generated help
+The owner wants a professional, scalable command system with no hand-wired or dead-end commands. All commands
+are declared as a tree (`CommandBuilder` DSL) in one `CommandRegistry`; help is generated from description keys
+and categories, and every node without an action prints its help. Modules declare commands through
+`ctx.command`, so they follow the module lifecycle. Brigadier cannot remove nodes, so nodes are reference counted
+and hidden through `requires`; Fabric only re-filters suggestions on refresh, so every change triggers one.
+
+## 2026-10-19 - MCP Fabric for agent access, singleplayer only
+To let the AI see and test the game, MCP Fabric (MIT, supports 26.2, loopback + token) is loaded through
+`fabric.addMods` only by `runWorld`, opt-in per machine. It automates input, so it must never reach Hypixel:
+it is not a dependency, not in the release jar, and not loaded by `runClient`/`runHypixel`. Alternatives:
+miziusLabs/Mod (no license), minecraft-driver-mcp (1.21.1 only).
+
 ## 2026-10-19 - Gradient identity: OKLab lookup tables, semantic colors
 The owner wants a distinctive gradient look. Gradients mix stops in OKLab (keeps perceived lightness: red to
 green does not turn dark olive; CSS uses the same default) and bake a 256-entry table at construction, so

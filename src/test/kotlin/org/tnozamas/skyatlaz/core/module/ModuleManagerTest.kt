@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.tnozamas.skyatlaz.core.command.CommandRegistry
 import org.tnozamas.skyatlaz.core.event.Event
 import org.tnozamas.skyatlaz.core.event.EventBus
 import org.tnozamas.skyatlaz.core.event.Registration
@@ -46,7 +47,10 @@ class ModuleManagerTest {
     private val failures = ArrayList<Pair<String, Throwable>>()
     private val bus = EventBus { _, error -> throw AssertionError("unexpected unhandled error", error) }
     private val scheduler = Scheduler({ it.run() }) { throw AssertionError("unexpected unhandled error", it) }
-    private val manager = ModuleManager(bus, scheduler) { module, error -> failures.add(module.id to error) }
+    private val commands =
+        CommandRegistry("test", "command.root", { true }, {}, { _, error -> throw AssertionError("command failed", error) })
+    private val manager =
+        ModuleManager(ModuleServices(bus, scheduler, commands)) { module, error -> failures.add(module.id to error) }
     private val module = TestModule().also(manager::register)
 
     @Test
@@ -172,6 +176,29 @@ class ModuleManagerTest {
 
         assertEquals(1, ticks)
         assertEquals(1, results)
+    }
+
+    @Test
+    fun `module commands exist only while the module runs`() {
+        val withCommand =
+            object : Module("test.commands", FeatureCategory.MISC) {
+                override fun onEnable(ctx: ModuleContext) {
+                    ctx.command {
+                        literal("ping") {
+                            description("command.root")
+                            executes {}
+                        }
+                    }
+                }
+            }
+        manager.register(withCommand)
+        val ping = { commands.root.childMap["ping"] }
+
+        manager.setEnabled(withCommand.id, true)
+        assertTrue(commands.isAvailable(ping()!!))
+
+        manager.setEnabled(withCommand.id, false)
+        assertFalse(commands.isAvailable(ping()!!))
     }
 
     @Test

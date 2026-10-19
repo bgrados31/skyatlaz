@@ -2,6 +2,7 @@ package org.tnozamas.skyatlaz.ui.chat
 
 import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.MutableComponent
 import org.tnozamas.skyatlaz.i18n.Tr
 import org.tnozamas.skyatlaz.i18n.withGradient
 import org.tnozamas.skyatlaz.ui.theme.Gradient
@@ -26,19 +27,33 @@ object Chat {
     fun format(
         gradient: Gradient,
         message: Component,
-    ): Component =
+    ): MutableComponent =
         Tr
             .tr("chat.prefix")
             .withGradient(Theme.BRAND_GRADIENT)
             .append(message.withGradient(gradient))
 
+    /** A titled block (help pages, summaries): prefix + brand-gradient [title], then one [lines] entry per line. */
+    fun panel(
+        title: Component,
+        lines: List<Component>,
+    ) {
+        val message = format(Theme.BRAND_GRADIENT, title)
+        for (line in lines) message.append(NEWLINE).append(line)
+        add(message)
+    }
+
     private fun send(
         gradient: Gradient,
         message: Component,
-    ) {
+    ) = add(format(gradient, message))
+
+    private fun add(message: Component) {
         Minecraft
             .getInstance()
             .gui.hud.chat
-            .addClientSystemMessage(format(gradient, message))
+            .addClientSystemMessage(message)
     }
+
+    private const val NEWLINE = "\n"
 }

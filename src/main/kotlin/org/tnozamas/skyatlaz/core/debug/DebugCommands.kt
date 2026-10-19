@@ -1,29 +1,25 @@
 package org.tnozamas.skyatlaz.core.debug
 
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
-import net.fabricmc.fabric.api.client.command.v2.ClientCommands
-import net.fabricmc.loader.api.FabricLoader
+import org.tnozamas.skyatlaz.core.command.CommandCategory
+import org.tnozamas.skyatlaz.core.command.CommandRegistry
 import org.tnozamas.skyatlaz.i18n.Tr
 import org.tnozamas.skyatlaz.ui.chat.Chat
 
 /**
- * `/skyatlaz debug ...` tools for developing without Hypixel (docs/TESTING.md). Registered only in the dev
- * environment for now; a debug-mode config toggle comes with core.config.
+ * `/skyatlaz debug ...` tools for developing without Hypixel (docs/TESTING.md). In the DEBUG category, so they are
+ * hidden unless debug mode is on (always on in the dev environment).
  */
 object DebugCommands {
-    fun register() {
-        if (!FabricLoader.getInstance().isDevelopmentEnvironment) return
-        ClientCommandRegistrationCallback.EVENT.register { dispatcher, _ ->
-            dispatcher.register(
-                ClientCommands.literal("skyatlaz").then(
-                    ClientCommands.literal("debug").then(
-                        ClientCommands.literal("theme").executes {
-                            previewTheme()
-                            1
-                        },
-                    ),
-                ),
-            )
+    fun register(registry: CommandRegistry) {
+        registry.register {
+            literal("debug") {
+                category(CommandCategory.DEBUG)
+                description("command.debug")
+                literal("theme") {
+                    description("command.debug.theme")
+                    executes { previewTheme() }
+                }
+            }
         }
     }
 

@@ -17,6 +17,7 @@ core/
   config/            [planned] Typed config model, persistence, versioned migrations
   scheduler/         [done]    Tick tasks (later/every), shared async pool, runOnClient
   error/             [done]    rethrowIfFatal; isolation lives in EventBus/Scheduler/ModuleManager, notice via ui.chat
+  command/           [done]    CommandRegistry (declarative tree, generated help), CommandInstaller (Fabric)
   debug/             [partial] /skyatlaz debug theme (dev only); dump/load/chat/open planned
 api/
   hypixel/           [planned] Wrapper over Hypixel Mod API (subscriptions, cached responses)
@@ -63,6 +64,31 @@ abstract class Module(val id: String, val category: FeatureCategory) {   // id: 
 - `EventBus.hasListeners(type)` is O(1). Mixins check it before building an event object, so unused hooks
   cost one boolean check.
 - Events are posted on the client thread. Async work posts results back through the scheduler.
+
+## Commands [done]
+All commands live under `/skyatlaz` in one `CommandRegistry` (`SkyAtlaz.COMMANDS`). Nothing is wired by hand:
+```kotlin
+ctx.command {                                   // module commands exist only while the module runs
+    literal("pets") {
+        category(CommandCategory.FEATURES)      // help section (GENERAL, FEATURES, TOOLS, DEBUG)
+        description("command.pets")             // required on every node, translation key
+        visibleWhen { SkyBlockState.onSkyBlock } // optional extra condition
+        argument("name", StringArgumentType.word()) {
+            description("command.pets.name")
+            suggests { petNames }
+            executes { call -> show(call.string("name")) }
+        }
+    }
+}
+```
+- Any node without `executes` prints generated help for its children (grouped by category, clickable, hover
+  shows syntax), so no path ends in "unknown or incomplete command". `/skyatlaz` is the root help.
+- Declarations are validated before applying (names, descriptions, duplicate actions, literal/argument clash).
+- Nodes are reference counted and never removed from Brigadier; unavailable nodes fail `requires`, and the
+  installer refreshes Fabric's suggestion tree on every change. Call `COMMANDS.refresh()` when a
+  `visibleWhen` condition changes.
+- `DEBUG` commands are hidden unless debug mode is on (dev environment for now).
+- Errors inside a command are logged and reported in chat (`command.failed`), never crash the client.
 
 ## SkyBlock state [planned]
 - Single source of truth (`skyblock/`) built from Hypixel Mod API location packets, scoreboard, tab list and chat.

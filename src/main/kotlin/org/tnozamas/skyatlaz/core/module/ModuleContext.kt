@@ -1,20 +1,18 @@
 package org.tnozamas.skyatlaz.core.module
 
+import org.tnozamas.skyatlaz.core.command.CommandBuilder
 import org.tnozamas.skyatlaz.core.event.Event
-import org.tnozamas.skyatlaz.core.event.EventBus
 import org.tnozamas.skyatlaz.core.event.Registration
-import org.tnozamas.skyatlaz.core.scheduler.Scheduler
 
 /**
  * What a running module uses to hook into shared systems. Every registration is tracked and released when the
  * module stops, so modules never unregister by hand and a disabled module leaves nothing behind.
  *
- * Errors thrown by the module's listeners are routed to its manager, which disables the module.
+ * Errors thrown by the module's listeners and tasks are routed to its manager, which disables the module.
  */
 class ModuleContext internal constructor(
-    @PublishedApi internal val events: EventBus,
-    private val scheduler: Scheduler,
-    @PublishedApi internal val onError: (Throwable) -> Unit,
+    private val services: ModuleServices,
+    private val onError: (Throwable) -> Unit,
 ) {
     private val registrations = ArrayList<Registration>()
     private var closed = false
@@ -25,7 +23,15 @@ class ModuleContext internal constructor(
         priority: Int = 0,
         listener: (E) -> Unit,
     ) {
-        track(events.register(type, priority, onError, listener))
+        track(services.events.register(type, priority, onError, listener))
+    }
+
+    /**
+     * Declares `/skyatlaz` subcommands that exist only while the module runs (see [CommandBuilder]). They show up
+     * in the generated help under their category.
+     */
+    fun command(block: CommandBuilder.() -> Unit) {
+        track(services.commands.register(block))
     }
 
     inline fun <reified E : Event> on(
@@ -38,7 +44,7 @@ class ModuleContext internal constructor(
         delayTicks: Int,
         action: () -> Unit,
     ) {
-        track(scheduler.later(delayTicks, onError, action))
+        track(services.scheduler.later(delayTicks, onError, action))
     }
 
     /** Runs [action] every [intervalTicks] ticks while the module runs. The way to throttle expensive checks. */
@@ -47,7 +53,7 @@ class ModuleContext internal constructor(
         initialDelayTicks: Int = intervalTicks,
         action: () -> Unit,
     ) {
-        track(scheduler.every(intervalTicks, initialDelayTicks, onError, action))
+        track(services.scheduler.every(intervalTicks, initialDelayTicks, onError, action))
     }
 
     /** Runs [work] in the background; [onResult] runs on the client thread only if the module is still running. */
@@ -55,7 +61,7 @@ class ModuleContext internal constructor(
         work: () -> T,
         onResult: (T) -> Unit,
     ) {
-        scheduler.async(work, { if (!closed) onError(it) }) { if (!closed) onResult(it) }
+        services.scheduler.async(work, { if (!closed) onError(it) }) { if (!closed) onResult(it) }
     }
 
     /**

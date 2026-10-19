@@ -37,7 +37,10 @@ object ExampleModule : Module(id = "example", category = FeatureCategory.MISC) {
     }
 }
 ```
-- Register everything through `ctx` so disabling removes it automatically.
+- Register everything through `ctx` (`on`, `every`, `later`, `async`, `command`) so disabling removes it automatically.
+- Commands: `ctx.command { literal("x") { category(...); description("command.x"); executes { } } }`. Every node needs
+  a description key; nodes without `executes` show generated help. Never register with Fabric/Brigadier directly.
+- Chat output: `Chat.info/success/warning/error(Tr.tr(...))`; colors and gradients from `ui.theme.Theme`.
 - Never import another feature. Use events and `skyblock` state.
 - All text via `Tr.tr("<category>.<feature>.<element>")`; config keys `config.<category>.<feature>.<entry>.name|description`.
 

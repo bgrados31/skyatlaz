@@ -30,6 +30,7 @@ create a shared component first:
 | User-facing text | `i18n.Tr` |
 | Gradient text | `Component.withGradient(Theme.X_GRADIENT)` |
 | Chat messages | `ui.chat.Chat` (info/success/warning/error) |
+| Commands | `ctx.command { }` in modules, `SkyAtlaz.COMMANDS` in core (never Fabric/Brigadier directly) |
 
 ## Performance
 The mod will run many modules every tick; every rule here matters.

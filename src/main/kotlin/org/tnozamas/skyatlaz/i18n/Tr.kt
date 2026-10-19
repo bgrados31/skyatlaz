@@ -21,4 +21,10 @@ object Tr {
         key: String,
         vararg args: Any,
     ): MutableComponent = Component.translatable(PREFIX + key, *args)
+
+    /**
+     * Text that is not language and must not be translated: command syntax, ids, numbers, separators. Never use it
+     * for words a player reads as a sentence.
+     */
+    fun verbatim(text: String): MutableComponent = Component.literal(text)
 }

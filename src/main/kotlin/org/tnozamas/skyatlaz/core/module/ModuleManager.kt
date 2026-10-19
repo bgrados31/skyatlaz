@@ -1,8 +1,6 @@
 package org.tnozamas.skyatlaz.core.module
 
 import org.tnozamas.skyatlaz.core.error.rethrowIfFatal
-import org.tnozamas.skyatlaz.core.event.EventBus
-import org.tnozamas.skyatlaz.core.scheduler.Scheduler
 
 /**
  * Owns every module's lifecycle. A module runs while it is enabled (config toggle), active ([Module.isActive])
@@ -12,8 +10,7 @@ import org.tnozamas.skyatlaz.core.scheduler.Scheduler
  * Client thread only.
  */
 class ModuleManager(
-    private val events: EventBus,
-    private val scheduler: Scheduler,
+    private val services: ModuleServices,
     private val onFailure: (module: Module, error: Throwable) -> Unit,
 ) {
     private val slots = LinkedHashMap<String, Slot>()
@@ -83,7 +80,7 @@ class ModuleManager(
         }
 
     private fun start(slot: Slot) {
-        val context = ModuleContext(events, scheduler, slot.errorHandler)
+        val context = ModuleContext(services, slot.errorHandler)
         slot.context = context
         try {
             slot.module.dispatchEnable(context)
