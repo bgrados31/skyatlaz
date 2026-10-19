@@ -22,7 +22,7 @@ sampling in render paths is an array read. Semantic gradients follow familiar hu
 warning, red error, blue info). Revised the same day to a soft palette (aqua, lavender, rose; pastel semantics,
 message bodies going from a deep to a soft tone of their own hue, never to white, and no icons)
 because the saturated version read as noisy. Glyphs were vetted by rendering them in game: curved box corners
-(`/skyatlaz debug glyphs`): box-drawing corners render small and misaligned, so panels use rules and icons. Gradient text is built in
+(╰ ╭) are 3px wide in the game font, so help trees use ├ and └ (9px) in a fixed-width cell. Gradient text is built in
 `i18n` (`withGradient`) because only `i18n` may create components from strings; all chat output goes through
 `ui.chat.Chat`.
 
