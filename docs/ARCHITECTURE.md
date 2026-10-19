@@ -14,7 +14,7 @@ i18n/                [done]    Tr: the only way to create user-facing text. with
 core/
   module/            [done]    Module, ModuleManager, ModuleContext, FeatureCategory
   event/             [done]    EventBus, Event, CancellableEvent, Registration (event types: planned)
-  config/            [planned] Typed config model, persistence, versioned migrations
+  config/            [done]    ConfigManager (JSON, migrations, debounced atomic saves), ConfigSection, ConfigEntry
   scheduler/         [done]    Tick tasks (later/every), shared async pool, runOnClient
   error/             [done]    rethrowIfFatal; isolation lives in EventBus/Scheduler/ModuleManager, notice via ui.chat
   command/           [done]    CommandRegistry (declarative tree, generated help), CommandInstaller (Fabric)
@@ -64,6 +64,27 @@ abstract class Module(val id: String, val category: FeatureCategory) {   // id: 
 - `EventBus.hasListeners(type)` is O(1). Mixins check it before building an event object, so unused hooks
   cost one boolean check.
 - Events are posted on the client thread. Async work posts results back through the scheduler.
+
+## Config [done]
+```kotlin
+object ScoreHudConfig : ConfigSection("dungeons.scorehud") {
+    val scale = decimal("scale", 1.0, 0.5..3.0)   // also boolean, int, text, choice<Enum>
+}
+object ScoreHudModule : Module("dungeons.scorehud", FeatureCategory.DUNGEONS) {
+    override val config = ScoreHudConfig            // registered and loaded with the module
+    override fun onEnable(ctx: ModuleContext) {
+        ctx.watch(ScoreHudConfig.scale) { rebuildLayout() }   // react to changes, never poll
+    }
+}
+```
+- One file, `config/skyatlaz/config.json`: `{ "version": N, "values": { flat.sorted.keys: value } }`. Unknown keys
+  are kept. Older versions are upgraded by `ConfigMigration`s; a corrupt file is moved aside (`.broken-*`).
+- Values are always valid (clamped / replaced by defaults). `ConfigEntry.value` is a plain field read.
+- Every module gets a `module.<id>.enabled` toggle (default `enabledByDefault`, off unless said otherwise);
+  `ModuleManager.setEnabled` writes it, so module state persists.
+- Saves are debounced (1 s after the last change), written off the client thread with an atomic replace, plus
+  a synchronous save on client shutdown. `GeneralConfig.debugMode` gates DEBUG commands.
+- Texts for the config screen: `config.<key>.name` and `config.<key>.description`.
 
 ## Commands [done]
 All commands live under `/skyatlaz` in one `CommandRegistry` (`SkyAtlaz.COMMANDS`). Nothing is wired by hand:

@@ -1,6 +1,7 @@
 package org.tnozamas.skyatlaz
 
 import net.fabricmc.api.ClientModInitializer
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.loader.api.FabricLoader
 import org.slf4j.Logger
@@ -9,6 +10,8 @@ import org.tnozamas.skyatlaz.core.command.BuiltinCommands
 import org.tnozamas.skyatlaz.core.command.CommandHelp
 import org.tnozamas.skyatlaz.core.command.CommandInstaller
 import org.tnozamas.skyatlaz.core.command.CommandRegistry
+import org.tnozamas.skyatlaz.core.config.ConfigManager
+import org.tnozamas.skyatlaz.core.config.GeneralConfig
 import org.tnozamas.skyatlaz.core.debug.DebugCommands
 import org.tnozamas.skyatlaz.core.event.EventBus
 import org.tnozamas.skyatlaz.core.module.ModuleManager
@@ -38,8 +41,19 @@ object SkyAtlaz : ClientModInitializer {
             LOGGER.error("Unhandled error in a scheduled task", error)
         }
 
-    // TODO(phase-1): debug mode becomes a config toggle with core.config.
-    private val debugEnabled = FabricLoader.getInstance().isDevelopmentEnvironment
+    /** Every setting, saved to `config/skyatlaz/config.json`. Loaded in [onInitializeClient] before modules. */
+    @JvmField
+    val CONFIG =
+        ConfigManager(
+            file =
+                FabricLoader
+                    .getInstance()
+                    .configDir
+                    .resolve(MOD_ID)
+                    .resolve("config.json"),
+            migrations = emptyList(),
+            scheduler = SCHEDULER,
+        ) { message, error -> LOGGER.warn(message, error) }
 
     /** Every `/skyatlaz` command. Nodes without an action print generated help. */
     @JvmField
@@ -47,7 +61,7 @@ object SkyAtlaz : ClientModInitializer {
         CommandRegistry(
             rootName = MOD_ID,
             rootDescriptionKey = "command.root",
-            debugEnabled = { debugEnabled },
+            debugEnabled = { GeneralConfig.debugMode.value },
             onHelp = { node -> CommandHelp.show(COMMANDS, node) },
             onError = { node, error ->
                 LOGGER.error("Command {} failed", node.usage, error)
@@ -58,13 +72,17 @@ object SkyAtlaz : ClientModInitializer {
     /** Module lifecycle. A failing module is stopped, logged and announced in chat; the game keeps running. */
     @JvmField
     val MODULES =
-        ModuleManager(ModuleServices(EVENTS, SCHEDULER, COMMANDS)) { module, error ->
+        ModuleManager(ModuleServices(EVENTS, SCHEDULER, COMMANDS, CONFIG)) { module, error ->
             LOGGER.error("Module {} failed and was disabled", module.id, error)
             Chat.error(Tr.tr("error.module_disabled", module.id))
         }
 
     override fun onInitializeClient() {
         LOGGER.info("Initializing {}", MOD_ID)
+        CONFIG.register(GeneralConfig)
+        CONFIG.load()
+        GeneralConfig.debugMode.onChange { COMMANDS.refresh() }
+        ClientLifecycleEvents.CLIENT_STOPPING.register { CONFIG.saveNow() }
         ClientTickEvents.END_CLIENT_TICK.register { SCHEDULER.tick() }
         CommandInstaller.install(COMMANDS)
         BuiltinCommands.register(COMMANDS)

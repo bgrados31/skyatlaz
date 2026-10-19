@@ -2,6 +2,13 @@
 
 Newest first. Format: date, decision, why, consequences.
 
+## 2026-10-19 - Own config model, flat versioned JSON
+Config is our own typed model (`core.config`) rather than a library, so the future screen (own UI or YACL behind
+an adapter, still open) only reads `ConfigEntry` metadata. Flat sorted keys make migrations simple key edits and
+the file readable; unknown keys are preserved so removing or disabling a feature never loses settings. Module
+toggles live in the config, and modules are off unless they opt in (`enabledByDefault`), which keeps "disabled
+costs nothing" the default and Gray features safe.
+
 ## 2026-10-19 - Declarative command registry with generated help
 The owner wants a professional, scalable command system with no hand-wired or dead-end commands. All commands
 are declared as a tree (`CommandBuilder` DSL) in one `CommandRegistry`; help is generated from description keys

@@ -1,5 +1,7 @@
 {
   "skyatlaz.chat.prefix": "SkyAtlaz",
+  "skyatlaz.config.general.debug_mode.description": "Show developer tools under /skyatlaz debug.",
+  "skyatlaz.config.general.debug_mode.name": "Debug mode",
   "skyatlaz.command.category.debug": "Debug",
   "skyatlaz.command.category.features": "Features",
   "skyatlaz.command.category.general": "General",

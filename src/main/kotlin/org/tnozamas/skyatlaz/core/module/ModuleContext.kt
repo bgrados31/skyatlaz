@@ -1,6 +1,7 @@
 package org.tnozamas.skyatlaz.core.module
 
 import org.tnozamas.skyatlaz.core.command.CommandBuilder
+import org.tnozamas.skyatlaz.core.config.ConfigEntry
 import org.tnozamas.skyatlaz.core.event.Event
 import org.tnozamas.skyatlaz.core.event.Registration
 
@@ -24,6 +25,14 @@ class ModuleContext internal constructor(
         listener: (E) -> Unit,
     ) {
         track(services.events.register(type, priority, onError, listener))
+    }
+
+    /** Reacts to changes of a setting while the module runs (recompute derived data here, not every frame). */
+    fun <T : Any> watch(
+        entry: ConfigEntry<T>,
+        listener: (T) -> Unit,
+    ) {
+        track(entry.onChange(listener))
     }
 
     /**

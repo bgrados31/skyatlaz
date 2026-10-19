@@ -16,7 +16,8 @@ description: Use when adding a new SkyAtlaz feature/module (HUD, overlay, timer,
 ```
 src/main/kotlin/org/tnozamas/skyatlaz/feature/<category>/<feature>/
   <Feature>Module.kt      Module subclass: lifecycle + wiring only
-  <Feature>Config.kt      Config entries for this feature (toggle off by default if Gray)
+  <Feature>Config.kt      `object XConfig : ConfigSection("<category>.<feature>")`; set `override val config = XConfig`
+                          (the on/off toggle is automatic; keep `enabledByDefault = false` if Gray)
   <Feature>Logic.kt       Pure logic (parsing/calculations), no Minecraft calls -> unit-testable
   <Feature>Hud.kt         Only if it draws something (uses ui.hud + ui.theme)
 src/test/kotlin/org/tnozamas/skyatlaz/feature/<category>/<feature>/<Feature>LogicTest.kt

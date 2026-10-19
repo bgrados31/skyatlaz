@@ -8,10 +8,14 @@ import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.tnozamas.skyatlaz.core.command.CommandRegistry
+import org.tnozamas.skyatlaz.core.config.ConfigEntry
+import org.tnozamas.skyatlaz.core.config.ConfigManager
+import org.tnozamas.skyatlaz.core.config.ConfigSection
 import org.tnozamas.skyatlaz.core.event.Event
 import org.tnozamas.skyatlaz.core.event.EventBus
 import org.tnozamas.skyatlaz.core.event.Registration
 import org.tnozamas.skyatlaz.core.scheduler.Scheduler
+import java.nio.file.Path
 
 class ModuleManagerTest {
     private class Tick : Event
@@ -47,10 +51,11 @@ class ModuleManagerTest {
     private val failures = ArrayList<Pair<String, Throwable>>()
     private val bus = EventBus { _, error -> throw AssertionError("unexpected unhandled error", error) }
     private val scheduler = Scheduler({ it.run() }) { throw AssertionError("unexpected unhandled error", it) }
+    private val config = ConfigManager(Path.of("build/tmp/unused-config.json"), emptyList(), null) { _, _ -> }
     private val commands =
         CommandRegistry("test", "command.root", { true }, {}, { _, error -> throw AssertionError("command failed", error) })
     private val manager =
-        ModuleManager(ModuleServices(bus, scheduler, commands)) { module, error -> failures.add(module.id to error) }
+        ModuleManager(ModuleServices(bus, scheduler, commands, config)) { module, error -> failures.add(module.id to error) }
     private val module = TestModule().also(manager::register)
 
     @Test
@@ -199,6 +204,33 @@ class ModuleManagerTest {
 
         manager.setEnabled(withCommand.id, false)
         assertFalse(commands.isAvailable(ping()!!))
+    }
+
+    @Test
+    fun `the enabled toggle lives in the config`() {
+        @Suppress("UNCHECKED_CAST")
+        val toggle = config.entry("module.${module.id}.enabled") as ConfigEntry<Boolean>
+
+        manager.setEnabled(module.id, true)
+        assertTrue(toggle.value)
+
+        toggle.set(false)
+        assertFalse(manager.isRunning(module.id))
+    }
+
+    @Test
+    fun `enabledByDefault and module config sections are registered`() {
+        val section = object : ConfigSection("test.defaults") {}
+        val onByDefault =
+            object : Module("test.defaults", FeatureCategory.MISC) {
+                override val enabledByDefault = true
+                override val config = section
+            }
+
+        manager.register(onByDefault)
+
+        assertTrue(manager.isRunning(onByDefault.id))
+        assertNotNull(config.entry("module.test.defaults.enabled"))
     }
 
     @Test

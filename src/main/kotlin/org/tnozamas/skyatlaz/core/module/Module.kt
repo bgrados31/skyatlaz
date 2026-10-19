@@ -1,5 +1,7 @@
 package org.tnozamas.skyatlaz.core.module
 
+import org.tnozamas.skyatlaz.core.config.ConfigSection
+
 /**
  * A feature that can be turned on and off at runtime. The [ModuleManager] owns the lifecycle: a module runs only
  * while its config toggle is on **and** [isActive] holds, and everything registered through the [ModuleContext]
@@ -15,6 +17,15 @@ abstract class Module(
     init {
         require(ID_PATTERN.matches(id)) { "Invalid module id '$id': lowercase segments separated by dots" }
     }
+
+    /**
+     * Initial state of the module's config toggle (`module.<id>.enabled`). Off unless the feature is clearly useful
+     * to everyone and Allowed (docs/HYPIXEL_RULES.md); Gray features must stay off.
+     */
+    open val enabledByDefault: Boolean = false
+
+    /** The module's settings, registered and loaded together with the module. */
+    open val config: ConfigSection? = null
 
     /**
      * Activation condition (e.g. "on SkyBlock", "in Dungeons"), re-evaluated by [ModuleManager.refreshActivation]

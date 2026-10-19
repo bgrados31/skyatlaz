@@ -1,5 +1,6 @@
 package org.tnozamas.skyatlaz.core.module
 
+import org.tnozamas.skyatlaz.core.config.ConfigEntry
 import org.tnozamas.skyatlaz.core.error.rethrowIfFatal
 
 /**
@@ -17,6 +18,7 @@ class ModuleManager(
 
     private inner class Slot(
         val module: Module,
+        val toggle: ConfigEntry.Bool,
     ) {
         var enabled = false
         var failure: Throwable? = null
@@ -29,18 +31,31 @@ class ModuleManager(
     val modules: Collection<Module>
         get() = slots.values.map { it.module }
 
-    /** Adds [module], initially disabled. Ids are unique. */
+    /**
+     * Adds [module] with its config toggle `module.<id>.enabled` and its [Module.config] section. The module starts
+     * if the stored (or default) toggle is on. Register after the config is loaded. Ids are unique.
+     */
     fun register(module: Module) {
         require(module.id !in slots) { "Duplicate module id '${module.id}'" }
-        slots[module.id] = Slot(module)
+        val toggle = ConfigEntry.Bool("module.${module.id}.enabled", module.enabledByDefault)
+        services.config.register(toggle)
+        module.config?.let(services.config::register)
+        val slot = Slot(module, toggle)
+        slots[module.id] = slot
+        toggle.onChange { applyEnabled(slot, it) }
+        applyEnabled(slot, toggle.value)
     }
 
-    /** Applies the config toggle. Turning a failed module off clears its failure so it can be retried. */
+    /** Sets the module's config toggle (saved). Turning a failed module off clears its failure so it can be retried. */
     fun setEnabled(
         id: String,
         enabled: Boolean,
+    ) = slot(id).toggle.set(enabled)
+
+    private fun applyEnabled(
+        slot: Slot,
+        enabled: Boolean,
     ) {
-        val slot = slot(id)
         if (slot.enabled == enabled) return
         slot.enabled = enabled
         if (!enabled) slot.failure = null

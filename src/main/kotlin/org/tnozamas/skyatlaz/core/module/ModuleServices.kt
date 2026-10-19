@@ -1,6 +1,7 @@
 package org.tnozamas.skyatlaz.core.module
 
 import org.tnozamas.skyatlaz.core.command.CommandRegistry
+import org.tnozamas.skyatlaz.core.config.ConfigManager
 import org.tnozamas.skyatlaz.core.event.EventBus
 import org.tnozamas.skyatlaz.core.scheduler.Scheduler
 
@@ -12,4 +13,5 @@ class ModuleServices(
     val events: EventBus,
     val scheduler: Scheduler,
     val commands: CommandRegistry,
+    val config: ConfigManager,
 )
