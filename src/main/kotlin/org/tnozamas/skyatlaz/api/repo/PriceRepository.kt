@@ -148,9 +148,10 @@ class PriceRepository(
         /**
          * Third-party lowest BIN endpoint (flat `{ "ID": price }` with Hypixel ids): Tricked's hosted lowestbins
          * (https://github.com/Tricked-dev/lowestbins), used with the credit its author asks for (README). Set to null
-         * to disable; see the "Lowest BIN" decision in docs/DECISIONS.md.
+         * to disable; see the "Lowest BIN" decision in docs/DECISIONS.md. `type=auction` skips its bazaar copy (we read the
+         * bazaar from Hypixel); the default `price=historical` keeps the last known price of items not listed right now.
          */
-        val LOWEST_BIN_URL: String? = "https://lb.tricked.dev/lowestbins"
+        val LOWEST_BIN_URL: String? = "https://lb.tricked.dev/lowestbins?type=auction"
 
         private const val PROBLEM_COOLDOWN_TICKS = 20 * 60 * 5
     }
