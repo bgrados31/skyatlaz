@@ -53,3 +53,5 @@ Update this file at the end of every session: what changed, what is next, open q
   action icons, ─ rule); runWorld window 1280x720 for legible agent screenshots.
 - 2026-10-19 (Opus 5.5): Help as a tree (├ └ connectors, ✧ entries, deeper indent and path header on subpages,
   constant brand title); no category or message icons; semantic gradients deep -> soft; removed debug glyphs.
+- 2026-10-19 (Opus 5.5): Help redesigned without decoration: typography hierarchy, blank lines, page header and
+  back link on subpages, plain hover (usage, description, subcommands, click hint).

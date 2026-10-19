@@ -28,18 +28,20 @@ object ChatLayout {
     /** A quiet horizontal line at most [pixels] wide (rounded down, so a full-width rule never wraps). */
     fun rule(pixels: Int): MutableComponent = Tr.verbatim(spaces(pixels, roundUp = false)).withStyle(RULE)
 
-    /** Full-width line with [title] centered on it. */
+    /** Full-width line with [title] centered on it, with [TITLE_GAP] pixels of air on each side of the title. */
     fun titledRule(title: Component): MutableComponent {
-        val gap = width(Tr.verbatim(SPACE))
-        val side = ((lineWidth() - width(title)) / 2 - gap).coerceAtLeast(gap * 2)
+        val gap = pad(TITLE_GAP)
+        val side = ((lineWidth() - width(title)) / 2 - width(gap)).coerceAtLeast(TITLE_GAP)
         return Tr
             .verbatim("")
             .append(rule(side))
-            .append(SPACE)
+            .append(gap.copy())
             .append(title)
-            .append(SPACE)
+            .append(gap)
             .append(rule(side))
     }
+
+    private const val TITLE_GAP = 8
 
     /** Spaces filling [pixels] (rounded up to whole spaces), for aligning columns. */
     fun pad(pixels: Int): MutableComponent = Tr.verbatim(spaces(pixels, roundUp = true))

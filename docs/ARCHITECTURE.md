@@ -81,7 +81,8 @@ ctx.command {                                   // module commands exist only wh
     }
 }
 ```
-- Any node without `executes` prints generated help for its children (grouped by category, clickable, hover
+- Any node without `executes` prints generated help (`CommandHelp`: brand title rule, blank-line spacing,
+  categories on the root, page name + description + back link on subpages; entries clickable, hover
   shows syntax), so no path ends in "unknown or incomplete command". `/skyatlaz` is the root help.
 - Declarations are validated before applying (names, descriptions, duplicate actions, literal/argument clash).
 - Nodes are reference counted and never removed from Brigadier; unavailable nodes fail `requires`, and the
