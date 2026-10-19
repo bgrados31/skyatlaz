@@ -31,7 +31,8 @@ ui/
   hud/               [planned] HUD element system + editor (move/scale)
   component/         [planned] Reusable widgets
   render/            [planned] World render helpers with reused buffers
-util/                [partial] LegacyText (§ encode/strip); ChatMatcher, ItemParser, NumberFormat planned
+util/                [done]    LegacyText, Numbers (parse/compact/grouped/roman), ChatPattern (+ ctx.onChat),
+                               RarityLine + Rarity, SkyBlockItemData (custom_data)
 mixin/ (Java)        [done]    Mixins: accessors, or guard + forward to Kotlin; no logic. PlayerTabOverlayAccessor
 feature/<category>/<feature>/  [planned] One Module per feature
 ```

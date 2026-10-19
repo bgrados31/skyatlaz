@@ -2,8 +2,11 @@ package org.tnozamas.skyatlaz.core.module
 
 import org.tnozamas.skyatlaz.core.command.CommandBuilder
 import org.tnozamas.skyatlaz.core.config.ConfigEntry
+import org.tnozamas.skyatlaz.core.event.ChatReceivedEvent
 import org.tnozamas.skyatlaz.core.event.Event
 import org.tnozamas.skyatlaz.core.event.Registration
+import org.tnozamas.skyatlaz.util.ChatMatch
+import org.tnozamas.skyatlaz.util.ChatPattern
 
 /**
  * What a running module uses to hook into shared systems. Every registration is tracked and released when the
@@ -25,6 +28,20 @@ class ModuleContext internal constructor(
         listener: (E) -> Unit,
     ) {
         track(services.events.register(type, priority, onError, listener))
+    }
+
+    /**
+     * Runs [listener] for chat lines (not the action bar) matching [pattern] while the module runs. The pattern's
+     * prefilter keeps non-matching lines to a `contains` check.
+     */
+    fun onChat(
+        pattern: ChatPattern,
+        priority: Int = 0,
+        listener: (match: ChatMatch, event: ChatReceivedEvent) -> Unit,
+    ) {
+        on(ChatReceivedEvent::class.java, priority) { event ->
+            if (!event.actionBar) pattern.match(event.text)?.let { listener(it, event) }
+        }
     }
 
     /** Reacts to changes of a setting while the module runs (recompute derived data here, not every frame). */

@@ -26,7 +26,7 @@ create a shared component first:
 | Hypixel server data | `api.hypixel` |
 | Game state (island, profile...) | `skyblock` |
 | Threads, delays, throttling | `core.scheduler` |
-| Text/chat/item parsing, number format | `util` |
+| Text/chat/item parsing, number format | `util`: `ChatPattern` (prefilter + regex), `Numbers`, `LegacyText`, `RarityLine`, `SkyBlockItemData` |
 | User-facing text | `i18n.Tr` |
 | Gradient text | `Component.withGradient(Theme.X_GRADIENT)` |
 | Chat messages | `ui.chat.Chat` (info/success/warning/error) |
