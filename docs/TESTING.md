@@ -35,6 +35,23 @@ All inherit the client run (DevAuth included). IntelliJ gets matching run config
 | `./gradlew runWorld` | Singleplayer world `run/saves/Development` (override: `skyatlaz.dev.world=<folder>` in `~/.gradle/gradle.properties`) |
 | `./gradlew runHypixel` | Joined to `play.hypixel.net` |
 
+## Agent access to the dev world (MCP Fabric)
+An AI agent can see and drive the **singleplayer dev world** through [MCP Fabric](https://github.com/denfry/mcpfabric)
+(MIT): screenshots, chat/commands, open-screen widgets and clicks.
+- **Only `runWorld` loads it** (`fabric.addMods=run/agent-mods`, opt-in `skyatlaz.agentMods=true` in
+  `~/.gradle/gradle.properties`). `runClient` and `runHypixel` never do: it automates input, which is forbidden on
+  Hypixel (`docs/HYPIXEL_RULES.md`).
+- Setup per machine:
+  1. Put `mcpfabric-<version>+26.2.jar` from Modrinth in `run/agent-mods/` (verify the sha512).
+  2. Run `./gradlew runWorld` once; it writes `run/config/mcpfabric.config.json`. Set `enableWorldWrite` to
+     `false` and `enableUiControl` to `true`; keep `host` = `127.0.0.1` and `requireAuth` = `true`.
+  3. MCP server (outside the repo): clone `denfry/mcpfabric` at the matching tag, `cd mcp-server`,
+     `npm ci && npm run build`, then
+     `claude mcp add mcpfabric --scope local -e MCPFABRIC_TOKEN=<token> -- node <path>/mcp-server/dist/index.js`.
+     The token stays in your local Claude config, never in the repo.
+- Without the MCP server, `node tools/agent/bridge.mjs chat "/skyatlaz"` and
+  `node tools/agent/bridge.mjs screenshot out.png` talk to the bridge directly.
+
 ## 3. Offline sandbox [planned: core/debug]
 `./gradlew runWorld`, then load a dump instead of joining Hypixel:
 - `/skyatlaz debug load <name>`: pushes the dump's scoreboard/tab/location into SkyBlock state (fires the same

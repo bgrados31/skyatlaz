@@ -21,6 +21,11 @@ val devAuthAccount = providers.gradleProperty("skyatlaz.devauth.account").orNull
 // Folder name in run/saves opened by `runWorld`; override with `skyatlaz.dev.world` in ~/.gradle/gradle.properties.
 val devWorld = providers.gradleProperty("skyatlaz.dev.world").orNull ?: "Development"
 
+// Agent tooling (MCP bridge mods in run/agent-mods). Loaded ONLY by `runWorld`: these mods drive input, which is
+// forbidden on Hypixel. Opt-in with `skyatlaz.agentMods=true` in ~/.gradle/gradle.properties. See docs/TESTING.md.
+val agentModsEnabled = providers.gradleProperty("skyatlaz.agentMods").orNull == "true"
+val agentModsDir = layout.projectDirectory.dir("run/agent-mods").asFile
+
 version = prop("mod_version")
 group = prop("maven_group")
 
@@ -60,6 +65,7 @@ loom {
             inherit(getByName("client"))
             displayName.set("Minecraft World")
             programArguments.addAll("--quickPlaySingleplayer", devWorld)
+            if (agentModsEnabled) systemProperties.put("fabric.addMods", agentModsDir.absolutePath)
         }
         register("hypixel") {
             inherit(getByName("client"))

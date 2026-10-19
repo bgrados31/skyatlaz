@@ -18,6 +18,11 @@ https://hypixel.net/allowed-mods (re-check before each release). When in doubt, 
 
 Record the tier in the feature's KDoc and in its config description.
 
+## Development tooling
+Agent tooling that drives input (MCP Fabric in `run/agent-mods`) is loaded only by `./gradlew runWorld`
+(singleplayer). Never add it to `runClient`/`runHypixel`, the mod's dependencies or a release jar, and never
+connect to Hypixel from a client that has it loaded.
+
 ## Minecraft version policy
 Hypixel SkyBlock only accepts the latest two Minecraft content updates. We target the newest version accepted
 by Hypixel and the Hypixel Mod API (currently 26.2). Bump when Hypixel announces a new one.
