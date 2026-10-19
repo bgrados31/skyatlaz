@@ -2,7 +2,19 @@
 
 Update this file at the end of every session: what changed, what is next, open questions.
 
-## Current phase: 1 - Core (done), next: 2 - SkyBlock state
+## Current phase: 2 - SkyBlock state (in progress)
+
+## Where we left off (2026-10-19)
+- Done in phase 2: `api.hypixel` (Mod API session), `util` (Numbers, ChatPattern, RarityLine, SkyBlockItemData),
+  `api.http` (cached HTTP), `api.repo` (bazaar, item catalog, lowest BIN via Tricked). 140 tests, all green.
+- Waiting on the owner (from `./gradlew runHypixel`, debug mode is on in dev):
+  1. `/skyatlaz debug hypixel` in a couple of places: confirms location + party on real Hypixel.
+  2. Dumps for the parsers: `/skyatlaz debug dump hub`, `island`, `mines`, `hotm` (menu open), `dungeon`
+     (mid run). Files land in `run/skyatlaz/dumps/`; copy good ones to `src/test/resources/fixtures/`.
+- Next for the agent: with dumps -> scoreboard/tab parsers + `skyblock` state + `debug load`. Without dumps ->
+  NEU-REPO items/recipes (`api.repo`) or start phase 3 (`ui.hud` system + editor).
+- Owner preferences learned: talk in Spanish; UI must be calm and typographic (soft palette, no decorative icons,
+  blank-line spacing; see DECISIONS "Gradient identity"); verify UI in game with screenshots before committing.
 
 ## Roadmap
 - [x] **Phase 0 - Environment**: Gradle/Loom/Kotlin on MC 26.2, single client source set, Spotless (ktlint),
@@ -11,8 +23,8 @@ Update this file at the end of every session: what changed, what is next, open q
   `core.event` (EventBus with hasListeners), `core.scheduler`, `core.config` (typed model + persistence +
   migrations), `core.error` (module isolation), `core.debug` (commands, fixture dump), first mixins for
   tick/chat/render hooks. Unit tests for all of it.
-- [ ] **Phase 2 - SkyBlock state**: `api.hypixel` (Mod API wrapper), scoreboard/tab/chat parsers,
-  `skyblock` state + change events, `util` (ChatMatcher, ItemParser, NumberFormat), `api.http` + `api.repo`.
+- [ ] **Phase 2 - SkyBlock state**: [done] `api.hypixel`, `util`, `api.http`, `api.repo` prices. [todo] scoreboard/tab/chat parsers,
+  `skyblock` state + change events, `debug load`, NEU-REPO data.
 - [ ] **Phase 3 - UI base**: `ui.theme` tokens, `ui.hud` system + editor, `ui.component`, config screen.
 - [ ] **Phase 4 - First features** (vertical slice) to validate the base, then grow by category.
 
@@ -72,3 +84,6 @@ Update this file at the end of every session: what changed, what is next, open q
 - 2026-10-19 (Opus 5.5): `api.repo` PriceRepository (official keyless bazaar + item catalog, streaming parsers, loaded
   only while used, refresh 60 s / 6 h, PricesUpdatedEvent, value() bazaar -> NPC), `ctx.usePrices()`,
   `/skyatlaz debug price`. Verified with live data. 137 tests.
+- 2026-10-19 (Opus 5.5): Lowest BIN from Tricked lowestbins (only provider with stated terms: credit, given in
+  README); value order bazaar > auction > NPC. Checked providers: Moulberry down, EliteSkyblock and hysky.de public
+  without terms. 140 tests. Ignored stray `logs/`.

@@ -26,3 +26,6 @@ references/
 # Local secrets / machine config
 local.properties
 *.env
+
+# Stray log4j output from tests/tools
+logs/
