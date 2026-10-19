@@ -13,12 +13,13 @@ SkyAtlaz.kt          [done]    Client entrypoint. Only wires core services.
 i18n/                [done]    Tr: the only way to create user-facing text. withGradient(Gradient)
 core/
   module/            [done]    Module, ModuleManager, ModuleContext, FeatureCategory
-  event/             [done]    EventBus, Event, CancellableEvent, Registration (event types: planned)
+  event/             [done]    EventBus, GameHooks (Fabric callbacks -> bus); ChatReceivedEvent, ClientTickEvent,
+                               WorldJoinEvent, WorldLeaveEvent
   config/            [done]    ConfigManager (JSON, migrations, debounced atomic saves), ConfigSection, ConfigEntry
   scheduler/         [done]    Tick tasks (later/every), shared async pool, runOnClient
   error/             [done]    rethrowIfFatal; isolation lives in EventBus/Scheduler/ModuleManager, notice via ui.chat
   command/           [done]    CommandRegistry (declarative tree, generated help), CommandInstaller (Fabric)
-  debug/             [partial] /skyatlaz debug theme (dev only); dump/load/chat/open planned
+  debug/             [done]    dump / chat / open / theme, Snapshot fixtures, ChatRecorder (load: phase 2)
 api/
   hypixel/           [planned] Wrapper over Hypixel Mod API (subscriptions, cached responses)
   http/              [planned] Shared HTTP client: async, disk cache, ETag, rate limits
@@ -30,8 +31,8 @@ ui/
   hud/               [planned] HUD element system + editor (move/scale)
   component/         [planned] Reusable widgets
   render/            [planned] World render helpers with reused buffers
-util/                [planned] ChatMatcher, ItemParser, NumberFormat, text helpers
-mixin/ (Java)        [done]    Mixins: guard + forward to Kotlin, no logic
+util/                [partial] LegacyText (§ encode/strip); ChatMatcher, ItemParser, NumberFormat planned
+mixin/ (Java)        [done]    Mixins: accessors, or guard + forward to Kotlin; no logic. PlayerTabOverlayAccessor
 feature/<category>/<feature>/  [planned] One Module per feature
 ```
 
@@ -64,6 +65,8 @@ abstract class Module(val id: String, val category: FeatureCategory) {   // id: 
 - `EventBus.hasListeners(type)` is O(1). Mixins check it before building an event object, so unused hooks
   cost one boolean check.
 - Events are posted on the client thread. Async work posts results back through the scheduler.
+- Game callbacks come from Fabric API events where they exist (`GameHooks`), mixins only where Fabric has no
+  hook. Each bridge checks `hasListeners` before building the event; tick/world events are singletons.
 
 ## Config [done]
 ```kotlin

@@ -2,12 +2,12 @@
 
 Update this file at the end of every session: what changed, what is next, open questions.
 
-## Current phase: 1 - Core (event, module, scheduler, error, command, config done; debug + mixins left)
+## Current phase: 1 - Core (done), next: 2 - SkyBlock state
 
 ## Roadmap
 - [x] **Phase 0 - Environment**: Gradle/Loom/Kotlin on MC 26.2, single client source set, Spotless (ktlint),
   architecture + i18n tests, shared rules file, Claude Code hooks, git hooks, CI, docs, skills, reference repos.
-- [ ] **Phase 1 - Core**: `core.module` (Module, ModuleManager, ModuleContext with auto-unregister),
+- [x] **Phase 1 - Core**: `core.module` (Module, ModuleManager, ModuleContext with auto-unregister),
   `core.event` (EventBus with hasListeners), `core.scheduler`, `core.config` (typed model + persistence +
   migrations), `core.error` (module isolation), `core.debug` (commands, fixture dump), first mixins for
   tick/chat/render hooks. Unit tests for all of it.
@@ -17,8 +17,9 @@ Update this file at the end of every session: what changed, what is next, open q
 - [ ] **Phase 4 - First features** (vertical slice) to validate the base, then grow by category.
 
 ## Next steps
-1. Phase 1 next: `core.debug` (dump / load / chat / open for the offline sandbox), first mixins (chat, render
-   hooks). Config screen (own UI recommended vs YACL adapter) is phase 3; `core.config` is UI-agnostic.
+1. Phase 2: `api.hypixel` (Mod API location/party wrapper), scoreboard/tab/chat parsers on `Snapshot` fixtures,
+   `skyblock` state + change events, `debug load`. Capture real dumps on Hypixel first (hub, dungeon, mines, HOTM).
+   Render hooks arrive with `ui.hud` (phase 3). Config screen: own UI recommended vs YACL adapter (phase 3).
 2. UI sounds (amethyst chimes at musical pitches, cut short via the scheduler, volume + toggle) for command and
    chat feedback. Command palette screen (Ctrl+K style, fuzzy search) in phase 3, fed by `CommandRegistry`.
 3. Owner: build and register the MCP Fabric server (docs/TESTING.md "Agent access"); the jar and config are
@@ -58,3 +59,7 @@ Update this file at the end of every session: what changed, what is next, open q
 - 2026-10-19 (Opus 5.5): `core.config` (typed entries, sections, flat versioned JSON, migrations, corrupt-file
   recovery, debounced atomic saves, shutdown save), module toggles in config, `ctx.watch`, `GeneralConfig.debugMode`
   gates DEBUG commands. 75 tests.
+- 2026-10-19 (Opus 5.5): Phase 1 done. `GameHooks` (chat/tick/join/leave events via Fabric API),
+  `util.LegacyText`, tab accessor mixin, `core.debug` (dump, chat injection, offline container open, chat
+  recorder only in debug mode). Verified in game: injected chat recorded with codes, item + container round trip
+  exact. 82 tests.

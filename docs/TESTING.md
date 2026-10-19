@@ -21,9 +21,11 @@ sandbox feeds the same state from fixtures.
 - **Unit tests**: one per parser/calculator/state machine. Keep logic out of Minecraft classes so it can be
   tested with plain inputs.
 
-## 2. Fixtures from the real game [planned: core/debug]
-1. In game, run `/skyatlaz debug dump <name>`: writes current scoreboard, tab list, recent chat, held item and
-   the **open container** (title, slots, item names, lore, components) to `run/skyatlaz-dumps/<name>.json`.
+## 2. Fixtures from the real game
+1. In game (debug mode on), run `/skyatlaz debug dump <name>`: writes sidebar title and lines, tab list with header
+   and footer, the last 100 chat lines, the held item and the **open container** (title, rows, slots with id, name,
+   lore and `custom_data` SNBT) to `run/skyatlaz/dumps/<name>.json`. Texts keep legacy `§` codes.
+   Tests read it with `Snapshot.fromJson(...)` (pure Kotlin, no game needed).
 2. Copy useful dumps to `src/test/resources/fixtures/<area>/` and write a test against them.
 3. Every bug found in game becomes a fixture + failing test first, then the fix.
 
@@ -52,15 +54,16 @@ An AI agent can see and drive the **singleplayer dev world** through [MCP Fabric
 - Without the MCP server, `node tools/agent/bridge.mjs cmd skyatlaz` and
   `node tools/agent/bridge.mjs screenshot out.png` talk to the bridge directly.
 
-## 3. Offline sandbox [planned: core/debug]
-`./gradlew runWorld`, then load a dump instead of joining Hypixel:
-- `/skyatlaz debug load <name>`: pushes the dump's scoreboard/tab/location into SkyBlock state (fires the same
-  change events as on Hypixel).
-- `/skyatlaz debug chat <text>`: injects a chat line through the normal chat pipeline.
+## 3. Offline sandbox
+`./gradlew runWorld`, then replay Hypixel data instead of joining:
+- `/skyatlaz debug chat <text>`: injects a server message through the normal receive pipeline (`ChatReceivedEvent`
+  fires, listeners can cancel it). `&` color codes, e.g. `&6&lLEGENDARY &eDrop`.
+- [planned: phase 2] `/skyatlaz debug load <name>`: pushes the dump's scoreboard/tab/location into SkyBlock state
+  (fires the same change events as on Hypixel).
 - `/skyatlaz debug open <name>`: opens a local container screen filled with the dumped items, so container
   overlays (HOTM tree, menus, solvers) render exactly as on Hypixel.
 
-Debug commands are only registered in a dev environment or with debug mode on. Later, the Fabric client gametest
+Debug commands exist only with debug mode on (`general.debug_mode`, default on in dev). Later, the Fabric client gametest
 API (already on the dev classpath) can automate these scenarios.
 
 ## 4. Running on Hypixel

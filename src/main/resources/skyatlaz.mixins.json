@@ -4,6 +4,7 @@
   "package": "org.tnozamas.skyatlaz.mixin",
   "compatibilityLevel": "JAVA_25",
   "client": [
+    "PlayerTabOverlayAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

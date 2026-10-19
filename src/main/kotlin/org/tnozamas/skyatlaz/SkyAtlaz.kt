@@ -12,8 +12,11 @@ import org.tnozamas.skyatlaz.core.command.CommandInstaller
 import org.tnozamas.skyatlaz.core.command.CommandRegistry
 import org.tnozamas.skyatlaz.core.config.ConfigManager
 import org.tnozamas.skyatlaz.core.config.GeneralConfig
+import org.tnozamas.skyatlaz.core.debug.ChatRecorder
 import org.tnozamas.skyatlaz.core.debug.DebugCommands
+import org.tnozamas.skyatlaz.core.debug.SnapshotStore
 import org.tnozamas.skyatlaz.core.event.EventBus
+import org.tnozamas.skyatlaz.core.event.GameHooks
 import org.tnozamas.skyatlaz.core.module.ModuleManager
 import org.tnozamas.skyatlaz.core.module.ModuleServices
 import org.tnozamas.skyatlaz.core.scheduler.Scheduler
@@ -81,11 +84,26 @@ object SkyAtlaz : ClientModInitializer {
         LOGGER.info("Initializing {}", MOD_ID)
         CONFIG.register(GeneralConfig)
         CONFIG.load()
-        GeneralConfig.debugMode.onChange { COMMANDS.refresh() }
         ClientLifecycleEvents.CLIENT_STOPPING.register { CONFIG.saveNow() }
         ClientTickEvents.END_CLIENT_TICK.register { SCHEDULER.tick() }
+        GameHooks.install(EVENTS)
         CommandInstaller.install(COMMANDS)
         BuiltinCommands.register(COMMANDS)
-        DebugCommands.register(COMMANDS)
+
+        val recorder = ChatRecorder(EVENTS)
+        recorder.setActive(GeneralConfig.debugMode.value)
+        GeneralConfig.debugMode.onChange { enabled ->
+            recorder.setActive(enabled)
+            COMMANDS.refresh()
+        }
+        val dumps =
+            SnapshotStore(
+                FabricLoader
+                    .getInstance()
+                    .gameDir
+                    .resolve(MOD_ID)
+                    .resolve("dumps"),
+            )
+        DebugCommands(SCHEDULER, recorder, dumps).register(COMMANDS)
     }
 }

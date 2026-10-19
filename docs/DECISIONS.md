@@ -2,6 +2,12 @@
 
 Newest first. Format: date, decision, why, consequences.
 
+## 2026-10-19 - Fabric API events before mixins; legacy text for fixtures
+Chat, tick and connection hooks use Fabric API events (`GameHooks`): stable across game updates and shared with
+other mods. Mixins are reserved for what Fabric lacks (first one: tab header/footer accessor). Dumps store text
+with legacy `§` codes because Hypixel patterns (rarities, chat formats) are written in them and they diff well
+in fixtures. Dumps are pure data (`Snapshot`), read by tests without the game.
+
 ## 2026-10-19 - Own config model, flat versioned JSON
 Config is our own typed model (`core.config`) rather than a library, so the future screen (own UI or YACL behind
 an adapter, still open) only reads `ConfigEntry` metadata. Flat sorted keys make migrations simple key edits and
