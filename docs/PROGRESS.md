@@ -32,9 +32,8 @@ Update this file at the end of every session: what changed, what is next, open q
   update checker, release pipeline (Modrinth/GitHub).
 - Config screen: own UI vs YACL behind an adapter.
 - GitHub repository for CI.
-- Lowest BIN source: third-party APIs (hysky.de = Skyblocker, EliteSkyblock, Moulberry) need permission; computing
-  from the official auctions endpoint is ~60 pages per refresh. Options: ask a provider, own backend later, or
-  sample `auctions_ended` over time. `ItemValue.Source` is ready for an AUCTION source.
+- Lowest BIN: decided third-party API with permission (DECISIONS). Owner contacts providers; when one agrees, set
+  `PriceRepository.LOWEST_BIN_URL` and credit them.
 
 ## Session log
 - 2026-10-19 (Opus 5.5): Phase 0 setup. Fixed template build error (`project.property` nullable types).

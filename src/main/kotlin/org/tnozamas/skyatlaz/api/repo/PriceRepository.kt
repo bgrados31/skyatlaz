@@ -9,7 +9,9 @@ import org.tnozamas.skyatlaz.core.scheduler.Scheduler
 import java.time.Duration
 
 /**
- * Prices and item facts from official, keyless Hypixel endpoints. Demand driven, so unused it costs nothing:
+ * Prices and item facts: official keyless Hypixel endpoints (bazaar, item catalog) plus, when [lowestBinUrl] is
+ * set, lowest BIN auction prices from a third-party provider used with its author's permission. Demand driven, so
+ * unused it costs nothing:
  * - nothing downloads until someone calls [use] (modules: `ctx.usePrices()`);
  * - while used, bazaar data refreshes every [BAZAAR_REFRESH_TICKS] and the catalog every [CATALOG_MAX_AGE];
  * - when the last user releases it, refreshing stops and the data is dropped (the disk cache makes the next
@@ -21,11 +23,15 @@ class PriceRepository(
     private val scheduler: Scheduler,
     private val bus: EventBus,
     private val onProblem: (String) -> Unit,
+    private val lowestBinUrl: String? = LOWEST_BIN_URL,
 ) {
     var bazaar: BazaarSnapshot? = null
         private set
 
     var catalog: ItemCatalog? = null
+        private set
+
+    var lowestBins: LowestBins? = null
         private set
 
     val isActive: Boolean get() = users > 0
@@ -48,11 +54,12 @@ class PriceRepository(
         }
     }
 
-    /** Best known value of one unit: bazaar instant-sell, else NPC sell price. Null when unknown or not loaded. */
+    /** Best known value of one unit: bazaar instant-sell, else lowest BIN, else NPC price. Null when unknown. */
     fun value(id: String): ItemValue? {
         bazaar?.quotes?.get(id)?.let { quote ->
             if (quote.instantSell > 0) return ItemValue(quote.instantSell, ItemValue.Source.BAZAAR)
         }
+        lowestBins?.get(id)?.takeIf { it > 0 }?.let { return ItemValue(it, ItemValue.Source.AUCTION) }
         return catalog
             ?.get(id)
             ?.npcSellPrice
@@ -66,8 +73,8 @@ class PriceRepository(
 
     private fun start() {
         refreshCatalog()
-        refreshBazaar()
-        refreshTasks.add(scheduler.every(BAZAAR_REFRESH_TICKS) { refreshBazaar() })
+        refreshMarket()
+        refreshTasks.add(scheduler.every(BAZAAR_REFRESH_TICKS) { refreshMarket() })
         // The catalog changes rarely; re-checking once per hour is plenty (the HTTP cache decides if it downloads).
         refreshTasks.add(scheduler.every(CATALOG_RECHECK_TICKS) { refreshCatalog() })
     }
@@ -77,6 +84,22 @@ class PriceRepository(
         refreshTasks.clear()
         bazaar = null
         catalog = null
+        lowestBins = null
+    }
+
+    private fun refreshMarket() {
+        refreshBazaar()
+        lowestBinUrl?.let(::refreshLowestBins)
+    }
+
+    private fun refreshLowestBins(url: String) {
+        http.get(url, BAZAAR_MAX_AGE, LowestBins::parseFlat) { result ->
+            if (!isActive) return@get
+            when (result) {
+                is HttpResult.Success -> apply { lowestBins = result.value }
+                is HttpResult.Failure -> report("lowest BIN prices", result.error)
+            }
+        }
     }
 
     private fun refreshBazaar() {
@@ -121,6 +144,12 @@ class PriceRepository(
 
         val CATALOG_MAX_AGE: Duration = Duration.ofHours(6)
         const val CATALOG_RECHECK_TICKS = 20 * 60 * 60
+
+        /**
+         * Third-party lowest BIN endpoint (flat `{ "ID": price }`). Null until a provider grants permission; see the
+         * "Lowest BIN source" decision in docs/DECISIONS.md. Enabling it is this one line.
+         */
+        val LOWEST_BIN_URL: String? = null
 
         private const val PROBLEM_COOLDOWN_TICKS = 20 * 60 * 5
     }

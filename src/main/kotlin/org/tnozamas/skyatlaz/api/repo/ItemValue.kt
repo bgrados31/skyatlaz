@@ -5,10 +5,13 @@ data class ItemValue(
     val coins: Double,
     val source: Source,
 ) {
-    /** Ordered by preference when several apply. Auction prices will be added as another source. */
+    /** Ordered by preference when several apply. */
     enum class Source {
         /** Instant-sell price on the bazaar. */
         BAZAAR,
+
+        /** Lowest buy-it-now auction price (only when a provider is enabled). */
+        AUCTION,
 
         /** What an NPC pays. */
         NPC,

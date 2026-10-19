@@ -56,7 +56,7 @@ class ModuleManagerTest {
     private val scheduler = Scheduler({ it.run() }) { throw AssertionError("unexpected unhandled error", it) }
     private val config = ConfigManager(Path.of("build/tmp/unused-config.json"), emptyList(), null) { _, _ -> }
     private val prices =
-        PriceRepository(HttpService({ _, _ -> HttpResponse(503, "") }, null, scheduler), scheduler, bus) { }
+        PriceRepository(HttpService({ _, _ -> HttpResponse(503, "") }, null, scheduler), scheduler, bus, onProblem = {})
     private val commands =
         CommandRegistry("test", "command.root", { true }, {}, { _, error -> throw AssertionError("command failed", error) })
     private val manager =

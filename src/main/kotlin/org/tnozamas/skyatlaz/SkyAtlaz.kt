@@ -111,7 +111,7 @@ object SkyAtlaz : ClientModInitializer {
 
     /** Bazaar prices and the item catalog; loaded only while some module uses them (`ctx.usePrices()`). */
     @JvmField
-    val PRICES = PriceRepository(HTTP, SCHEDULER, EVENTS) { message -> LOGGER.warn(message) }
+    val PRICES = PriceRepository(HTTP, SCHEDULER, EVENTS, onProblem = { message -> LOGGER.warn(message) })
 
     /** Module lifecycle. A failing module is stopped, logged and announced in chat; the game keeps running. */
     @JvmField

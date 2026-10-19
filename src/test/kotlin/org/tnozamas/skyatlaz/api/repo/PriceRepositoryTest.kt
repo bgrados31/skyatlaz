@@ -28,7 +28,8 @@ class PriceRepositoryTest {
     private val background = ArrayList<Runnable>()
     private val scheduler = Scheduler({ background.add(it) }) { throw AssertionError(it) }
     private val bus = EventBus { _, error -> throw AssertionError(error) }
-    private val repository = PriceRepository(HttpService(transport, null, scheduler), scheduler, bus) { throw AssertionError(it) }
+    private val repository =
+        PriceRepository(HttpService(transport, null, scheduler), scheduler, bus, onProblem = { throw AssertionError(it) })
 
     private fun settle() {
         repeat(10) {
@@ -98,6 +99,54 @@ class PriceRepositoryTest {
         repeat(PriceRepository.BAZAAR_REFRESH_TICKS * 2) { scheduler.tick() }
         settle()
         assertEquals(afterStart + 1, requested.count { it == PriceRepository.BAZAAR_URL })
+    }
+
+    @Test
+    fun `lowest bin flat format skips non numbers`() {
+        val bins = LowestBins.parseFlat("""{"HYPERION": 1.2E9, "BOOSTER_COOKIE": 1.4E7, "BROKEN": "n/a"}""")
+
+        assertEquals(2, bins.size)
+        assertEquals(1.2e9, bins["HYPERION"])
+    }
+
+    @Test
+    fun `auction prices sit between bazaar and npc when a provider is set`() {
+        val lowestBinUrl = "https://provider.example/lowestbin"
+        val withAuctions =
+            PriceRepository(
+                HttpService(
+                    { url, _ ->
+                        requested.add(url)
+                        val body =
+                            when (url) {
+                                PriceRepository.BAZAAR_URL -> bazaarJson
+                                lowestBinUrl -> """{"ASPECT_OF_THE_END": 250000, "BOOSTER_COOKIE": 1}"""
+                                else -> itemsJson
+                            }
+                        HttpResponse(200, body)
+                    },
+                    null,
+                    scheduler,
+                ),
+                scheduler,
+                bus,
+                onProblem = { throw AssertionError(it) },
+                lowestBinUrl = lowestBinUrl,
+            )
+
+        withAuctions.use()
+        settle()
+
+        assertEquals(ItemValue(250_000.0, ItemValue.Source.AUCTION), withAuctions.value("ASPECT_OF_THE_END"))
+        assertEquals(ItemValue.Source.BAZAAR, withAuctions.value("BOOSTER_COOKIE")?.source)
+    }
+
+    @Test
+    fun `no lowest bin request without a provider`() {
+        repository.use()
+        settle()
+
+        assertEquals(setOf(PriceRepository.BAZAAR_URL, PriceRepository.ITEMS_URL), requested.toSet())
     }
 
     @Test
