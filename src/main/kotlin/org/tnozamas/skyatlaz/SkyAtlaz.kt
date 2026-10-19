@@ -6,6 +6,8 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.loader.api.FabricLoader
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.tnozamas.skyatlaz.api.hypixel.HypixelDebugCommands
+import org.tnozamas.skyatlaz.api.hypixel.HypixelModApi
 import org.tnozamas.skyatlaz.core.command.BuiltinCommands
 import org.tnozamas.skyatlaz.core.command.CommandHelp
 import org.tnozamas.skyatlaz.core.command.CommandInstaller
@@ -72,6 +74,10 @@ object SkyAtlaz : ClientModInitializer {
             },
         )
 
+    /** The Hypixel Mod API owner; read `HYPIXEL.session` for location and party. */
+    @JvmField
+    val HYPIXEL = HypixelModApi(EVENTS, SCHEDULER) { message -> LOGGER.warn(message) }
+
     /** Module lifecycle. A failing module is stopped, logged and announced in chat; the game keeps running. */
     @JvmField
     val MODULES =
@@ -87,6 +93,7 @@ object SkyAtlaz : ClientModInitializer {
         ClientLifecycleEvents.CLIENT_STOPPING.register { CONFIG.saveNow() }
         ClientTickEvents.END_CLIENT_TICK.register { SCHEDULER.tick() }
         GameHooks.install(EVENTS)
+        HYPIXEL.install()
         CommandInstaller.install(COMMANDS)
         BuiltinCommands.register(COMMANDS)
 
@@ -105,5 +112,6 @@ object SkyAtlaz : ClientModInitializer {
                     .resolve("dumps"),
             )
         DebugCommands(SCHEDULER, recorder, dumps).register(COMMANDS)
+        HypixelDebugCommands(HYPIXEL, EVENTS).register(COMMANDS)
     }
 }

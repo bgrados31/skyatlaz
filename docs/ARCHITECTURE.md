@@ -21,7 +21,7 @@ core/
   command/           [done]    CommandRegistry (declarative tree, generated help), CommandInstaller (Fabric)
   debug/             [done]    dump / chat / open / theme, Snapshot fixtures, ChatRecorder (load: phase 2)
 api/
-  hypixel/           [planned] Wrapper over Hypixel Mod API (subscriptions, cached responses)
+  hypixel/           [done]    HypixelModApi (only Mod API user) -> HypixelSession (location, party), events
   http/              [planned] Shared HTTP client: async, disk cache, ETag, rate limits
   repo/              [planned] Item/static data (Hypixel resources endpoints, NEU-REPO)
 skyblock/            [planned] Shared game state (island, area, profile, purse...), parsed once
@@ -123,7 +123,9 @@ ctx.command {                                   // module commands exist only wh
 
 ## Hypixel APIs
 - **Mod API** (`net.hypixel:mod-api`, compileOnly; users install the `hypixel-mod-api` Fabric mod): location,
-  party info, player info. Only `api.hypixel` talks to it. Request cooldowns are per packet type, so responses
+  party info, player info. Only `HypixelModApi` talks to it; it translates packets into `HypixelLocation` /
+  `HypixelParty`, posts `LocationChangeEvent` / `PartyInfoEvent` on the client thread and keeps the current state in
+  `SkyAtlaz.HYPIXEL.session` (cleared on disconnect). Party requests are throttled (5 s cooldown, one pending), so responses
   are cached and shared.
 - **Public API v2**: SkyBlock resources, bazaar and auctions endpoints need no key. Endpoints needing a key
   (profiles) cannot be used from a distributed mod with a dev key; we do not ship keys.

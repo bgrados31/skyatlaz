@@ -17,7 +17,7 @@ Update this file at the end of every session: what changed, what is next, open q
 - [ ] **Phase 4 - First features** (vertical slice) to validate the base, then grow by category.
 
 ## Next steps
-1. Phase 2: `api.hypixel` (Mod API location/party wrapper), scoreboard/tab/chat parsers on `Snapshot` fixtures,
+1. Phase 2 (`api.hypixel` done): scoreboard/tab/chat parsers on `Snapshot` fixtures,
    `skyblock` state + change events, `debug load`. Capture real dumps on Hypixel first (hub, dungeon, mines, HOTM).
    Render hooks arrive with `ui.hud` (phase 3). Config screen: own UI recommended vs YACL adapter (phase 3).
 2. UI sounds (amethyst chimes at musical pitches, cut short via the scheduler, volume + toggle) for command and
@@ -63,3 +63,5 @@ Update this file at the end of every session: what changed, what is next, open q
   `util.LegacyText`, tab accessor mixin, `core.debug` (dump, chat injection, offline container open, chat
   recorder only in debug mode). Verified in game: injected chat recorded with codes, item + container round trip
   exact. 82 tests.
+- 2026-10-19 (Opus 5.5): `api.hypixel` (Mod API wrapper: location events, throttled party requests, session state
+  cleared on disconnect), `core.scheduler.Cooldown`, `/skyatlaz debug hypixel`. 90 tests. Needs a check on Hypixel.
