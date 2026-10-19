@@ -50,4 +50,6 @@ Update this file at the end of every session: what changed, what is next, open q
   pixel-aligned columns), help with breadcrumb title, relative names, rich hover, click to open/run/type.
   Game now runs on the RTX 4050 (Windows GPU preference for the toolchain java.exe).
 - 2026-10-19 (Opus 5.5): Semantic gradients deepen within their hue; icons (ⓘ ✔ ⚠ ✖, category icons, hover
-  action icons, ─ rule); `/skyatlaz debug glyphs`; runWorld window 1280x720 for legible agent screenshots.
+  action icons, ─ rule); runWorld window 1280x720 for legible agent screenshots.
+- 2026-10-19 (Opus 5.5): Help as a tree (├ └ connectors, ✧ entries, deeper indent and path header on subpages,
+  constant brand title); no category or message icons; semantic gradients deep -> soft; removed debug glyphs.

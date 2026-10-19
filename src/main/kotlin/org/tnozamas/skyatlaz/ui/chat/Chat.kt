@@ -10,23 +10,21 @@ import org.tnozamas.skyatlaz.ui.theme.Gradient
 import org.tnozamas.skyatlaz.ui.theme.Theme
 
 /**
- * The only way the mod writes to the player's chat. A message reads `SkyAtlaz › ✔ text`: brand name, a quiet
- * separator, an icon in the message's tone and text fading from that tone into regular text, so the kind is
- * clear at a glance without a wall of color. Messages are client-side only.
+ * The only way the mod writes to the player's chat. A message reads `SkyAtlaz › text`: brand name, a quiet
+ * separator and text painted with the gradient of its kind, so the tone is clear at a glance without icons or a
+ * wall of color. Messages are client-side only.
  *
  * Client thread only (use the scheduler's `runOnClient` from other threads).
  */
 object Chat {
-    /** The kinds of message, each with its icon and body gradient. Icons are symbols, not language. */
+    /** The kinds of message and their body gradients. */
     enum class Kind(
-        val icon: String,
-        val color: Int,
         val gradient: Gradient,
     ) {
-        INFO("ⓘ", Theme.INFO, Theme.INFO_GRADIENT),
-        SUCCESS("✔", Theme.SUCCESS, Theme.SUCCESS_GRADIENT),
-        WARNING("⚠", Theme.WARNING, Theme.WARNING_GRADIENT),
-        ERROR("✖", Theme.ERROR, Theme.ERROR_GRADIENT),
+        INFO(Theme.INFO_GRADIENT),
+        SUCCESS(Theme.SUCCESS_GRADIENT),
+        WARNING(Theme.WARNING_GRADIENT),
+        ERROR(Theme.ERROR_GRADIENT),
     }
 
     fun info(message: Component) = send(Kind.INFO, message)
@@ -48,10 +46,7 @@ object Chat {
     fun format(
         kind: Kind,
         message: Component,
-    ): MutableComponent =
-        prefix()
-            .append(Tr.verbatim(kind.icon + " ").withColor(kind.color))
-            .append(message.withGradient(kind.gradient))
+    ): MutableComponent = prefix().append(message.withGradient(kind.gradient))
 
     /** A multi-line block sent as one chat message (help pages, summaries). Lines are laid out by the caller. */
     fun block(lines: List<Component>) {
