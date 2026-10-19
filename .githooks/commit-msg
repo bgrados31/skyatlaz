@@ -1,0 +1,17 @@
+#!/bin/sh
+# Enforces Conventional Commits: <type>(<scope>)?: <description>
+# See docs/CONVENTIONS.md#commits.
+first_line=$(head -n 1 "$1")
+
+case "$first_line" in
+  Merge\ *|Revert\ *|fixup!\ *|squash!\ *) exit 0 ;;
+esac
+
+pattern='^(feat|fix|perf|refactor|docs|test|build|ci|chore|style|revert)(\([a-z0-9-]+\))?!?: [a-z].{0,71}$'
+if ! printf '%s' "$first_line" | grep -Eq "$pattern"; then
+  echo "Invalid commit message: \"$first_line\""
+  echo "Expected: <type>(<scope>): <lowercase description, max 72 chars>"
+  echo "Types: feat fix perf refactor docs test build ci chore style revert"
+  echo "Example: feat(dungeons): add secret counter hud"
+  exit 1
+fi

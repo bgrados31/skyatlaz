@@ -1,0 +1,47 @@
+{
+  "_doc": "Single source of truth for pattern-based code rules. Read by src/test/.../ArchitectureTest.kt (build gate) and .claude/hooks/guard-edit.mjs (blocks AI edits early). 'allowedIn' are sub-packages of org.tnozamas.skyatlaz (slash separated) where the pattern is permitted.",
+  "rules": [
+    {
+      "id": "no-console-print",
+      "message": "Use the logger (SkyAtlaz.LOGGER or a module logger) instead of printing.",
+      "pattern": "\\bprintln\\(|\\bprint\\(|System\\.(out|err)",
+      "extensions": ["kt", "java"],
+      "allowedIn": []
+    },
+    {
+      "id": "no-literal-text",
+      "message": "User-facing text must use Tr.tr(key) with a key in en_us.json (docs/I18N.md).",
+      "pattern": "Component\\.literal\\(",
+      "extensions": ["kt", "java"],
+      "allowedIn": ["i18n"]
+    },
+    {
+      "id": "no-hardcoded-color",
+      "message": "Colors must come from ui.theme tokens, never hex literals or ChatFormatting.",
+      "pattern": "\\b0x[0-9A-Fa-f]{6,8}\\b|ChatFormatting\\.",
+      "extensions": ["kt"],
+      "allowedIn": ["ui/theme"]
+    },
+    {
+      "id": "network-only-in-api-http",
+      "message": "HTTP/network access must go through api.http (shared client, cache, rate limits).",
+      "pattern": "java\\.net\\.(http|URL|HttpURLConnection)|okhttp|ktor",
+      "extensions": ["kt", "java"],
+      "allowedIn": ["api/http"]
+    },
+    {
+      "id": "no-blocking",
+      "message": "Never block threads. Use the core scheduler or async executors.",
+      "pattern": "Thread\\.sleep\\(|\\brunBlocking\\b",
+      "extensions": ["kt", "java"],
+      "allowedIn": []
+    },
+    {
+      "id": "no-raw-threads",
+      "message": "Do not create threads/executors directly; use the core scheduler/executor.",
+      "pattern": "\\bThread\\(|Executors\\.new|GlobalScope",
+      "extensions": ["kt", "java"],
+      "allowedIn": ["core/scheduler"]
+    }
+  ]
+}

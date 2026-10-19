@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "skyatlaz",
+  "version": "${version}",
+  "name": "SkyAtlaz",
+  "description": "All-in-one quality of life mod for Hypixel SkyBlock.",
+  "authors": ["tnozamas"],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      {
+        "adapter": "kotlin",
+        "value": "org.tnozamas.skyatlaz.SkyAtlaz"
+      }
+    ]
+  },
+  "mixins": [
+    "skyatlaz.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-language-kotlin": ">=${fabric_kotlin_version}",
+    "fabric-api": "*",
+    "hypixel-mod-api": ">=1.0",
+    "minecraft": "${minecraft_version}"
+  }
+}

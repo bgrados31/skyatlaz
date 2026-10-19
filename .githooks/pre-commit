@@ -1,0 +1,12 @@
+#!/bin/sh
+# Fast gate before every commit: formatting only (tests run in the Claude Stop hook and CI).
+# Fix with: ./gradlew spotlessApply
+if [ -z "$JAVA_HOME" ] && [ -d "$HOME/.jdks" ]; then
+  JAVA_HOME=$(ls -d "$HOME"/.jdks/*25* 2>/dev/null | sort -r | head -n 1)
+  export JAVA_HOME
+fi
+
+./gradlew spotlessCheck -q --console=plain || {
+  echo "Formatting check failed. Run ./gradlew spotlessApply and stage the changes."
+  exit 1
+}
