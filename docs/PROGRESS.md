@@ -2,7 +2,7 @@
 
 Update this file at the end of every session: what changed, what is next, open questions.
 
-## Current phase: 1 - Core (in progress: event + module done)
+## Current phase: 1 - Core (in progress: event, module, scheduler, error done; theme/chat pulled forward)
 
 ## Roadmap
 - [x] **Phase 0 - Environment**: Gradle/Loom/Kotlin on MC 26.2, single client source set, Spotless (ktlint),
@@ -17,10 +17,11 @@ Update this file at the end of every session: what changed, what is next, open q
 - [ ] **Phase 4 - First features** (vertical slice) to validate the base, then grow by category.
 
 ## Next steps
-1. Phase 1 next: `core.scheduler`, then `core.error` (translated chat notice on module failure, wire into
-   `SkyAtlaz.MODULES`), `core.config` (toggles drive `ModuleManager.setEnabled`), `core.debug`, first mixins.
-   Plan `core.debug` (dump / load / chat / open) early: the offline sandbox in `docs/TESTING.md` depends on it.
-2. (Done) runClient + DevAuth + Hypixel Mod API verified on Hypixel (hello + location packets received).
+1. Phase 1 next: `core.config` (toggles drive `ModuleManager.setEnabled`; decide own UI vs YACL first),
+   `core.debug` (dump / load / chat / open for the offline sandbox), first mixins (chat, render hooks).
+2. Command system + UI sounds (amethyst chimes at musical pitches, cut short via the scheduler, volume + toggle),
+   alongside `core.debug`. Command palette screen (Ctrl+K style, fuzzy search) in phase 3.
+3. Owner to check `/skyatlaz debug theme` in `runWorld` and adjust the brand palette in `ui.theme.Theme`.
 
 ## Open questions for the owner
 - Optional extras not yet confirmed: remote kill-switch, per-module profiling overlay, config migrations,
@@ -37,3 +38,5 @@ Update this file at the end of every session: what changed, what is next, open q
 - 2026-10-19 (Opus 5.5): Quick play runs (`runWorld`, `runHypixel`). Phase 1 started: `core.event` (EventBus with
   priorities, hasListeners, per-listener error routing) and `core.module` (Module, ModuleContext auto-unregister,
   ModuleManager with activation conditions and failure isolation), 17 unit tests.
+- 2026-10-19 (Opus 5.5): `core.scheduler` (later/every/async, ModuleContext helpers), `ui.theme` (Theme tokens,
+  OKLab Gradient), `withGradient`, `ui.chat.Chat`, module failure chat notice, `/skyatlaz debug theme`. 48 tests.

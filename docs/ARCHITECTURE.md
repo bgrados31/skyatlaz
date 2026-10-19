@@ -10,21 +10,22 @@ Status markers: **[done]** exists in code, **[planned]** target design, implemen
 ## Package layout (`org.tnozamas.skyatlaz`)
 ```
 SkyAtlaz.kt          [done]    Client entrypoint. Only wires core services.
-i18n/                [done]    Tr: the only way to create user-facing text.
+i18n/                [done]    Tr: the only way to create user-facing text. withGradient(Gradient)
 core/
   module/            [done]    Module, ModuleManager, ModuleContext, FeatureCategory
   event/             [done]    EventBus, Event, CancellableEvent, Registration (event types: planned)
   config/            [planned] Typed config model, persistence, versioned migrations
-  scheduler/         [planned] Tick tasks, throttling, the single async executor
-  error/             [partial] Fatal-error rule done; isolation lives in EventBus/ModuleManager; chat notice planned
-  debug/             [planned] /skyatlaz debug commands, fixture dumps
+  scheduler/         [done]    Tick tasks (later/every), shared async pool, runOnClient
+  error/             [done]    rethrowIfFatal; isolation lives in EventBus/Scheduler/ModuleManager, notice via ui.chat
+  debug/             [partial] /skyatlaz debug theme (dev only); dump/load/chat/open planned
 api/
   hypixel/           [planned] Wrapper over Hypixel Mod API (subscriptions, cached responses)
   http/              [planned] Shared HTTP client: async, disk cache, ETag, rate limits
   repo/              [planned] Item/static data (Hypixel resources endpoints, NEU-REPO)
 skyblock/            [planned] Shared game state (island, area, profile, purse...), parsed once
 ui/
-  theme/             [planned] Color/spacing/font tokens. Only place where colors exist.
+  theme/             [partial] Theme color tokens + Gradient (OKLab LUT) done; spacing/font tokens planned
+  chat/              [done]    Chat.info/success/warning/error: the only way to print to chat
   hud/               [planned] HUD element system + editor (move/scale)
   component/         [planned] Reusable widgets
   render/            [planned] World render helpers with reused buffers

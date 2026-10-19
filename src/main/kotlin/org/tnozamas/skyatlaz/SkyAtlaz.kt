@@ -4,9 +4,12 @@ import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.tnozamas.skyatlaz.core.debug.DebugCommands
 import org.tnozamas.skyatlaz.core.event.EventBus
 import org.tnozamas.skyatlaz.core.module.ModuleManager
 import org.tnozamas.skyatlaz.core.scheduler.Scheduler
+import org.tnozamas.skyatlaz.i18n.Tr
+import org.tnozamas.skyatlaz.ui.chat.Chat
 
 /** Client entrypoint. Only wires core services together; features register through the module system. */
 object SkyAtlaz : ClientModInitializer {
@@ -29,15 +32,17 @@ object SkyAtlaz : ClientModInitializer {
             LOGGER.error("Unhandled error in a scheduled task", error)
         }
 
-    // TODO(phase-1): core.error adds a translated chat notice when a module is disabled.
+    /** Module lifecycle. A failing module is stopped, logged and announced in chat; the game keeps running. */
     @JvmField
     val MODULES =
         ModuleManager(EVENTS, SCHEDULER) { module, error ->
             LOGGER.error("Module {} failed and was disabled", module.id, error)
+            Chat.error(Tr.tr("error.module_disabled", module.id))
         }
 
     override fun onInitializeClient() {
         LOGGER.info("Initializing {}", MOD_ID)
         ClientTickEvents.END_CLIENT_TICK.register { SCHEDULER.tick() }
+        DebugCommands.register()
     }
 }
