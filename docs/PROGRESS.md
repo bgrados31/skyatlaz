@@ -17,7 +17,7 @@ Update this file at the end of every session: what changed, what is next, open q
 - [ ] **Phase 4 - First features** (vertical slice) to validate the base, then grow by category.
 
 ## Next steps
-1. Phase 2 (`api.hypixel`, `util`, `api.http` done): `api.repo` (bazaar/auction prices, NEU-REPO items), parsers on `Snapshot` fixtures,
+1. Phase 2 (`api.hypixel`, `util`, `api.http`, `api.repo` prices done): parsers on `Snapshot` fixtures,
    `skyblock` state + change events, `debug load`. Capture real dumps on Hypixel first (hub, dungeon, mines, HOTM).
    Render hooks arrive with `ui.hud` (phase 3). Config screen: own UI recommended vs YACL adapter (phase 3).
 2. UI sounds (amethyst chimes at musical pitches, cut short via the scheduler, volume + toggle) for command and
@@ -32,6 +32,9 @@ Update this file at the end of every session: what changed, what is next, open q
   update checker, release pipeline (Modrinth/GitHub).
 - Config screen: own UI vs YACL behind an adapter.
 - GitHub repository for CI.
+- Lowest BIN source: third-party APIs (hysky.de = Skyblocker, EliteSkyblock, Moulberry) need permission; computing
+  from the official auctions endpoint is ~60 pages per refresh. Options: ask a provider, own backend later, or
+  sample `auctions_ended` over time. `ItemValue.Source` is ready for an AUCTION source.
 
 ## Session log
 - 2026-10-19 (Opus 5.5): Phase 0 setup. Fixed template build error (`project.property` nullable types).
@@ -68,3 +71,6 @@ Update this file at the end of every session: what changed, what is next, open q
 - 2026-10-19 (Opus 5.5): `util` (Numbers, ChatPattern + ctx.onChat, RarityLine, SkyBlockItemData) and `api.http`
   (HttpService with disk cache, ETag/304, stale fallback, dedupe; JdkHttpTransport with gzip). Verified in game:
   bazaar 3.6M chars from network in 677 ms, then from cache in 69 ms. 131 tests.
+- 2026-10-19 (Opus 5.5): `api.repo` PriceRepository (official keyless bazaar + item catalog, streaming parsers, loaded
+  only while used, refresh 60 s / 6 h, PricesUpdatedEvent, value() bazaar -> NPC), `ctx.usePrices()`,
+  `/skyatlaz debug price`. Verified with live data. 137 tests.

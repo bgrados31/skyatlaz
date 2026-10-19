@@ -23,7 +23,7 @@ core/
 api/
   hypixel/           [done]    HypixelModApi (only Mod API user) -> HypixelSession (location, party), events
   http/              [done]    HttpService (SkyAtlaz.HTTP): async, disk cache + ETag/304, stale fallback, dedupe
-  repo/              [planned] Item/static data (Hypixel resources endpoints, NEU-REPO)
+  repo/              [done]    PriceRepository (bazaar + item catalog, demand driven via ctx.usePrices); NEU-REPO planned
 skyblock/            [planned] Shared game state (island, area, profile, purse...), parsed once
 ui/
   theme/             [partial] Theme color tokens + Gradient (OKLab LUT) done; spacing/font tokens planned

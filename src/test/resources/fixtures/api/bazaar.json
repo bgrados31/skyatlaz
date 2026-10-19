@@ -1,0 +1,120 @@
+{
+  "success": true,
+  "lastUpdated": 1792437882767,
+  "products": {
+    "ENCHANTED_DIAMOND": {
+      "product_id": "ENCHANTED_DIAMOND",
+      "sell_summary": [
+        {
+          "amount": 51032,
+          "pricePerUnit": 1262.6,
+          "orders": 1
+        },
+        {
+          "amount": 36524,
+          "pricePerUnit": 1262.5,
+          "orders": 1
+        }
+      ],
+      "buy_summary": [
+        {
+          "amount": 796,
+          "pricePerUnit": 1296.8,
+          "orders": 1
+        },
+        {
+          "amount": 205,
+          "pricePerUnit": 1296.9,
+          "orders": 1
+        }
+      ],
+      "quick_status": {
+        "productId": "ENCHANTED_DIAMOND",
+        "sellPrice": 1255.013063894369,
+        "sellVolume": 23078241,
+        "sellMovingWeek": 23186951,
+        "sellOrders": 887,
+        "buyPrice": 1296.9984772089792,
+        "buyVolume": 2661582,
+        "buyMovingWeek": 5372040,
+        "buyOrders": 749
+      }
+    },
+    "BOOSTER_COOKIE": {
+      "product_id": "BOOSTER_COOKIE",
+      "sell_summary": [
+        {
+          "amount": 12,
+          "pricePerUnit": 13656083,
+          "orders": 2
+        },
+        {
+          "amount": 1,
+          "pricePerUnit": 13656082.9,
+          "orders": 1
+        }
+      ],
+      "buy_summary": [
+        {
+          "amount": 7,
+          "pricePerUnit": 13999995.4,
+          "orders": 1
+        },
+        {
+          "amount": 16,
+          "pricePerUnit": 13999995.5,
+          "orders": 1
+        }
+      ],
+      "quick_status": {
+        "productId": "BOOSTER_COOKIE",
+        "sellPrice": 13244086.5670073,
+        "sellVolume": 68339,
+        "sellMovingWeek": 59904,
+        "sellOrders": 4186,
+        "buyPrice": 13999995.46,
+        "buyVolume": 1160,
+        "buyMovingWeek": 82835,
+        "buyOrders": 93
+      }
+    },
+    "RECOMBOBULATOR_3000": {
+      "product_id": "RECOMBOBULATOR_3000",
+      "sell_summary": [
+        {
+          "amount": 36,
+          "pricePerUnit": 9069083.8,
+          "orders": 1
+        },
+        {
+          "amount": 8,
+          "pricePerUnit": 9069083.7,
+          "orders": 1
+        }
+      ],
+      "buy_summary": [
+        {
+          "amount": 4,
+          "pricePerUnit": 9225096.3,
+          "orders": 1
+        },
+        {
+          "amount": 8,
+          "pricePerUnit": 9225096.4,
+          "orders": 1
+        }
+      ],
+      "quick_status": {
+        "productId": "RECOMBOBULATOR_3000",
+        "sellPrice": 9057820.29111111,
+        "sellVolume": 16992,
+        "sellMovingWeek": 57013,
+        "sellOrders": 763,
+        "buyPrice": 9257213.142211052,
+        "buyVolume": 19243,
+        "buyMovingWeek": 63093,
+        "buyOrders": 2656
+      }
+    }
+  }
+}

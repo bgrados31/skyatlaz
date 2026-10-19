@@ -12,6 +12,8 @@ import org.tnozamas.skyatlaz.api.http.HttpService
 import org.tnozamas.skyatlaz.api.http.JdkHttpTransport
 import org.tnozamas.skyatlaz.api.hypixel.HypixelDebugCommands
 import org.tnozamas.skyatlaz.api.hypixel.HypixelModApi
+import org.tnozamas.skyatlaz.api.repo.PriceDebugCommands
+import org.tnozamas.skyatlaz.api.repo.PriceRepository
 import org.tnozamas.skyatlaz.core.command.BuiltinCommands
 import org.tnozamas.skyatlaz.core.command.CommandHelp
 import org.tnozamas.skyatlaz.core.command.CommandInstaller
@@ -107,10 +109,14 @@ object SkyAtlaz : ClientModInitializer {
     @JvmField
     val HYPIXEL = HypixelModApi(EVENTS, SCHEDULER) { message -> LOGGER.warn(message) }
 
+    /** Bazaar prices and the item catalog; loaded only while some module uses them (`ctx.usePrices()`). */
+    @JvmField
+    val PRICES = PriceRepository(HTTP, SCHEDULER, EVENTS) { message -> LOGGER.warn(message) }
+
     /** Module lifecycle. A failing module is stopped, logged and announced in chat; the game keeps running. */
     @JvmField
     val MODULES =
-        ModuleManager(ModuleServices(EVENTS, SCHEDULER, COMMANDS, CONFIG)) { module, error ->
+        ModuleManager(ModuleServices(EVENTS, SCHEDULER, COMMANDS, CONFIG, PRICES)) { module, error ->
             LOGGER.error("Module {} failed and was disabled", module.id, error)
             Chat.error(Tr.tr("error.module_disabled", module.id))
         }
@@ -143,5 +149,6 @@ object SkyAtlaz : ClientModInitializer {
         DebugCommands(SCHEDULER, recorder, dumps).register(COMMANDS)
         HypixelDebugCommands(HYPIXEL, EVENTS).register(COMMANDS)
         HttpDebugCommands(HTTP).register(COMMANDS)
+        PriceDebugCommands(PRICES, SCHEDULER, EVENTS).register(COMMANDS)
     }
 }

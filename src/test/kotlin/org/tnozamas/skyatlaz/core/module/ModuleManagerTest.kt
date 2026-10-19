@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.tnozamas.skyatlaz.api.http.HttpResponse
+import org.tnozamas.skyatlaz.api.http.HttpService
+import org.tnozamas.skyatlaz.api.repo.PriceRepository
 import org.tnozamas.skyatlaz.core.command.CommandRegistry
 import org.tnozamas.skyatlaz.core.config.ConfigEntry
 import org.tnozamas.skyatlaz.core.config.ConfigManager
@@ -52,10 +55,12 @@ class ModuleManagerTest {
     private val bus = EventBus { _, error -> throw AssertionError("unexpected unhandled error", error) }
     private val scheduler = Scheduler({ it.run() }) { throw AssertionError("unexpected unhandled error", it) }
     private val config = ConfigManager(Path.of("build/tmp/unused-config.json"), emptyList(), null) { _, _ -> }
+    private val prices =
+        PriceRepository(HttpService({ _, _ -> HttpResponse(503, "") }, null, scheduler), scheduler, bus) { }
     private val commands =
         CommandRegistry("test", "command.root", { true }, {}, { _, error -> throw AssertionError("command failed", error) })
     private val manager =
-        ModuleManager(ModuleServices(bus, scheduler, commands, config)) { module, error -> failures.add(module.id to error) }
+        ModuleManager(ModuleServices(bus, scheduler, commands, config, prices)) { module, error -> failures.add(module.id to error) }
     private val module = TestModule().also(manager::register)
 
     @Test

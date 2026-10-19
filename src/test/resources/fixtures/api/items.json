@@ -1,0 +1,170 @@
+{
+  "success": true,
+  "lastUpdated": 1791302445914,
+  "items": [
+    {
+      "material": "DIAMOND_SWORD",
+      "item_model": "hypixel_skyblock:item/uncategorized/aspect_of_the_end",
+      "name": "Aspect of the End",
+      "category": "SWORD",
+      "tier": "RARE",
+      "stats": {
+        "DAMAGE": 100,
+        "STRENGTH": 100
+      },
+      "npc_sell_price": 56000,
+      "gemstone_slots": [
+        {
+          "slot_type": "SAPPHIRE"
+        }
+      ],
+      "can_have_power_scroll": true,
+      "museum_data": {
+        "donation_xp": 4,
+        "category": "COMBAT",
+        "parent": {
+          "ASPECT_OF_THE_END": "ASPECT_OF_THE_VOID"
+        },
+        "mapped_item_ids": [],
+        "game_stage": "INTERMEDIATE"
+      },
+      "id": "ASPECT_OF_THE_END"
+    },
+    {
+      "material": "IRON_SWORD",
+      "item_model": "hypixel_skyblock:item/uncategorized/hyperion",
+      "name": "Hyperion",
+      "category": "SWORD",
+      "tier": "LEGENDARY",
+      "stats": {
+        "DAMAGE": 260,
+        "STRENGTH": 150,
+        "FEROCITY": 30,
+        "INTELLIGENCE": 350
+      },
+      "upgrade_costs": [
+        [
+          {
+            "type": "ESSENCE",
+            "essence_type": "WITHER",
+            "amount": 150
+          }
+        ],
+        [
+          {
+            "type": "ESSENCE",
+            "essence_type": "WITHER",
+            "amount": 300
+          }
+        ],
+        [
+          {
+            "type": "ESSENCE",
+            "essence_type": "WITHER",
+            "amount": 500
+          }
+        ],
+        [
+          {
+            "type": "ESSENCE",
+            "essence_type": "WITHER",
+            "amount": 900
+          }
+        ],
+        [
+          {
+            "type": "ESSENCE",
+            "essence_type": "WITHER",
+            "amount": 1500
+          }
+        ]
+      ],
+      "requirements": [
+        {
+          "type": "DUNGEON_TIER",
+          "dungeon_type": "CATACOMBS",
+          "tier": 7
+        }
+      ],
+      "dungeon_item": true,
+      "gemstone_slots": [
+        {
+          "slot_type": "SAPPHIRE",
+          "costs": [
+            {
+              "type": "COINS",
+              "coins": 250000
+            },
+            {
+              "type": "ITEM",
+              "item_id": "FLAWLESS_SAPPHIRE_GEM",
+              "amount": 4
+            }
+          ]
+        },
+        {
+          "slot_type": "COMBAT",
+          "costs": [
+            {
+              "type": "COINS",
+              "coins": 250000
+            },
+            {
+              "type": "ITEM",
+              "item_id": "FLAWLESS_JASPER_GEM",
+              "amount": 1
+            },
+            {
+              "type": "ITEM",
+              "item_id": "FLAWLESS_SAPPHIRE_GEM",
+              "amount": 1
+            },
+            {
+              "type": "ITEM",
+              "item_id": "FLAWLESS_RUBY_GEM",
+              "amount": 1
+            },
+            {
+              "type": "ITEM",
+              "item_id": "FLAWLESS_AMETHYST_GEM",
+              "amount": 1
+            }
+          ]
+        }
+      ],
+      "museum_data": {
+        "donation_xp": 5,
+        "category": "DUNGEONEERING",
+        "parent": {},
+        "mapped_item_ids": [],
+        "game_stage": "MASTER"
+      },
+      "id": "HYPERION"
+    },
+    {
+      "material": "COOKIE",
+      "name": "Booster Cookie",
+      "glowing": true,
+      "tier": "LEGENDARY",
+      "unstackable": true,
+      "has_uuid": true,
+      "can_auction": false,
+      "can_trade": false,
+      "id": "BOOSTER_COOKIE"
+    },
+    {
+      "material": "DIAMOND",
+      "name": "Enchanted Diamond",
+      "glowing": true,
+      "tier": "UNCOMMON",
+      "npc_sell_price": 1280,
+      "category_display": "ORE",
+      "experience": {
+        "mining": {
+          "MINION_STORAGE": 64
+        }
+      },
+      "id": "ENCHANTED_DIAMOND"
+    }
+  ]
+}

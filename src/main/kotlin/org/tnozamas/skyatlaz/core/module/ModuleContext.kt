@@ -1,5 +1,6 @@
 package org.tnozamas.skyatlaz.core.module
 
+import org.tnozamas.skyatlaz.api.repo.PriceRepository
 import org.tnozamas.skyatlaz.core.command.CommandBuilder
 import org.tnozamas.skyatlaz.core.config.ConfigEntry
 import org.tnozamas.skyatlaz.core.event.ChatReceivedEvent
@@ -50,6 +51,15 @@ class ModuleContext internal constructor(
         listener: (T) -> Unit,
     ) {
         track(entry.onChange(listener))
+    }
+
+    /**
+     * Keeps bazaar prices and the item catalog loaded and refreshing while the module runs, and returns them. Listen
+     * to `PricesUpdatedEvent` to recompute displays when new data arrives.
+     */
+    fun usePrices(): PriceRepository {
+        track(services.prices.use())
+        return services.prices
     }
 
     /**

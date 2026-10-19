@@ -1,5 +1,6 @@
 package org.tnozamas.skyatlaz.core.module
 
+import org.tnozamas.skyatlaz.api.repo.PriceRepository
 import org.tnozamas.skyatlaz.core.command.CommandRegistry
 import org.tnozamas.skyatlaz.core.config.ConfigManager
 import org.tnozamas.skyatlaz.core.event.EventBus
@@ -14,4 +15,5 @@ class ModuleServices(
     val scheduler: Scheduler,
     val commands: CommandRegistry,
     val config: ConfigManager,
+    val prices: PriceRepository,
 )
