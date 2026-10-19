@@ -2,6 +2,14 @@
 
 Newest first. Format: date, decision, why, consequences.
 
+## 2026-10-19 - Gradient identity: OKLab lookup tables, semantic colors
+The owner wants a distinctive gradient look. Gradients mix stops in OKLab (keeps perceived lightness: red to
+green does not turn dark olive; CSS uses the same default) and bake a 256-entry table at construction, so
+sampling in render paths is an array read. Semantic gradients follow familiar hues (green success, amber
+warning, red error, blue info); the brand palette (cyan, violet, pink) is provisional. Gradient text is built in
+`i18n` (`withGradient`) because only `i18n` may create components from strings; all chat output goes through
+`ui.chat.Chat`.
+
 ## 2026-10-19 - Test offline first, Hypixel last
 Joining Hypixel is slow, needs a login and can't reproduce rare states on demand. Most logic is tested with
 fixture-based unit tests; UI is iterated in a singleplayer sandbox fed by dumps of real Hypixel state

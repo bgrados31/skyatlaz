@@ -28,6 +28,8 @@ create a shared component first:
 | Threads, delays, throttling | `core.scheduler` |
 | Text/chat/item parsing, number format | `util` |
 | User-facing text | `i18n.Tr` |
+| Gradient text | `Component.withGradient(Theme.X_GRADIENT)` |
+| Chat messages | `ui.chat.Chat` (info/success/warning/error) |
 
 ## Performance
 The mod will run many modules every tick; every rule here matters.

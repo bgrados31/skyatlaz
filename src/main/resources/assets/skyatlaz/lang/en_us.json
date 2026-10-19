@@ -1,4 +1,10 @@
 {
-  "skyatlaz.mod.name": "SkyAtlaz",
-  "skyatlaz.mod.loaded": "SkyAtlaz loaded"
+  "skyatlaz.chat.prefix": "SkyAtlaz » ",
+  "skyatlaz.debug.theme.error": "Something went wrong: this is how errors look",
+  "skyatlaz.debug.theme.info": "Heads up: this is how information looks",
+  "skyatlaz.debug.theme.success": "All good: this is how success looks",
+  "skyatlaz.debug.theme.warning": "Careful: this is how warnings look",
+  "skyatlaz.error.module_disabled": "%s stopped working and was disabled. Toggle it to retry; details are in the log.",
+  "skyatlaz.mod.loaded": "SkyAtlaz loaded",
+  "skyatlaz.mod.name": "SkyAtlaz"
 }
