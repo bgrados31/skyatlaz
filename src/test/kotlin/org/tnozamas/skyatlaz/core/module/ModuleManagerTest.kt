@@ -17,7 +17,9 @@ import org.tnozamas.skyatlaz.core.config.ConfigSection
 import org.tnozamas.skyatlaz.core.event.Event
 import org.tnozamas.skyatlaz.core.event.EventBus
 import org.tnozamas.skyatlaz.core.event.Registration
+import org.tnozamas.skyatlaz.core.keybind.KeyBindManager
 import org.tnozamas.skyatlaz.core.scheduler.Scheduler
+import org.tnozamas.skyatlaz.ui.hud.HudManager
 import java.nio.file.Path
 
 class ModuleManagerTest {
@@ -59,8 +61,12 @@ class ModuleManagerTest {
         PriceRepository(HttpService({ _, _ -> HttpResponse(503, "") }, null, scheduler), scheduler, bus, onProblem = {})
     private val commands =
         CommandRegistry("test", "command.root", { true }, {}, { _, error -> throw AssertionError("command failed", error) })
+    private val hud = HudManager(config)
+    private val keybinds = KeyBindManager(config) { _, _ -> }
     private val manager =
-        ModuleManager(ModuleServices(bus, scheduler, commands, config, prices)) { module, error -> failures.add(module.id to error) }
+        ModuleManager(ModuleServices(bus, scheduler, commands, config, prices, hud, keybinds)) { module, error ->
+            failures.add(module.id to error)
+        }
     private val module = TestModule().also(manager::register)
 
     @Test
@@ -221,6 +227,14 @@ class ModuleManagerTest {
 
         toggle.set(false)
         assertFalse(manager.isRunning(module.id))
+    }
+
+    @Test
+    fun `toggles expose the module entry and category`() {
+        val toggle = manager.toggles.single { it.id == module.id }
+
+        assertEquals(FeatureCategory.MISC, toggle.category)
+        assertEquals(config.entry("module.${module.id}.enabled"), toggle.entry)
     }
 
     @Test

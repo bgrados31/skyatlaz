@@ -52,6 +52,30 @@ class ConfigManagerTest {
     }
 
     @Test
+    fun `registered sections are listed in order`() {
+        val hud = HudConfig()
+        val other = object : ConfigSection("other") {}
+        val config = manager()
+
+        config.register(hud)
+        config.register(other)
+
+        assertEquals(listOf("dungeons.scorehud", "other"), config.registeredSections.map { it.id })
+        assertEquals("config.section.dungeons.scorehud", hud.titleKey)
+    }
+
+    @Test
+    fun `choice options can be driven by index`() {
+        val hud = HudConfig()
+
+        assertEquals(listOf("COMPACT", "FULL"), hud.style.optionNames())
+        hud.style.selectIndex(1)
+        assertEquals(Style.FULL, hud.style.value)
+        hud.style.selectIndex(99)
+        assertEquals(Style.FULL, hud.style.value)
+    }
+
+    @Test
     fun `values survive a save and load round trip`() {
         val first = HudConfig()
         manager().apply {

@@ -31,13 +31,18 @@ class ConfigManager(
     private val onProblem: (message: String, error: Throwable?) -> Unit,
 ) {
     private val entries = LinkedHashMap<String, ConfigEntry<*>>()
+    private val sections = ArrayList<ConfigSection>()
     private var stored = JsonObject()
     private var loaded = false
     private var saveScheduled = false
 
+    /** Sections in registration order, for screens that list settings. */
+    val registeredSections: List<ConfigSection> get() = sections
+
     /** Registers every entry of [section]; if the file was already loaded, stored values apply immediately. */
     fun register(section: ConfigSection) {
         for (entry in section.entries) register(entry)
+        sections.add(section)
     }
 
     fun register(entry: ConfigEntry<*>) {

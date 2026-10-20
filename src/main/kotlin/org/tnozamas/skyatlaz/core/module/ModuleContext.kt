@@ -6,6 +6,8 @@ import org.tnozamas.skyatlaz.core.config.ConfigEntry
 import org.tnozamas.skyatlaz.core.event.ChatReceivedEvent
 import org.tnozamas.skyatlaz.core.event.Event
 import org.tnozamas.skyatlaz.core.event.Registration
+import org.tnozamas.skyatlaz.core.keybind.KeyBind
+import org.tnozamas.skyatlaz.ui.hud.HudElement
 import org.tnozamas.skyatlaz.util.ChatMatch
 import org.tnozamas.skyatlaz.util.ChatPattern
 
@@ -60,6 +62,22 @@ class ModuleContext internal constructor(
     fun usePrices(): PriceRepository {
         track(services.prices.use())
         return services.prices
+    }
+
+    /** Shows [element] on the HUD and lets the player move it with `/skyatlaz hud` while the module runs. */
+    fun hud(element: HudElement) {
+        track(services.hud.register(element))
+    }
+
+    /**
+     * Listens to a key while the module runs. The binding disappears with the module, and the key the player chose
+     * is saved in the config.
+     */
+    fun keyBind(
+        bind: KeyBind,
+        onPress: () -> Unit,
+    ) {
+        track(services.keybinds.register(bind, onPress))
     }
 
     /**

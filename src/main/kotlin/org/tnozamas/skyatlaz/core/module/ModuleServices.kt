@@ -4,7 +4,9 @@ import org.tnozamas.skyatlaz.api.repo.PriceRepository
 import org.tnozamas.skyatlaz.core.command.CommandRegistry
 import org.tnozamas.skyatlaz.core.config.ConfigManager
 import org.tnozamas.skyatlaz.core.event.EventBus
+import org.tnozamas.skyatlaz.core.keybind.KeyBindManager
 import org.tnozamas.skyatlaz.core.scheduler.Scheduler
+import org.tnozamas.skyatlaz.ui.hud.HudManager
 
 /**
  * The shared systems a [ModuleContext] registers into. One holder, so adding a system (HUD, config) touches this
@@ -16,4 +18,6 @@ class ModuleServices(
     val commands: CommandRegistry,
     val config: ConfigManager,
     val prices: PriceRepository,
+    val hud: HudManager,
+    val keybinds: KeyBindManager,
 )

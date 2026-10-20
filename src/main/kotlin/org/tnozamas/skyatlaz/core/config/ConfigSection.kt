@@ -15,6 +15,9 @@ abstract class ConfigSection(
 ) {
     private val declared = ArrayList<ConfigEntry<*>>()
 
+    /** Heading used by the config screen; feature sections can override it. */
+    open val titleKey: String get() = "config.section.$id"
+
     val entries: List<ConfigEntry<*>> get() = declared
 
     protected fun boolean(

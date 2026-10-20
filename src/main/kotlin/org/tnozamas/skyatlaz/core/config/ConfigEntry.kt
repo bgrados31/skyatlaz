@@ -120,6 +120,15 @@ sealed class ConfigEntry<T : Any>(
         default: E,
         val type: Class<E>,
     ) : ConfigEntry<E>(key, default) {
+        /** Enum constants in declaration order, for a choice widget. */
+        fun optionNames(): List<String> = type.enumConstants.map { it.name }
+
+        /** Selects by declaration index; used by the config screen so it does not need the generic type. */
+        fun selectIndex(index: Int) {
+            val options = type.enumConstants
+            if (index in options.indices) set(options[index])
+        }
+
         override fun toJson(): JsonElement = JsonPrimitive(value.name)
 
         override fun parse(json: JsonElement): E? {

@@ -28,6 +28,17 @@ class ModuleManager(
         val errorHandler: (Throwable) -> Unit = { fail(this, it) }
     }
 
+    /** One feature toggle, exposed to the config screen together with the module's category. */
+    data class Toggle(
+        val id: String,
+        val entry: ConfigEntry.Bool,
+        val category: FeatureCategory,
+    )
+
+    /** Every registered module's `enabled` toggle, in registration order. */
+    val toggles: List<Toggle>
+        get() = slots.values.map { Toggle(it.module.id, it.toggle, it.module.category) }
+
     val modules: Collection<Module>
         get() = slots.values.map { it.module }
 

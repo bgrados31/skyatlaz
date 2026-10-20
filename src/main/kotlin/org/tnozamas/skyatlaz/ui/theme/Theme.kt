@@ -19,6 +19,16 @@ object Theme {
     const val TEXT_MUTED = 0x9AA1B9
     const val TEXT_SUBTLE = 0x5E6478
 
+    /** Near-black backdrop for in-game screens, used with a translucent alpha. */
+    const val SCREEN_DIM = 0x0B0D14
+
+    // Surfaces for screens built on `ui.component`: opaque enough to read over the world, still soft.
+    const val SURFACE = 0x151A26
+    const val SURFACE_RAISED = 0x1D2333
+    const val SURFACE_SUNKEN = 0x10141D
+    const val BORDER = 0x2C3347
+    const val TRACK = 0x323A50
+
     // Semantic: a deep tone of the hue for gradient starts, a soft tone for gradient ends.
     const val SUCCESS = 0x6EE7A8
     const val SUCCESS_DEEP = 0x22B566
@@ -44,4 +54,13 @@ object Theme {
     @JvmField val ERROR_GRADIENT = Gradient.of(ERROR_DEEP, ERROR)
 
     @JvmField val INFO_GRADIENT = Gradient.of(INFO_DEEP, INFO)
+
+    /**
+     * Converts a `0xRRGGBB` theme token to the `0xAARRGGBB` value required by GUI drawing calls.
+     * Keeps alpha math out of feature code and the hardcoded-color rule intact.
+     */
+    fun argb(
+        rgb: Int,
+        alpha: Int = 255,
+    ): Int = (alpha.coerceIn(0, 255) shl 24) or (rgb and 16777215)
 }
