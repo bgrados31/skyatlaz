@@ -24,12 +24,30 @@ object DebugCapture {
         store: SnapshotStore,
         area: String?,
     ) {
-        val name = name(area)
-        val snapshot = SnapshotCapture.capture(name, recorder.recent())
+        val base = name(area)
+        val snapshot = SnapshotCapture.capture(base, recorder.recent())
         scheduler.async(
-            work = { store.save(snapshot) },
-            onError = { Chat.error(Tr.tr("debug.dump.failed", Tr.verbatim(name))) },
+            work = {
+                // The tree of the Heart of the Mountain is scrolled, so the same name is captured more than once.
+                val final = freeName(store, base)
+                store.save(snapshot.copy(name = final))
+            },
+            onError = { Chat.error(Tr.tr("debug.dump.failed", Tr.verbatim(base))) },
         ) { file -> Chat.success(Tr.tr("debug.dump.saved", Tr.verbatim(file.fileName.toString()))) }
+    }
+
+    /** The name [base] with a number when it is taken, so a second capture does not overwrite the first. */
+    private fun freeName(
+        store: SnapshotStore,
+        base: String,
+    ): String {
+        val taken = store.names()
+        if (base !in taken) return base
+        for (index in 2..99) {
+            val candidate = "${base}_$index"
+            if (candidate !in taken) return candidate
+        }
+        return base
     }
 
     /** The name of the next dump: the title of the open container, or the area, or "capture". */
