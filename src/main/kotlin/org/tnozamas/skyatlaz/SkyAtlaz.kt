@@ -35,6 +35,8 @@ import org.tnozamas.skyatlaz.core.keybind.KeyCombo
 import org.tnozamas.skyatlaz.core.module.ModuleManager
 import org.tnozamas.skyatlaz.core.module.ModuleServices
 import org.tnozamas.skyatlaz.core.scheduler.Scheduler
+import org.tnozamas.skyatlaz.feature.economy.heldprice.HeldPriceModule
+import org.tnozamas.skyatlaz.feature.economy.itemprice.ItemPriceModule
 import org.tnozamas.skyatlaz.feature.skyblock.statushud.StatusHudModule
 import org.tnozamas.skyatlaz.i18n.Tr
 import org.tnozamas.skyatlaz.skyblock.SkyBlockHooks
@@ -173,6 +175,8 @@ object SkyAtlaz : ClientModInitializer {
         EVENTS.register(SkyBlockStateChangeEvent::class.java) { MODULES.refreshActivation() }
         CommandInstaller.install(COMMANDS)
         MODULES.register(StatusHudModule)
+        MODULES.register(ItemPriceModule)
+        MODULES.register(HeldPriceModule)
         BuiltinCommands.register(COMMANDS)
         HudCommand(HUD, SCHEDULER).register(COMMANDS)
         ConfigCommand(CONFIG, MODULES, KEYBINDS, SCHEDULER).register(COMMANDS)
@@ -198,7 +202,7 @@ object SkyAtlaz : ClientModInitializer {
                     .resolve(MOD_ID)
                     .resolve("dumps"),
             )
-        DebugCommands(SCHEDULER, recorder, dumps, SKYBLOCK).register(COMMANDS)
+        DebugCommands(SCHEDULER, recorder, dumps, SKYBLOCK, PRICES).register(COMMANDS)
         HypixelDebugCommands(HYPIXEL, EVENTS).register(COMMANDS)
         HttpDebugCommands(HTTP).register(COMMANDS)
         PriceDebugCommands(PRICES, SCHEDULER, EVENTS).register(COMMANDS)

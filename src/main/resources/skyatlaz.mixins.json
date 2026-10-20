@@ -4,6 +4,8 @@
   "package": "org.tnozamas.skyatlaz.mixin",
   "compatibilityLevel": "JAVA_25",
   "client": [
+    "CreativeTooltipMixin",
+    "ScreenTooltipMixin",
     "PlayerTabOverlayAccessor"
   ],
   "injectors": {

@@ -2,7 +2,13 @@ package org.tnozamas.skyatlaz.core.debug
 
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.screens.inventory.InventoryScreen
 import net.minecraft.core.component.DataComponents
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
+import net.minecraft.world.item.component.CustomData
+import org.tnozamas.skyatlaz.api.repo.PriceRepository
 import org.tnozamas.skyatlaz.core.command.CommandCategory
 import org.tnozamas.skyatlaz.core.command.CommandRegistry
 import org.tnozamas.skyatlaz.core.scheduler.Scheduler
@@ -29,6 +35,7 @@ class DebugCommands(
     private val recorder: ChatRecorder,
     private val store: SnapshotStore,
     private val skyblock: SkyBlockTracker,
+    private val prices: PriceRepository,
 ) {
     fun register(registry: CommandRegistry) {
         registry.register {
@@ -69,7 +76,14 @@ class DebugCommands(
                     description("command.debug.state")
                     executes { reportState() }
                 }
-
+                literal("item") {
+                    description("command.debug.item")
+                    argument("id", StringArgumentType.word()) {
+                        description("command.debug.item.id")
+                        suggests { prices.catalog?.ids ?: emptySet() }
+                        executes { giveItem(it.string("id").uppercase()) }
+                    }
+                }
                 literal("theme") {
                     description("command.debug.theme")
                     executes { previewTheme() }
@@ -167,6 +181,34 @@ class DebugCommands(
                     Tr.verbatim(state.profile ?: "-"),
                 ),
             )
+        }
+    }
+
+    /**
+     * Puts an item with SkyBlock data in the player's hand and opens the inventory, so the features that read item
+     * data (prices, tooltips) can be tried offline without joining Hypixel.
+     *
+     * The features that need SkyBlock (the prices, for one) only run on SkyBlock, so the sandbox state is loaded
+     * when it is missing: without it the item would show nothing at all.
+     */
+    private fun giveItem(id: String) {
+        val player = Minecraft.getInstance().player
+        if (player == null) {
+            Chat.error(Tr.tr("debug.item.failed"))
+            return
+        }
+        val stack = ItemStack(Items.DIAMOND)
+        val tag = CompoundTag()
+        tag.putString("id", id)
+        CustomData.set(DataComponents.CUSTOM_DATA, stack, tag)
+        stack.set(DataComponents.ITEM_NAME, Tr.verbatim(id))
+        player.inventory.setSelectedItem(stack)
+        Chat.success(Tr.tr("debug.item.given", Tr.verbatim(id)))
+        // Next tick: the chat screen closes first and must not close the inventory.
+        scheduler.later(1) { Minecraft.getInstance().setScreenAndShow(InventoryScreen(player)) }
+        if (!skyblock.state.onSkyBlock) {
+            loadDump(SANDBOX_DUMP)
+            Chat.info(Tr.tr("debug.item.sandbox"))
         }
     }
 
