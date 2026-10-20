@@ -50,6 +50,43 @@ class SkyBlockParserTest {
     }
 
     @Test
+    fun `deep caverns dump reads its sub area and server`() {
+        val state = parse("deep_caverns")
+
+        assertEquals("Deep Caverns", state.area)
+        assertEquals("Deep Caverns", state.subArea)
+        assertEquals("mini81BD", state.serverId)
+        assertEquals("Mango", state.profile)
+    }
+
+    @Test
+    fun `garden dump reads its area and sub area`() {
+        val state = parse("garden")
+
+        assertEquals("Garden", state.area)
+        // The sidebar also carries the plot number ("The Garden x8"), so only the name is checked.
+        assertTrue(state.subArea!!.startsWith("The Garden"))
+        assertEquals("mini221J", state.serverId)
+    }
+
+    @Test
+    fun `crystal hollows dump reads the area and the jungle sub area`() {
+        val state = parse("crystal_hollows")
+
+        assertEquals("Crystal Hollows", state.area)
+        assertEquals("Jungle", state.subArea)
+        assertEquals("mini183CC", state.serverId)
+    }
+
+    @Test
+    fun `catacombs dump reads the dungeon name and the difficulty`() {
+        val state = parse("catacombs")
+
+        assertEquals("The Catacombs (E)", state.subArea)
+        assertEquals("Mango", state.profile)
+    }
+
+    @Test
     fun `empty sources are not on skyblock`() {
         val state = SkyBlockParser.parse(SkyBlockSources(null, emptyList(), null, null, emptyList()))
 
