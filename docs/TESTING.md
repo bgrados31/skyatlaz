@@ -58,10 +58,23 @@ An AI agent can see and drive the **singleplayer dev world** through [MCP Fabric
 `./gradlew runWorld`, then replay Hypixel data instead of joining:
 - `/skyatlaz debug chat <text>`: injects a server message through the normal receive pipeline (`ChatReceivedEvent`
   fires, listeners can cancel it). `&` color codes, e.g. `&6&lLEGENDARY &eDrop`.
-- [planned: phase 2] `/skyatlaz debug load <name>`: pushes the dump's scoreboard/tab/location into SkyBlock state
-  (fires the same change events as on Hypixel).
+- [done] `/skyatlaz debug load <name>`: pushes the dump's scoreboard/tab/location into SkyBlock state
+  (fires the same change events as on Hypixel and pauses live updates until the world changes).
+- [done] `/skyatlaz debug item <id>`: gives the player an item with SkyBlock data (`custom_data.id`) and opens the
+  inventory, so the item features (prices in the tooltip) can be tried offline. It also loads the `hub` dump when the
+  world is not on SkyBlock: the features that need SkyBlock data (the prices) only run on SkyBlock, so without it the
+  tooltip would show nothing. Copy `src/test/resources/fixtures/skyblock/hub.json` to `run/skyatlaz/dumps/` once if
+  that dump is missing.
+- `/skyatlaz debug state`: prints the parsed state, to compare a loaded dump or the live game with expectations.
+- `/skyatlaz debug neu <id>`: fetches one NEU-REPO item page and prints its crafting/forge recipes (network + cache).
 - `/skyatlaz debug open <name>`: opens a local container screen filled with the dumped items, so container
   overlays (HOTM tree, menus, solvers) render exactly as on Hypixel.
+- [done] `/skyatlaz config`: opens the real settings screen (tabs from registered sections + module toggles,
+  search, Reset, Done/Esc, auto-save).
+- [done] `/skyatlaz hud`: opens the HUD editor (drag, scroll to scale, `R` reset, `Tab` select, `Esc` close).
+  With debug mode on, a SkyBlock state card is registered so the editor has an element to manipulate; its
+  layout is saved as `hud.debug.state.x/.y/.scale` and can also be set by hand to check a specific position or
+  scale before launching.
 
 Debug commands exist only with debug mode on (`general.debug_mode`, default on in dev). Later, the Fabric client gametest
 API (already on the dev classpath) can automate these scenarios.

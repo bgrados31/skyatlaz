@@ -11,6 +11,7 @@
 - One public top-level type per file; file named after it.
 - Prefer `val`, immutable data, `private`/`internal` by default. Expose the smallest API possible.
 - KDoc on every public type and on any non-obvious function. Explain **why**, not what.
+- Spacing and rhythm come from `ui.theme.Spacing`; only the size of a widget itself belongs to the widget.
 - No commented-out code, no TODO without context (`TODO(phase-2): reason`).
 - Java is only for mixins (`mixin/`); keep them to a guard check plus a call into Kotlin.
 
@@ -21,12 +22,15 @@ create a shared component first:
 |---|---|
 | Colors, spacing, fonts | `ui.theme` |
 | Widgets | `ui.component` |
+| Drawing primitives, cached text | `ui.render` |
+| Key bindings | `core.keybind`: `ctx.keyBind(bind) { }` in modules, never a vanilla `KeyMapping` |
 | HUD overlays | `ui.hud` |
 | HTTP / external data | `api.http`, `api.repo` |
 | Hypixel server data | `api.hypixel` |
 | Game state (island, profile...) | `skyblock` |
 | Threads, delays, throttling | `core.scheduler` |
 | Text/chat/item parsing, number format | `util`: `ChatPattern` (prefilter + regex), `Numbers`, `LegacyText`, `RarityLine`, `SkyBlockItemData` |
+| Price lines (the price of an item as rows) | `util.PriceLines` (shared: two features cannot import each other) |
 | User-facing text | `i18n.Tr` |
 | Gradient text | `Component.withGradient(Theme.X_GRADIENT)` |
 | Chat messages | `ui.chat.Chat` (info/success/warning/error) |

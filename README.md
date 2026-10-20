@@ -26,3 +26,4 @@ Start with [CLAUDE.md](CLAUDE.md) (rules) and [docs/PROGRESS.md](docs/PROGRESS.m
 | Bazaar prices, item catalog | [Hypixel Public API](https://api.hypixel.net/) (keyless endpoints) |
 | Location, party | [Hypixel Mod API](https://github.com/HypixelDev/ModAPI) |
 | Lowest BIN auction prices | [lowestbins](https://github.com/Tricked-dev/lowestbins) by **Tricked**, hosted instance `lb.tricked.dev`. Thank you! |
+| Item pages and recipes | [NEU-REPO](https://github.com/NotEnoughUpdates/NotEnoughUpdates-REPO) (MIT), fetched per item on demand |
