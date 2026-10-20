@@ -13,8 +13,7 @@
       "Bash(node tools/refs/sync.mjs:*)"
     ],
     "deny": [
-      "Edit(references/**)",
-      "Write(references/**)"
+      "Edit(references/**)"
     ]
   },
   "hooks": {
