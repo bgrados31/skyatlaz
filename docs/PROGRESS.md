@@ -69,8 +69,8 @@ Update this file at the end of every session: what changed, what is next, open q
   migrations), `core.error` (module isolation), `core.debug` (commands, fixture dump), first mixins for
   tick/chat/render hooks. Unit tests for all of it.
 - [ ] **Phase 2 - SkyBlock state**: [done] `api.hypixel`, `util`, `api.http`, `api.repo` prices + NEU-REPO item
-  pages/recipes, scoreboard/tab parsers + `skyblock` state + `debug load`. [todo] dungeon/HOTM-specific state,
-  chat-driven state.
+  pages/recipes, scoreboard/tab parsers + `skyblock` state + `debug load`. [done] the perks of the HOTM read from the
+  lore of its menu (`feature/mining/hotm`). [todo] dungeon-specific state, chat-driven state.
 - [x] **Phase 3 - UI base**: `ui.theme` tokens, `ui.hud` system + editor, `ui.component` engine (chosen for the
   config screen), real `ui.config.ConfigScreen` backed by `core.config` + module toggles.
 - [ ] **Phase 4 - First features**: [done] `skyblock/statushud` (the vertical slice that validates the stack),
@@ -79,8 +79,9 @@ Update this file at the end of every session: what changed, what is next, open q
 
 ## Next steps
 1. Phase 4: the next vertical slices, now that the shape is proven (`feature/<category>/<feature>` with a config
-   section, pure logic, HUD element and tests). Candidates: HOTM tree, dungeon score, purse/bank tracker.
-   Phase 2: HOTM/dungeon state once `hotm`/`dungeon` dumps exist (capture on Hypixel first, menu open / mid-run).
+   section, pure logic, HUD element and tests). Candidates: the HOTM card, dungeon score, purse/bank tracker.
+   Phase 2: the dungeon state needs a dump taken after the run (the score arrives at the end); the HOTM needs the
+   scrolled views of the tree (F7 on each one) or the profile API.
 2. UI sounds (amethyst chimes at musical pitches, cut short via the scheduler, volume + toggle) for command and
    chat feedback. The command palette is done (`ui/palette`, Ctrl+K).
 3. Owner: build and register the MCP Fabric server (docs/TESTING.md "Agent access"); the jar and config are

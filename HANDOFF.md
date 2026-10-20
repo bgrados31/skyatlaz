@@ -1,6 +1,6 @@
 # Handoff - SkyAtlaz base closed, phase 4 running
 
-Updated: 2026-10-21. Read `CLAUDE.md` first; this file is the short state of the current task.
+Updated: 2026-10-21 (later). Read `CLAUDE.md` first; this file is the short state of the current task.
 
 ## Objective
 The base (phases 0-3) is closed and phase 4 is running: three vertical slices work end to end
@@ -36,24 +36,42 @@ time, reusing the shape proven by the first one.
   features cannot import each other. The translation keys moved with them (`economy.price.*`), so the tooltip and
   the card say the same thing. The tooltip feature's old `ItemPriceLogic` is gone (its test moved to
   `util/PriceLinesTest`).
+- **The perks of the HOTM are read** (`feature/mining/hotm/HotmLogic.kt`): the tree is a container, so the perks come
+  from the items and their lore. The lore pattern (`Level 12/20`, `Level 50` at the maximum) is the one Skyblocker
+  uses, and the state of a perk is read from the marks the lore uses (`ENABLED` = active, `SELECTED` = the equipped
+  ability, `Cost` = still to be bought, and the level of a locked perk is the one it would reach). Pure logic, 8
+  tests against the real capture of the menu.
+- **A capture is never overwritten** anymore: the name gets a number when it is taken (`heart_of_the_mountain`,
+  `heart_of_the_mountain_2`, ...), so the scrolled views of the tree can all be captured.
+- The **whole tree is known** (49 perks) from the NEU-REPO layout (`references/neu-repo/constants/hotmlayout.json`:
+  name, maximum level, position in the tree and powder of every perk). The owner's capture only had 19 of them: it
+  was one scrolled view.
+- `.\gradlew spotlessApply check` green: **227 tests, 0 failures**.
 - `ModuleManager.refreshActivation()` is now really called (the entrypoint wires `SkyBlockStateChangeEvent` to it),
   so a module with an activation condition starts and stops with the shared state.
 - The UI sandbox (`ui/prototype`, `/skyatlaz debug ui`) is deleted with the owner's confirmation.
-- `.\gradlew spotlessApply check` green: **215 tests, 0 failures**.
+- `.\gradlew spotlessApply check` green: **215 tests, 0 failures** (before the HOTM parser).
 - Verified in `runWorld` (screenshots `60`-`87` in `run/verify/`, git-ignored): the HUD card, the config screen with
   the new tab bar, the "Controls" tab, capturing F6 with the mouse and the keyboard, the key saved in the config
   (`keybind.open_settings.key: 295`) and F6 opening the settings screen from the world.
 
 ## Pending
-1. Phase 4 continues: the next vertical slices (HOTM tree, dungeon score, purse/bank tracker...). HOTM and the
-   dungeon need the owner's dumps; the purse/bank tracker and the command palette do not.
-2. Phase 2 leftovers: HOTM/dungeon state once the owner captures `hotm` (menu open) and `dungeon` (mid-run) dumps
-   on Hypixel. The HOTM tree is an inventory, and with it open the chat is blocked: press **F7** (the capture binding,
-   which works with a screen open) and the dump is saved as `heart_of_the_mountain`. The owner also still owes the
-   `/skyatlaz debug hypixel` output (Mod API location + party).
-3. World rendering is still missing: 26.2 replaced the old render events and Fabric does not expose the new
+1. Phase 4 continues: the next vertical slices (HOTM tree, dungeon score, purse/bank tracker...). The purse/bank
+   tracker does not need anything from the owner.
+2. **HOTM**: the levels of the perks that are not in the current view of the tree are still missing. Two ways to get
+   them, and the owner has to pick one:
+   - **Scroll + F7**: open the tree, scroll through the tiers and press F7 on each view (the names no longer
+     overwrite each other). The mod reads the levels from the lore of the container.
+   - **The profile API**: Skyblocker reads the tree with `https://api.hypixel.net/v2/skyblock/profiles?uuid=<uuid>`
+     and gets the uuid from the Mojang API with the name of the player. All the levels at once, no scrolling, but it
+     needs the network and a keyless call has to be confirmed.
+3. **Dungeon**: the owner's `dungeon.json` was taken 20 s into the run (`Time Elapsed: 20s`, `Cleared: 20% (32)`),
+   so it has no score. The score arrives at the end of the run, in the chat (`You scored X points!`) and in the tab.
+   A dump after the run is needed.
+4. The owner still owes the `/skyatlaz debug hypixel` output (Mod API location + party).
+5. World rendering is still missing: 26.2 replaced the old render events and Fabric does not expose the new
    submit-node API yet, so `ui.render` covers the GUI only.
-4. Commit only when the owner asks. Everything is uncommitted; HEAD is `f561307`.
+6. Commit only when the owner asks. HEAD is `f5ff499`.
 
 - **Second vertical slice** `feature/economy/itemprice`: the price of an item in its tooltip (bazaar instant sell,
   lowest BIN, NPC price; each one can be turned off). The lines are added by a mixin on
@@ -78,6 +96,8 @@ time, reusing the shape proven by the first one.
 - `src/main/kotlin/org/tnozamas/skyatlaz/util/PriceLines.kt` - the price lines shared by the two price features.
 - `src/main/kotlin/org/tnozamas/skyatlaz/ui/palette/` - the command palette (screen, pure search, key characters).
 - `src/main/kotlin/org/tnozamas/skyatlaz/core/debug/DebugCapture.kt` - saves the state as a dump, with a name from the screen.
+- `src/main/kotlin/org/tnozamas/skyatlaz/feature/mining/hotm/HotmLogic.kt` - the perks of the HOTM read from the lore
+  of the container.
 - `src/main/kotlin/org/tnozamas/skyatlaz/core/tooltip/TooltipLines.kt` - where features add lines to the item tooltip.
 - `src/main/java/org/tnozamas/skyatlaz/mixin/ScreenTooltipMixin.java` + `CreativeTooltipMixin.java` - the mixins that
   merge those lines (the creative screen builds its own tooltip and needs its own hook).
