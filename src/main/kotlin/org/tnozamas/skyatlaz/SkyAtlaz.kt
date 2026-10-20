@@ -35,6 +35,7 @@ import org.tnozamas.skyatlaz.core.keybind.KeyCombo
 import org.tnozamas.skyatlaz.core.module.ModuleManager
 import org.tnozamas.skyatlaz.core.module.ModuleServices
 import org.tnozamas.skyatlaz.core.scheduler.Scheduler
+import org.tnozamas.skyatlaz.feature.skyblock.statushud.StatusHudModule
 import org.tnozamas.skyatlaz.i18n.Tr
 import org.tnozamas.skyatlaz.skyblock.SkyBlockHooks
 import org.tnozamas.skyatlaz.skyblock.SkyBlockStateChangeEvent
@@ -171,6 +172,7 @@ object SkyAtlaz : ClientModInitializer {
         // Modules with an activation condition ("only on SkyBlock") start and stop with the shared state.
         EVENTS.register(SkyBlockStateChangeEvent::class.java) { MODULES.refreshActivation() }
         CommandInstaller.install(COMMANDS)
+        MODULES.register(StatusHudModule)
         BuiltinCommands.register(COMMANDS)
         HudCommand(HUD, SCHEDULER).register(COMMANDS)
         ConfigCommand(CONFIG, MODULES, KEYBINDS, SCHEDULER).register(COMMANDS)
