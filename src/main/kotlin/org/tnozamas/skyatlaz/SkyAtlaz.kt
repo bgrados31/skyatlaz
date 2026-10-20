@@ -1,5 +1,6 @@
 package org.tnozamas.skyatlaz
 
+import com.mojang.blaze3d.platform.InputConstants
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
@@ -48,10 +49,14 @@ import org.tnozamas.skyatlaz.ui.config.ConfigScreen
 import org.tnozamas.skyatlaz.ui.hud.HudCommand
 import org.tnozamas.skyatlaz.ui.hud.HudManager
 import org.tnozamas.skyatlaz.ui.openScreenAfterChat
+import org.tnozamas.skyatlaz.ui.palette.CommandPaletteScreen
 
 /** Client entrypoint. Only wires core services together; features register through the module system. */
 object SkyAtlaz : ClientModInitializer {
     const val MOD_ID = "skyatlaz"
+
+    /** The binding that opens the command palette. */
+    const val PALETTE_KEYBIND = "open_command_palette"
 
     @JvmField
     val LOGGER: Logger = LoggerFactory.getLogger(MOD_ID)
@@ -131,13 +136,13 @@ object SkyAtlaz : ClientModInitializer {
     @JvmField
     val PRICES = PriceRepository(HTTP, SCHEDULER, EVENTS, onProblem = { message -> LOGGER.warn(message) })
 
-    /** Parsed SkyBlock state (area, profile, purse...); features read `SKYBLOCK.state` or its change events. */
-    @JvmField
-    val SKYBLOCK = SkyBlockTracker(EVENTS)
-
     /** NEU-REPO item pages and recipes, fetched per item on demand. */
     @JvmField
     val NEU = NeuRepository(HTTP, onProblem = { message -> LOGGER.warn(message) })
+
+    /** Parsed SkyBlock state (area, profile, purse...); features read `SKYBLOCK.state` or its change events. */
+    @JvmField
+    val SKYBLOCK = SkyBlockTracker(EVENTS)
 
     /** Every HUD element and the `/skyatlaz hud` editor. One Fabric hook draws all of them. */
     @JvmField
@@ -174,15 +179,21 @@ object SkyAtlaz : ClientModInitializer {
         // Modules with an activation condition ("only on SkyBlock") start and stop with the shared state.
         EVENTS.register(SkyBlockStateChangeEvent::class.java) { MODULES.refreshActivation() }
         CommandInstaller.install(COMMANDS)
-        MODULES.register(StatusHudModule)
-        MODULES.register(ItemPriceModule)
-        MODULES.register(HeldPriceModule)
         BuiltinCommands.register(COMMANDS)
         HudCommand(HUD, SCHEDULER).register(COMMANDS)
         ConfigCommand(CONFIG, MODULES, KEYBINDS, SCHEDULER).register(COMMANDS)
+        MODULES.register(StatusHudModule)
+        MODULES.register(ItemPriceModule)
+        MODULES.register(HeldPriceModule)
         // A core binding: the settings screen, from the keyboard.
         KEYBINDS.register(KeyBind("open_settings", KeyCombo.NONE)) {
             openScreenAfterChat(SCHEDULER) { ConfigScreen(CONFIG, MODULES, KEYBINDS) }
+        }
+        // A core binding: the command palette, the fuzzy search over every command.
+        KEYBINDS.register(KeyBind(PALETTE_KEYBIND, KeyCombo(InputConstants.KEY_K, KeyCombo.CTRL))) {
+            openScreenAfterChat(SCHEDULER) {
+                CommandPaletteScreen(COMMANDS, SCHEDULER, KEYBINDS.comboOf(PALETTE_KEYBIND).key)
+            }
         }
 
         val recorder = ChatRecorder(EVENTS)
