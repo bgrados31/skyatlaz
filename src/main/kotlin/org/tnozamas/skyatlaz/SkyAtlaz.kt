@@ -4,6 +4,7 @@ import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.client.Minecraft
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.tnozamas.skyatlaz.api.http.HttpCache
@@ -12,6 +13,8 @@ import org.tnozamas.skyatlaz.api.http.HttpService
 import org.tnozamas.skyatlaz.api.http.JdkHttpTransport
 import org.tnozamas.skyatlaz.api.hypixel.HypixelDebugCommands
 import org.tnozamas.skyatlaz.api.hypixel.HypixelModApi
+import org.tnozamas.skyatlaz.api.repo.NeuDebugCommands
+import org.tnozamas.skyatlaz.api.repo.NeuRepository
 import org.tnozamas.skyatlaz.api.repo.PriceDebugCommands
 import org.tnozamas.skyatlaz.api.repo.PriceRepository
 import org.tnozamas.skyatlaz.core.command.BuiltinCommands
@@ -22,14 +25,26 @@ import org.tnozamas.skyatlaz.core.config.ConfigManager
 import org.tnozamas.skyatlaz.core.config.GeneralConfig
 import org.tnozamas.skyatlaz.core.debug.ChatRecorder
 import org.tnozamas.skyatlaz.core.debug.DebugCommands
+import org.tnozamas.skyatlaz.core.debug.DebugHudPreview
 import org.tnozamas.skyatlaz.core.debug.SnapshotStore
 import org.tnozamas.skyatlaz.core.event.EventBus
 import org.tnozamas.skyatlaz.core.event.GameHooks
+import org.tnozamas.skyatlaz.core.keybind.KeyBind
+import org.tnozamas.skyatlaz.core.keybind.KeyBindManager
+import org.tnozamas.skyatlaz.core.keybind.KeyCombo
 import org.tnozamas.skyatlaz.core.module.ModuleManager
 import org.tnozamas.skyatlaz.core.module.ModuleServices
 import org.tnozamas.skyatlaz.core.scheduler.Scheduler
 import org.tnozamas.skyatlaz.i18n.Tr
+import org.tnozamas.skyatlaz.skyblock.SkyBlockHooks
+import org.tnozamas.skyatlaz.skyblock.SkyBlockStateChangeEvent
+import org.tnozamas.skyatlaz.skyblock.SkyBlockTracker
 import org.tnozamas.skyatlaz.ui.chat.Chat
+import org.tnozamas.skyatlaz.ui.config.ConfigCommand
+import org.tnozamas.skyatlaz.ui.config.ConfigScreen
+import org.tnozamas.skyatlaz.ui.hud.HudCommand
+import org.tnozamas.skyatlaz.ui.hud.HudManager
+import org.tnozamas.skyatlaz.ui.openScreenAfterChat
 
 /** Client entrypoint. Only wires core services together; features register through the module system. */
 object SkyAtlaz : ClientModInitializer {
@@ -113,10 +128,29 @@ object SkyAtlaz : ClientModInitializer {
     @JvmField
     val PRICES = PriceRepository(HTTP, SCHEDULER, EVENTS, onProblem = { message -> LOGGER.warn(message) })
 
+    /** Parsed SkyBlock state (area, profile, purse...); features read `SKYBLOCK.state` or its change events. */
+    @JvmField
+    val SKYBLOCK = SkyBlockTracker(EVENTS)
+
+    /** NEU-REPO item pages and recipes, fetched per item on demand. */
+    @JvmField
+    val NEU = NeuRepository(HTTP, onProblem = { message -> LOGGER.warn(message) })
+
+    /** Every HUD element and the `/skyatlaz hud` editor. One Fabric hook draws all of them. */
+    @JvmField
+    val HUD = HudManager(CONFIG)
+
+    /** Every key binding; features register theirs while they run. */
+    @JvmField
+    val KEYBINDS =
+        KeyBindManager(CONFIG) { first, second ->
+            Chat.warning(Tr.tr("keybind.conflict", Tr.tr(first.nameKey), Tr.tr(second.nameKey)))
+        }
+
     /** Module lifecycle. A failing module is stopped, logged and announced in chat; the game keeps running. */
     @JvmField
     val MODULES =
-        ModuleManager(ModuleServices(EVENTS, SCHEDULER, COMMANDS, CONFIG, PRICES)) { module, error ->
+        ModuleManager(ModuleServices(EVENTS, SCHEDULER, COMMANDS, CONFIG, PRICES, HUD, KEYBINDS)) { module, error ->
             LOGGER.error("Module {} failed and was disabled", module.id, error)
             Chat.error(Tr.tr("error.module_disabled", module.id))
         }
@@ -125,17 +159,33 @@ object SkyAtlaz : ClientModInitializer {
         LOGGER.info("Initializing {}", MOD_ID)
         CONFIG.register(GeneralConfig)
         CONFIG.load()
+        HUD.install()
         ClientLifecycleEvents.CLIENT_STOPPING.register { CONFIG.saveNow() }
-        ClientTickEvents.END_CLIENT_TICK.register { SCHEDULER.tick() }
+        ClientTickEvents.END_CLIENT_TICK.register {
+            SCHEDULER.tick()
+            KEYBINDS.tick(Minecraft.getInstance().window)
+        }
         GameHooks.install(EVENTS)
         HYPIXEL.install()
+        SkyBlockHooks.install(SKYBLOCK, SCHEDULER, EVENTS)
+        // Modules with an activation condition ("only on SkyBlock") start and stop with the shared state.
+        EVENTS.register(SkyBlockStateChangeEvent::class.java) { MODULES.refreshActivation() }
         CommandInstaller.install(COMMANDS)
         BuiltinCommands.register(COMMANDS)
+        HudCommand(HUD, SCHEDULER).register(COMMANDS)
+        ConfigCommand(CONFIG, MODULES, KEYBINDS, SCHEDULER).register(COMMANDS)
+        // A core binding: the settings screen, from the keyboard.
+        KEYBINDS.register(KeyBind("open_settings", KeyCombo.NONE)) {
+            openScreenAfterChat(SCHEDULER) { ConfigScreen(CONFIG, MODULES, KEYBINDS) }
+        }
 
         val recorder = ChatRecorder(EVENTS)
+        val hudPreview = DebugHudPreview(HUD, EVENTS, SKYBLOCK)
         recorder.setActive(GeneralConfig.debugMode.value)
+        hudPreview.setActive(GeneralConfig.debugMode.value)
         GeneralConfig.debugMode.onChange { enabled ->
             recorder.setActive(enabled)
+            hudPreview.setActive(enabled)
             COMMANDS.refresh()
         }
         val dumps =
@@ -146,9 +196,10 @@ object SkyAtlaz : ClientModInitializer {
                     .resolve(MOD_ID)
                     .resolve("dumps"),
             )
-        DebugCommands(SCHEDULER, recorder, dumps).register(COMMANDS)
+        DebugCommands(SCHEDULER, recorder, dumps, SKYBLOCK).register(COMMANDS)
         HypixelDebugCommands(HYPIXEL, EVENTS).register(COMMANDS)
         HttpDebugCommands(HTTP).register(COMMANDS)
         PriceDebugCommands(PRICES, SCHEDULER, EVENTS).register(COMMANDS)
+        NeuDebugCommands(NEU).register(COMMANDS)
     }
 }

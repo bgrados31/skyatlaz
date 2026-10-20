@@ -1,0 +1,26 @@
+{
+  "itemid": "minecraft:leather_chestplate",
+  "displayname": "\u00a76Abyssal Chestplate",
+  "lore": [
+    "\u00a76\u00a7lLEGENDARY CHESTPLATE"
+  ],
+  "internalname": "ABYSSAL_CHESTPLATE",
+  "crafttext": "",
+  "modver": "Firmament test",
+  "recipes": [
+    {
+      "A1": "GILL_MEMBRANE:64",
+      "A2": "ENCHANTED_SEA_LUMIES:16",
+      "A3": "GILL_MEMBRANE:64",
+      "B1": "DIVER_FRAGMENT:1",
+      "B2": "DIVER_CHESTPLATE:1",
+      "B3": "DIVER_FRAGMENT:1",
+      "C1": "GILL_MEMBRANE:64",
+      "C2": "ENCHANTED_SEA_LUMIES:16",
+      "C3": "GILL_MEMBRANE:64",
+      "type": "crafting",
+      "count": 2,
+      "overrideOutputId": "ABYSSAL_CHESTPLATE"
+    }
+  ]
+}

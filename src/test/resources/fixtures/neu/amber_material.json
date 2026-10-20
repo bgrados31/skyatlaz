@@ -1,0 +1,22 @@
+{
+  "itemid": "minecraft:prismarine_crystals",
+  "displayname": "\u00a76Amber Material",
+  "lore": [
+    "\u00a77\u00a7lFORGE RECIPE"
+  ],
+  "internalname": "AMBER_MATERIAL",
+  "crafttext": "",
+  "modver": "Firmament test",
+  "recipes": [
+    {
+      "type": "forge",
+      "inputs": [
+        "GOLDEN_PLATE:1",
+        "FINE_AMBER_GEM:12"
+      ],
+      "count": 1,
+      "overrideOutputId": "AMBER_MATERIAL",
+      "duration": 21600
+    }
+  ]
+}

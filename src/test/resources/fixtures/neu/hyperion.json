@@ -1,0 +1,29 @@
+{
+  "itemid": "minecraft:iron_sword",
+  "displayname": "\u00a76Necron's Blade (Unrefined)",
+  "damage": 0,
+  "lore": [
+    "\u00a77Gear Score: \u00a7d425",
+    "\u00a77Damage: \u00a7c+260",
+    "",
+    "\u00a76\u00a7lLEGENDARY DUNGEON SWORD"
+  ],
+  "internalname": "HYPERION",
+  "crafttext": "",
+  "modver": "Firmament test",
+  "infoType": "WIKI_URL",
+  "info": [
+    "https://hypixelskyblock.minecraft.wiki/w/Necron%27s_Blade"
+  ],
+  "recipe": {
+    "A1": "GIANT_FRAGMENT_LASER:1",
+    "A2": "GIANT_FRAGMENT_LASER:1",
+    "A3": "GIANT_FRAGMENT_LASER:1",
+    "B1": "GIANT_FRAGMENT_LASER:1",
+    "B2": "NECRON_BLADE:1",
+    "B3": "GIANT_FRAGMENT_LASER:1",
+    "C1": "GIANT_FRAGMENT_LASER:1",
+    "C2": "GIANT_FRAGMENT_LASER:1",
+    "C3": "GIANT_FRAGMENT_LASER:1"
+  }
+}
