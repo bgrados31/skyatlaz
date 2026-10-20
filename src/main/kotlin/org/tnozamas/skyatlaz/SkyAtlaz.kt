@@ -14,6 +14,8 @@ import org.tnozamas.skyatlaz.api.http.HttpService
 import org.tnozamas.skyatlaz.api.http.JdkHttpTransport
 import org.tnozamas.skyatlaz.api.hypixel.HypixelDebugCommands
 import org.tnozamas.skyatlaz.api.hypixel.HypixelModApi
+import org.tnozamas.skyatlaz.api.profile.ProfileClient
+import org.tnozamas.skyatlaz.api.profile.ProfileDebugCommands
 import org.tnozamas.skyatlaz.api.repo.NeuDebugCommands
 import org.tnozamas.skyatlaz.api.repo.NeuRepository
 import org.tnozamas.skyatlaz.api.repo.PriceDebugCommands
@@ -39,6 +41,7 @@ import org.tnozamas.skyatlaz.core.module.ModuleServices
 import org.tnozamas.skyatlaz.core.scheduler.Scheduler
 import org.tnozamas.skyatlaz.feature.economy.heldprice.HeldPriceModule
 import org.tnozamas.skyatlaz.feature.economy.itemprice.ItemPriceModule
+import org.tnozamas.skyatlaz.feature.mining.hotm.HotmModule
 import org.tnozamas.skyatlaz.feature.skyblock.statushud.StatusHudModule
 import org.tnozamas.skyatlaz.i18n.Tr
 import org.tnozamas.skyatlaz.skyblock.SkyBlockHooks
@@ -144,6 +147,10 @@ object SkyAtlaz : ClientModInitializer {
     @JvmField
     val NEU = NeuRepository(HTTP, onProblem = { message -> LOGGER.warn(message) })
 
+    /** The profile of the player, read from the Hypixel API with the developer key of the player. */
+    @JvmField
+    val PROFILE = ProfileClient(HTTP, { GeneralConfig.apiKey.value }, { message -> LOGGER.warn(message) })
+
     /** Parsed SkyBlock state (area, profile, purse...); features read `SKYBLOCK.state` or its change events. */
     @JvmField
     val SKYBLOCK = SkyBlockTracker(EVENTS)
@@ -162,7 +169,7 @@ object SkyAtlaz : ClientModInitializer {
     /** Module lifecycle. A failing module is stopped, logged and announced in chat; the game keeps running. */
     @JvmField
     val MODULES =
-        ModuleManager(ModuleServices(EVENTS, SCHEDULER, COMMANDS, CONFIG, PRICES, HUD, KEYBINDS)) { module, error ->
+        ModuleManager(ModuleServices(EVENTS, SCHEDULER, COMMANDS, CONFIG, PRICES, HUD, KEYBINDS, NEU, PROFILE)) { module, error ->
             LOGGER.error("Module {} failed and was disabled", module.id, error)
             Chat.error(Tr.tr("error.module_disabled", module.id))
         }
@@ -189,6 +196,7 @@ object SkyAtlaz : ClientModInitializer {
         MODULES.register(StatusHudModule)
         MODULES.register(ItemPriceModule)
         MODULES.register(HeldPriceModule)
+        MODULES.register(HotmModule)
         // A core binding: the settings screen, from the keyboard.
         KEYBINDS.register(KeyBind("open_settings", KeyCombo.NONE)) {
             openScreenAfterChat(SCHEDULER) { ConfigScreen(CONFIG, MODULES, KEYBINDS) }
@@ -222,6 +230,7 @@ object SkyAtlaz : ClientModInitializer {
         HttpDebugCommands(HTTP).register(COMMANDS)
         PriceDebugCommands(PRICES, SCHEDULER, EVENTS).register(COMMANDS)
         NeuDebugCommands(NEU).register(COMMANDS)
+        ProfileDebugCommands(PROFILE, NEU).register(COMMANDS)
         // A core binding: save the state as a dump. It fires with a screen open, because some states (the Heart of the
         // Mountain tree) only exist while an inventory is open, and then the chat is blocked.
         KEYBINDS.register(KeyBind(CAPTURE_KEYBIND, KeyCombo(InputConstants.KEY_F7), worksInScreen = true)) {

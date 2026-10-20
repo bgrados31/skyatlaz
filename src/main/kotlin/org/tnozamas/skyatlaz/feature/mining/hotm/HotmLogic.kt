@@ -1,7 +1,37 @@
 package org.tnozamas.skyatlaz.feature.mining.hotm
 
+import org.tnozamas.skyatlaz.api.profile.ProfileMining
+import org.tnozamas.skyatlaz.api.repo.HotmLayout
 import org.tnozamas.skyatlaz.core.debug.Snapshot
 import org.tnozamas.skyatlaz.util.LegacyText
+import org.tnozamas.skyatlaz.util.NumberStyle
+import org.tnozamas.skyatlaz.util.Numbers
+
+/** The key of the title of the card. */
+private const val TITLE_KEY = "mining.hotm.title"
+
+/** One row of the mining card: the key to translate and the values to fill it with. */
+data class HotmLine(
+    val key: String,
+    val args: List<String>,
+)
+
+/** What the mining card shows. */
+data class HotmContent(
+    val titleKey: String,
+    val lines: List<HotmLine>,
+) {
+    companion object {
+        val EMPTY = HotmContent(TITLE_KEY, emptyList())
+    }
+}
+
+/** The settings of the card. */
+data class HotmOptions(
+    val showPowders: Boolean = true,
+    val showAbility: Boolean = true,
+    val numberStyle: NumberStyle = NumberStyle.COMPACT,
+)
 
 /**
  * A perk of the Heart of the Mountain tree, as the game shows it in its menu.
@@ -57,6 +87,19 @@ object HotmLogic {
     private const val ENABLED = "ENABLED"
     private const val SELECTED = "SELECTED"
 
+    /** The perks the card always shows, in this order. */
+    private val HEADLINE = listOf("mining_speed", "mining_fortune", "titanium_insanium", "core_of_the_mountain")
+
+    /** The row of a perk: its name, its level and its maximum. */
+    private const val KEY_PERK = "mining.hotm.perk"
+
+    /** The row of the pickaxe ability that is equipped. */
+    private const val KEY_ABILITY = "mining.hotm.ability"
+
+    private const val KEY_POWDER_MITHRIL = "mining.hotm.powder.mithril"
+    private const val KEY_POWDER_GEMSTONE = "mining.hotm.powder.gemstone"
+    private const val KEY_POWDER_GLACITE = "mining.hotm.powder.glacite"
+
     /**
      * The perks of the tree, in the order the menu shows them. Empty when the items are not the tree (another
      * container, or the tree seen from another menu).
@@ -104,4 +147,46 @@ object HotmLogic {
         val max = match.groupValues[2].toIntOrNull()
         return level to max
     }
+
+    /**
+     * The rows of the mining card, in reading order.
+     *
+     * The card shows the perks that decide how fast the player mines, the ability that is equipped and the powder
+     * that is left. Every row is a translation key and its values: the names of the perks are the ones the game
+     * uses, so they are data, not text of the mod.
+     */
+    fun buildCard(
+        profile: ProfileMining,
+        layout: HotmLayout,
+        options: HotmOptions,
+    ): HotmContent {
+        val levels = profile.perks.associate { it.id to it.level }
+        val lines = ArrayList<HotmLine>(8)
+        for (id in HEADLINE) {
+            val perk = layout.perk(id) ?: continue
+            val level = levels[id] ?: continue
+            lines += HotmLine(KEY_PERK, listOf(perk.name, level.toString(), perk.maxLevel.toString()))
+        }
+        if (options.showAbility) {
+            profile.selectedAbility?.let { id -> layout.perk(id) }?.let { ability ->
+                lines += HotmLine(KEY_ABILITY, listOf(ability.name))
+            }
+        }
+        if (options.showPowders) {
+            lines += HotmLine(KEY_POWDER_MITHRIL, listOf(amount(profile.mithrilPowder, options.numberStyle)))
+            lines += HotmLine(KEY_POWDER_GEMSTONE, listOf(amount(profile.gemstonePowder, options.numberStyle)))
+            lines += HotmLine(KEY_POWDER_GLACITE, listOf(amount(profile.glacitePowder, options.numberStyle)))
+        }
+        if (lines.isEmpty()) return HotmContent.EMPTY
+        return HotmContent(TITLE_KEY, lines)
+    }
+
+    private fun amount(
+        value: Long,
+        style: NumberStyle,
+    ): String =
+        when (style) {
+            NumberStyle.COMPACT -> Numbers.compact(value.toDouble())
+            NumberStyle.GROUPED -> Numbers.grouped(value)
+        }
 }

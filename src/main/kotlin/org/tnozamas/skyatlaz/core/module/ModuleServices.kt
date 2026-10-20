@@ -1,5 +1,7 @@
 package org.tnozamas.skyatlaz.core.module
 
+import org.tnozamas.skyatlaz.api.profile.ProfileClient
+import org.tnozamas.skyatlaz.api.repo.NeuRepository
 import org.tnozamas.skyatlaz.api.repo.PriceRepository
 import org.tnozamas.skyatlaz.core.command.CommandRegistry
 import org.tnozamas.skyatlaz.core.config.ConfigManager
@@ -20,4 +22,6 @@ class ModuleServices(
     val prices: PriceRepository,
     val hud: HudManager,
     val keybinds: KeyBindManager,
+    val neu: NeuRepository,
+    val profiles: ProfileClient,
 )

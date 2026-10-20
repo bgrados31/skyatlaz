@@ -24,9 +24,45 @@ class NeuRepository(
 
     private val pending = HashMap<String, ArrayList<(NeuItem?) -> Unit>>()
     private val failures = HashMap<String, Long>()
+    private var layout: HotmLayout? = null
+    private var layoutPending: ArrayList<(HotmLayout?) -> Unit>? = null
 
     /** The parsed page if it is already in memory; never downloads. */
     fun cached(id: String): NeuItem? = normalize(id)?.let(cache::get)
+
+    /** The tree layout if it is already in memory; never downloads. */
+    fun cachedLayout(): HotmLayout? = layout
+
+    /** Loads the layout of the Heart of the Mountain tree. [callback] gets null when the download fails. */
+    fun loadLayout(callback: (HotmLayout?) -> Unit) {
+        layout?.let {
+            callback(it)
+            return
+        }
+        layoutPending?.let {
+            it.add(callback)
+            return
+        }
+        layoutPending = arrayListOf(callback)
+        http.get(LAYOUT_URL, MAX_AGE, HotmLayout::parse) { result ->
+            when (result) {
+                is HttpResult.Success -> {
+                    layout = result.value
+                    finishLayout(result.value)
+                }
+
+                is HttpResult.Failure -> {
+                    onProblem("Could not load the tree layout: ${result.error.message}")
+                    finishLayout(null)
+                }
+            }
+        }
+    }
+
+    private fun finishLayout(value: HotmLayout?) {
+        layoutPending?.forEach { it(value) }
+        layoutPending = null
+    }
 
     /** Loads [id] (any case) unless cached. [callback] gets null for invalid ids and load failures. */
     fun load(
@@ -84,6 +120,9 @@ class NeuRepository(
     companion object {
         /** Raw file for one item page, e.g. `.../items/HYPERION.json`. */
         const val ITEM_URL = "https://raw.githubusercontent.com/NotEnoughUpdates/NotEnoughUpdates-REPO/master/items/"
+
+        /** The layout of the Heart of the Mountain tree, the same community data. */
+        const val LAYOUT_URL = "https://raw.githubusercontent.com/NotEnoughUpdates/NotEnoughUpdates-REPO/master/constants/hotmlayout.json"
 
         fun urlFor(id: String): String = ITEM_URL + id + ".json"
 

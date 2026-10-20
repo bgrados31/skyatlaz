@@ -1,0 +1,57 @@
+{
+  "success": true,
+  "profiles": [
+    {
+      "profile_id": "6f1a2b3c-4d5e-6f70-8192-a3b4c5d6e7f8",
+      "cute_name": "TNOZamas",
+      "selected": true,
+      "members": {
+        "069a79f4-0000-4000-8000-000000000000": {
+          "skill_tree": {
+            "nodes": {
+              "mining_1": {
+                "mining_speed": 50,
+                "mining_fortune": 47,
+                "titanium_insanium": 24,
+                "core_of_the_mountain": 3,
+                "mining_speed_boost": 0,
+                "precision_mining": 0,
+                "pickobulus": 0,
+                "toggle_pickobulus": true
+              },
+              "mining_2": {
+                "sky_mall": 0,
+                "old_school": 8,
+                "professional": 18,
+                "mole": 18,
+                "gem_lover": 1,
+                "seasoned_mineman": 18,
+                "front_loaded": 0,
+                "daily_grind": 0,
+                "daily_powder": 0,
+                "toggle_sky_mall": true,
+                "toggle_daily_powder": true
+              },
+              "mining_3": {
+                "luck_of_the_cave": 1,
+                "efficient_miner": 67,
+                "quick_forge": 20
+              }
+            },
+            "selected_ability": {
+              "mining_1": "pickobulus"
+            },
+            "experience": {
+              "mining": 4213456
+            }
+          },
+          "mining_core": {
+            "powder_mithril": 184521,
+            "powder_gemstone": 96320,
+            "powder_glacite": 4096
+          }
+        }
+      }
+    }
+  ]
+}

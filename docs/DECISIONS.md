@@ -249,3 +249,20 @@ A single Fabric `HudElement` (`skyatlaz:hud`) draws all elements, which keeps th
 "no elements = no work" a single empty-list check. The editor hides the normal HUD to avoid double drawing and
 uses the same placement math as gameplay, so what is dragged is exactly what renders. Debug mode may add a
 `DebugHudPreview` element: it is the development fixture for the editor, not a player-facing feature.
+
+## 2026-10-21 - The profile of the player comes from the Hypixel API, with the developer key of the player
+The old v1 endpoint (/skyblock/profile/<uuid>) answers Unknown endpoint: it is gone, and the v2 one
+(/v2/skyblock/profiles?uuid=) answers Missing API-Key header, so a developer key is mandatory. The key of the
+player is a setting of the mod (general.api_key), never in the code and never in the repository; it travels in a
+header, so it never reaches the URL, the disk cache or a log. The uuid comes from the Mojang API with the name of
+the session (the same way Skyblocker does it) and is asked only once.
+
+The perks of the Heart of the Mountain come from that answer (skill_tree.nodes.mining_1..5, with the level of
+every perk and 	oggle_<id> for the ones that are switched off). The names and the maximum levels come from the
+community layout of the tree (constants/hotmlayout.json in NEU-REPO), fetched on demand like the item pages.
+The tree is still parsed out of the menu lore as well (eature/mining/hotm/HotmLogic): it is the path that works
+without a key and the only one that tells apart the perks that are locked from the ones that are bought.
+
+Consequence: the mining card needs the key of the player; without it the feature stays quiet instead of asking
+for something it cannot have. The feature is Allowed (it shows the data of the player, the same the game shows in
+the tree) but it stays off by default because it needs a key.

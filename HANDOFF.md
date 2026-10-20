@@ -46,7 +46,13 @@ time, reusing the shape proven by the first one.
 - The **whole tree is known** (49 perks) from the NEU-REPO layout (`references/neu-repo/constants/hotmlayout.json`:
   name, maximum level, position in the tree and powder of every perk). The owner's capture only had 19 of them: it
   was one scrolled view.
-- `.\gradlew spotlessApply check` green: **227 tests, 0 failures**.
+- **The mining tree card** (`feature/mining/hotm`): the perks that matter, the ability that is equipped and the
+  powder that is left, read from the profile API. The levels of the perks come from
+  `api.hypixel.net/v2/skyblock/profiles?uuid=` (the developer API key of the player, in the `API-Key` header) and the
+  names and the maximum levels from the community layout of the tree (`constants/hotmlayout.json` of NEU-REPO, fetched
+  on demand). The tree is also parsed out of the lore of the menu (`HotmLogic`), the path that works without a key.
+  Off by default: it needs the key of the player (`general.api_key` in the settings).
+- `.\gradlew spotlessApply check` green: **240 tests, 0 failures**.
 - `ModuleManager.refreshActivation()` is now really called (the entrypoint wires `SkyBlockStateChangeEvent` to it),
   so a module with an activation condition starts and stops with the shared state.
 - The UI sandbox (`ui/prototype`, `/skyatlaz debug ui`) is deleted with the owner's confirmation.
@@ -58,13 +64,11 @@ time, reusing the shape proven by the first one.
 ## Pending
 1. Phase 4 continues: the next vertical slices (HOTM tree, dungeon score, purse/bank tracker...). The purse/bank
    tracker does not need anything from the owner.
-2. **HOTM**: the levels of the perks that are not in the current view of the tree are still missing. Two ways to get
-   them, and the owner has to pick one:
-   - **Scroll + F7**: open the tree, scroll through the tiers and press F7 on each view (the names no longer
-     overwrite each other). The mod reads the levels from the lore of the container.
-   - **The profile API**: Skyblocker reads the tree with `https://api.hypixel.net/v2/skyblock/profiles?uuid=<uuid>`
-     and gets the uuid from the Mojang API with the name of the player. All the levels at once, no scrolling, but it
-     needs the network and a keyless call has to be confirmed.
+2. **HOTM**: the card is built and needs the developer API key of the player (the general settings of the mod). The
+   owner has one: paste it in `general.api_key`, turn on the "Mining tree HUD" module and the card shows the tree.
+   `/skyatlaz debug profile` prints the same data in the chat (it needs the debug mode on). The alternative without
+   a key is the lore of the menu: the tree is scrolled, so the owner presses **F7** on each view (the names no
+   longer overwrite each other) and the mod reads the levels of the visible perks.
 3. **Dungeon**: the owner's `dungeon.json` was taken 20 s into the run (`Time Elapsed: 20s`, `Cleared: 20% (32)`),
    so it has no score. The score arrives at the end of the run, in the chat (`You scored X points!`) and in the tab.
    A dump after the run is needed.
@@ -97,7 +101,9 @@ time, reusing the shape proven by the first one.
 - `src/main/kotlin/org/tnozamas/skyatlaz/ui/palette/` - the command palette (screen, pure search, key characters).
 - `src/main/kotlin/org/tnozamas/skyatlaz/core/debug/DebugCapture.kt` - saves the state as a dump, with a name from the screen.
 - `src/main/kotlin/org/tnozamas/skyatlaz/feature/mining/hotm/HotmLogic.kt` - the perks of the HOTM read from the lore
-  of the container.
+  of the container and the rows of the card.
+- `src/main/kotlin/org/tnozamas/skyatlaz/api/profile/` - the profile API (the key, the uuid, the perks of the tree).
+- `src/main/kotlin/org/tnozamas/skyatlaz/api/repo/HotmLayout.kt` - the layout of the tree (names, maximum levels).
 - `src/main/kotlin/org/tnozamas/skyatlaz/core/tooltip/TooltipLines.kt` - where features add lines to the item tooltip.
 - `src/main/java/org/tnozamas/skyatlaz/mixin/ScreenTooltipMixin.java` + `CreativeTooltipMixin.java` - the mixins that
   merge those lines (the creative screen builds its own tooltip and needs its own hook).

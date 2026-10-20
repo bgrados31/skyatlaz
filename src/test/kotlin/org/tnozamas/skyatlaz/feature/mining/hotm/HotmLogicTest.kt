@@ -1,9 +1,12 @@
 package org.tnozamas.skyatlaz.feature.mining.hotm
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.tnozamas.skyatlaz.api.profile.ProfileApi
+import org.tnozamas.skyatlaz.api.repo.HotmLayout
 import org.tnozamas.skyatlaz.core.debug.Snapshot
 import org.tnozamas.skyatlaz.util.LegacyText
 
@@ -81,5 +84,48 @@ class HotmLogicTest {
         val ignored = HotmLogic.parsePerk(Snapshot.Item("minecraft:paper", 1, "A crystal", listOf("A description"), null))
 
         assertNull(ignored)
+    }
+
+    @Test
+    fun `the card shows the perks of the tree with their level and their maximum`() {
+        val card = card()
+
+        val fortune = requireNotNull(card.lines.firstOrNull { it.args.contains("Mining Fortune") })
+
+        assertEquals(listOf("Mining Fortune", "47", "50"), fortune.args)
+    }
+
+    @Test
+    fun `the card shows the ability that is equipped`() {
+        val card = card()
+
+        assertTrue(card.lines.any { it.key == "mining.hotm.ability" && it.args == listOf("Pickobulus") })
+    }
+
+    @Test
+    fun `the card shows the powder that is left`() {
+        val card = card()
+
+        assertTrue(card.lines.any { it.key == "mining.hotm.powder.mithril" && it.args == listOf("184.52k") })
+    }
+
+    @Test
+    fun `the card can leave the powder out`() {
+        val card = card(HotmOptions(showPowders = false, showAbility = false))
+
+        assertTrue(card.lines.none { it.key.startsWith("mining.hotm.powder") })
+        assertTrue(card.lines.none { it.key == "mining.hotm.ability" })
+    }
+
+    /** The card of the profile of the fixture, with the layout of the fixture. */
+    private fun card(options: HotmOptions = HotmOptions()): HotmContent {
+        val profile =
+            ProfileApi.parseMining(
+                requireNotNull(javaClass.getResource("/fixtures/profile/profile.json")).readText(),
+                "069a79f4-0000-4000-8000-000000000000",
+            )
+        val layout =
+            HotmLayout.parse(requireNotNull(javaClass.getResource("/fixtures/profile/hotmlayout.json")).readText())
+        return HotmLogic.buildCard(profile, layout, options)
     }
 }

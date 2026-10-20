@@ -1,5 +1,7 @@
 package org.tnozamas.skyatlaz.core.module
 
+import org.tnozamas.skyatlaz.api.profile.ProfileClient
+import org.tnozamas.skyatlaz.api.repo.NeuRepository
 import org.tnozamas.skyatlaz.api.repo.PriceRepository
 import org.tnozamas.skyatlaz.core.command.CommandBuilder
 import org.tnozamas.skyatlaz.core.config.ConfigEntry
@@ -63,6 +65,18 @@ class ModuleContext internal constructor(
         track(services.prices.use())
         return services.prices
     }
+
+    /**
+     * The profile of the player, read from the Hypixel API. It needs the developer API key of the player; without
+     * it the answers are empty and nothing is requested.
+     */
+    fun useProfile(): ProfileClient = services.profiles
+
+    /**
+     * The community data repository: the pages of the items, their recipes and the layout of the mining tree. It is
+     * lazy: a page is downloaded only when a feature asks for it, so nothing has to be released.
+     */
+    fun useNeu(): NeuRepository = services.neu
 
     /** Shows [element] on the HUD and lets the player move it with `/skyatlaz hud` while the module runs. */
     fun hud(element: HudElement) {

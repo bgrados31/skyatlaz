@@ -1,0 +1,36 @@
+{
+  "hotm": {
+    "perks": {
+      "mining_speed": {
+        "name": "Mining Speed",
+        "x": 3,
+        "y": 9,
+        "maxLevel": 50
+      },
+      "mining_fortune": {
+        "name": "Mining Fortune",
+        "x": 3,
+        "y": 8,
+        "maxLevel": 50
+      },
+      "titanium_insanium": {
+        "name": "Titanium Insanium",
+        "x": 4,
+        "y": 8,
+        "maxLevel": 50
+      },
+      "core_of_the_mountain": {
+        "name": "Core of the Mountain",
+        "x": 0,
+        "y": 8,
+        "maxLevel": 10
+      },
+      "pickobulus": {
+        "name": "Pickobulus",
+        "x": 5,
+        "y": 8,
+        "maxLevel": 1
+      }
+    }
+  }
+}

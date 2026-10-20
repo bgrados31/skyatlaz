@@ -41,16 +41,26 @@ class HttpService(
         maxAge: Duration,
         parse: (String) -> T,
         callback: (HttpResult<T>) -> Unit,
+    ) = get(url, maxAge, emptyMap(), parse, callback)
+
+    /** As [get], but the request carries headers (the API key of the player, for example). */
+    fun <T : Any> get(
+        url: String,
+        maxAge: Duration,
+        headers: Map<String, String>,
+        parse: (String) -> T,
+        callback: (HttpResult<T>) -> Unit,
     ) {
         @Suppress("UNCHECKED_CAST")
         val waiter = Waiter(parse, callback as (HttpResult<Any>) -> Unit)
-        inFlight[url]?.let {
+        val key = flightKey(url, headers)
+        inFlight[key]?.let {
             it.add(waiter)
             return
         }
-        inFlight[url] = arrayListOf(waiter)
-        scheduler.async(work = { fetch(url, maxAge.toMillis()) }, onError = { finish(url, Result.failure(it)) }) { raw ->
-            finish(url, Result.success(raw))
+        inFlight[key] = arrayListOf(waiter)
+        scheduler.async(work = { fetch(url, maxAge.toMillis(), headers) }, onError = { finish(key, Result.failure(it)) }) { raw ->
+            finish(key, Result.success(raw))
         }
     }
 
@@ -61,14 +71,20 @@ class HttpService(
         callback: (HttpResult<String>) -> Unit,
     ) = get(url, maxAge, { it }, callback)
 
-    private fun finish(
+    /** Two requests only share the download when the URL and the headers are the same. */
+    private fun flightKey(
         url: String,
+        headers: Map<String, String>,
+    ): String = if (headers.isEmpty()) url else "$url|${headers.entries.sortedBy { it.key }}"
+
+    private fun finish(
+        key: String,
         raw: Result<Raw>,
     ) {
-        val waiters = inFlight.remove(url) ?: return
+        val waiters = inFlight.remove(key) ?: return
         val outcome = raw.getOrNull()
         if (outcome == null) {
-            val error = raw.exceptionOrNull() ?: IOException("Download failed for $url")
+            val error = raw.exceptionOrNull() ?: IOException("Download failed")
             for (waiter in waiters) waiter.callback(HttpResult.Failure(error))
             return
         }
@@ -84,17 +100,18 @@ class HttpService(
     private fun fetch(
         url: String,
         maxAgeMillis: Long,
+        headers: Map<String, String>,
     ): Raw {
         val now = clock()
         val cached = cache?.read(url)
         if (cached != null && now - cached.fetchedAt < maxAgeMillis) return Raw(cached.body, fromCache = true, stale = false)
 
-        val headers = HashMap<String, String>()
-        cached?.etag?.let { headers["If-None-Match"] = it }
-        cached?.lastModified?.let { headers["If-Modified-Since"] = it }
+        val requestHeaders = HashMap(headers)
+        cached?.etag?.let { requestHeaders["If-None-Match"] = it }
+        cached?.lastModified?.let { requestHeaders["If-Modified-Since"] = it }
         val response =
             try {
-                transport.get(url, headers)
+                transport.get(url, requestHeaders)
             } catch (error: Throwable) {
                 error.rethrowIfFatal()
                 return cached?.let { Raw(it.body, fromCache = true, stale = true) } ?: throw error
