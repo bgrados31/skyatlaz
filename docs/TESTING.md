@@ -29,6 +29,11 @@ sandbox feeds the same state from fixtures.
 2. Copy useful dumps to `src/test/resources/fixtures/<area>/` and write a test against them.
 3. Every bug found in game becomes a fixture + failing test first, then the fix.
 
+**When the state only exists in an open inventory** (the Heart of the Mountain tree), the chat is blocked and the
+command cannot be typed. Press **F7** instead (the capture binding, which fires with a screen open): it saves the same
+dump, named after the title of the container (`Heart of the Mountain` -> `heart_of_the_mountain`) or, with no container
+open, after the area. The binding can be changed in the "Controls" tab.
+
 ## Run tasks
 All inherit the client run (DevAuth included). IntelliJ gets matching run configs after a Gradle sync.
 | Task | Starts at |

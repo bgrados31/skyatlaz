@@ -24,6 +24,8 @@
   "skyatlaz.config.general.debug_mode.description": "Show developer tools under /skyatlaz debug.",
   "skyatlaz.config.general.debug_mode.name": "Debug mode",
   "skyatlaz.config.hint": "Esc closes",
+  "skyatlaz.config.keybind.capture_state.description": "Save the state as a dump. Works with an inventory open, for the states that only live there.",
+  "skyatlaz.config.keybind.capture_state.name": "Capture state",
   "skyatlaz.config.keybind.open_command_palette.description": "Open the command palette, a search over every command.",
   "skyatlaz.config.keybind.open_command_palette.name": "Command palette",
   "skyatlaz.config.keybind.open_settings.description": "Open the SkyAtlaz settings screen.",

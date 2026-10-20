@@ -15,6 +15,14 @@ client dispatcher answers it before the server sees it; a command that needs an 
 instead, with the cursor ready for the argument. Consequence: the palette never needs its own executor, and the
 vanilla suggestions still work in the chat it opens.
 
+## 2026-10-21 - A key binding that works with a screen open
+Some states only exist while a container is open (the Heart of the Mountain tree is an inventory), and with a container
+open the chat is blocked, so the player cannot type the dump command. `KeyBind` grew a `worksInScreen` flag: those
+bindings are polled even while a screen is open, because they read the key state and not the key events. The capture
+key (F7 by default) saves the state as a dump, named after the title of the open container ("Heart of the Mountain" ->
+`heart_of_the_mountain`) or, with no container open, after the area of the player. Consequence: the states that need an
+open inventory can be captured without the chat; the binding can be changed in the "Controls" tab like any other.
+
 ## 2026-10-21 - The price lines are shared in `util`, not owned by a feature
 Two features show prices (the item tooltip and the card of the item in hand) and features must not import each
 other, so the logic that turns the known prices into translatable lines lives in `util.PriceLines` (`ItemPrices`,

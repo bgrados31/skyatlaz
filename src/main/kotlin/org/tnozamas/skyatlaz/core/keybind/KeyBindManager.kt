@@ -90,13 +90,16 @@ class KeyBindManager(
     /**
      * Polls the keys once per tick and fires the bindings that were just pressed. Does nothing when no feature has a
      * binding, so a disabled feature costs nothing.
+     *
+     * A screen owns the keyboard while it is open, so the bindings that ask for it (the capture of an inventory, for
+     * one) still fire: they read the key state, not the events.
      */
     fun tick(window: Window) {
         if (binds.isEmpty()) return
-        // A screen owns the keyboard while it is open.
-        if (Minecraft.getInstance().gui.screen() != null) return
+        val screen = Minecraft.getInstance().gui.screen()
         val pressed = KeyModifiers.pressed(window)
         for (binding in binds.values) {
+            if (screen != null && !binding.bind.worksInScreen) continue
             val combo = binding.combo
             val down =
                 combo.isBound &&

@@ -63,11 +63,16 @@ object Chat {
         message: Component,
     ) = add(format(kind, message))
 
+    @Suppress("UNNECESSARY_SAFE_CALL")
     private fun add(message: Component) {
-        Minecraft
-            .getInstance()
-            .gui.hud.chat
-            .addClientSystemMessage(message)
+        // The GUI is not there yet while the mod starts, so a message then would crash the client.
+        val chat =
+            Minecraft
+                .getInstance()
+                .gui
+                ?.hud
+                ?.chat ?: return
+        chat.addClientSystemMessage(message)
     }
 
     private const val SEPARATOR = " › "

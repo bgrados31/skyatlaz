@@ -30,6 +30,8 @@ time, reusing the shape proven by the first one.
   selected one; a command that needs an argument is typed into the chat. The key that opens it is dropped from the
   search field (it arrives as a character too), and the palette reads the command tree, so it also shows the commands
   a module adds while it runs. Pure `CommandPaletteLogic` (8 tests) + `KeyCharacters` (3 tests).
+- **A capture binding** (F7 by default, `worksInScreen`): saves the state as a dump while a screen is open, named
+  after the container title or the area. It is how the HOTM tree (an inventory) can be captured. 4 tests.
 - **The price lines are shared** in `util.PriceLines` (`ItemPrices`, `PriceOptions`, `PriceLine`), because two
   features cannot import each other. The translation keys moved with them (`economy.price.*`), so the tooltip and
   the card say the same thing. The tooltip feature's old `ItemPriceLogic` is gone (its test moved to
@@ -37,7 +39,7 @@ time, reusing the shape proven by the first one.
 - `ModuleManager.refreshActivation()` is now really called (the entrypoint wires `SkyBlockStateChangeEvent` to it),
   so a module with an activation condition starts and stops with the shared state.
 - The UI sandbox (`ui/prototype`, `/skyatlaz debug ui`) is deleted with the owner's confirmation.
-- `.\gradlew spotlessApply check` green: **211 tests, 0 failures**.
+- `.\gradlew spotlessApply check` green: **215 tests, 0 failures**.
 - Verified in `runWorld` (screenshots `60`-`87` in `run/verify/`, git-ignored): the HUD card, the config screen with
   the new tab bar, the "Controls" tab, capturing F6 with the mouse and the keyboard, the key saved in the config
   (`keybind.open_settings.key: 295`) and F6 opening the settings screen from the world.
@@ -46,7 +48,9 @@ time, reusing the shape proven by the first one.
 1. Phase 4 continues: the next vertical slices (HOTM tree, dungeon score, purse/bank tracker...). HOTM and the
    dungeon need the owner's dumps; the purse/bank tracker and the command palette do not.
 2. Phase 2 leftovers: HOTM/dungeon state once the owner captures `hotm` (menu open) and `dungeon` (mid-run) dumps
-   on Hypixel. The owner also still owes the `/skyatlaz debug hypixel` output (Mod API location + party).
+   on Hypixel. The HOTM tree is an inventory, and with it open the chat is blocked: press **F7** (the capture binding,
+   which works with a screen open) and the dump is saved as `heart_of_the_mountain`. The owner also still owes the
+   `/skyatlaz debug hypixel` output (Mod API location + party).
 3. World rendering is still missing: 26.2 replaced the old render events and Fabric does not expose the new
    submit-node API yet, so `ui.render` covers the GUI only.
 4. Commit only when the owner asks. Everything is uncommitted; HEAD is `f561307`.
@@ -73,6 +77,7 @@ time, reusing the shape proven by the first one.
 - `src/main/kotlin/org/tnozamas/skyatlaz/feature/economy/heldprice/` - the held item card (module, config, pure logic, HUD).
 - `src/main/kotlin/org/tnozamas/skyatlaz/util/PriceLines.kt` - the price lines shared by the two price features.
 - `src/main/kotlin/org/tnozamas/skyatlaz/ui/palette/` - the command palette (screen, pure search, key characters).
+- `src/main/kotlin/org/tnozamas/skyatlaz/core/debug/DebugCapture.kt` - saves the state as a dump, with a name from the screen.
 - `src/main/kotlin/org/tnozamas/skyatlaz/core/tooltip/TooltipLines.kt` - where features add lines to the item tooltip.
 - `src/main/java/org/tnozamas/skyatlaz/mixin/ScreenTooltipMixin.java` + `CreativeTooltipMixin.java` - the mixins that
   merge those lines (the creative screen builds its own tooltip and needs its own hook).
@@ -84,7 +89,7 @@ time, reusing the shape proven by the first one.
 - `docs/PROGRESS.md`, `docs/ARCHITECTURE.md`, `docs/CONVENTIONS.md`, `docs/DECISIONS.md` - updated.
 
 ## Commands
-- `.\gradlew check` - Spotless + 211 tests.
+- `.\gradlew check` - Spotless + 215 tests.
 - `.\gradlew runWorld` - dev client; agent mods need `skyatlaz.agentMods=true`.
 - `node tools/agent/bridge.mjs` - MCP Fabric bridge on `127.0.0.1:25599` (`cmd`, `chat`, `screenshot`, `call`).
 - `.\run\agent-input.ps1 -X <clientX> -Y <clientY>` - Win32 click/keys/typing for the dev window (git-ignored

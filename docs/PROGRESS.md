@@ -55,7 +55,9 @@ Update this file at the end of every session: what changed, what is next, open q
   Screenshots in `run/verify/` (git-ignored).
 - Real dumps captured and added as fixtures: `hub`, `island`, `mines` (`src/test/resources/fixtures/skyblock/`).
 - Still wanted from the owner: `/skyatlaz debug hypixel` output (Mod API location + party) and dumps for
-  `hotm` (menu open) and `dungeon` (mid-run), ideally `hollows`, `garden` and a party.
+  `hotm` (menu open) and `dungeon` (mid-run), ideally `hollows`, `garden` and a party. The `hotm` one is the tree
+  of the Heart of the Mountain, an inventory: open it and press F7 (the capture binding, which works with a screen
+  open) to save it as `heart_of_the_mountain`.
 - Owner preferences learned: talk in Spanish; UI must be calm and typographic (soft palette, no decorative icons,
   blank-line spacing; see DECISIONS "Gradient identity"); verify UI in game with screenshots before committing.
 
@@ -186,6 +188,11 @@ Update this file at the end of every session: what changed, what is next, open q
   bits/bank), the "Status HUD" and "Modules" tabs of the config screen, the `UiChoice` number format (compact vs
   grouped, applied live), Reset, the module toggle removing the card, and the HUD editor listing both elements.
   The debug card moved to the top right corner so it no longer overlaps the player facing one.
+- 2026-10-21: A key binding that works with a screen open (F7 by default) saves the state as a dump, so the
+  states that only live in an open inventory (the Heart of the Mountain tree) can be captured without the chat, which
+  is blocked while a container is open. The dump is named after the title of the container or, without one, after the
+  area. Also fixed a crash: a message written before the game GUI exists (a key conflict found while starting) killed
+  the client. 215 tests, `check` green.
 - 2026-10-21: Third vertical slice, `economy/heldprice`: a card on the HUD with the item in the player's hand and
   what it is worth (bazaar instant sell, lowest BIN, NPC price, each one can be turned off). The hand is read once
   per client tick and compared by reference, so the card follows the player switching items and the prices are only

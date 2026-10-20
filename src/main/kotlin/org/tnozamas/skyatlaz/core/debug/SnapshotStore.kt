@@ -45,5 +45,8 @@ class SnapshotStore(
     companion object {
         /** Also what the `dump` command accepts, so names are safe file names on every OS. */
         val NAME_PATTERN = Regex("[a-z0-9_-]{1,48}")
+
+        /** The longest name the pattern accepts. */
+        const val NAME_PATTERN_MAX = 48
     }
 }

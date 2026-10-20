@@ -25,6 +25,7 @@ import org.tnozamas.skyatlaz.core.command.CommandRegistry
 import org.tnozamas.skyatlaz.core.config.ConfigManager
 import org.tnozamas.skyatlaz.core.config.GeneralConfig
 import org.tnozamas.skyatlaz.core.debug.ChatRecorder
+import org.tnozamas.skyatlaz.core.debug.DebugCapture
 import org.tnozamas.skyatlaz.core.debug.DebugCommands
 import org.tnozamas.skyatlaz.core.debug.DebugHudPreview
 import org.tnozamas.skyatlaz.core.debug.SnapshotStore
@@ -57,6 +58,9 @@ object SkyAtlaz : ClientModInitializer {
 
     /** The binding that opens the command palette. */
     const val PALETTE_KEYBIND = "open_command_palette"
+
+    /** The binding that saves the state as a dump. */
+    const val CAPTURE_KEYBIND = "capture_state"
 
     @JvmField
     val LOGGER: Logger = LoggerFactory.getLogger(MOD_ID)
@@ -218,5 +222,10 @@ object SkyAtlaz : ClientModInitializer {
         HttpDebugCommands(HTTP).register(COMMANDS)
         PriceDebugCommands(PRICES, SCHEDULER, EVENTS).register(COMMANDS)
         NeuDebugCommands(NEU).register(COMMANDS)
+        // A core binding: save the state as a dump. It fires with a screen open, because some states (the Heart of the
+        // Mountain tree) only exist while an inventory is open, and then the chat is blocked.
+        KEYBINDS.register(KeyBind(CAPTURE_KEYBIND, KeyCombo(InputConstants.KEY_F7), worksInScreen = true)) {
+            DebugCapture.save(SCHEDULER, recorder, dumps, SKYBLOCK.state.area)
+        }
     }
 }
