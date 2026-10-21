@@ -1,6 +1,6 @@
 ---
 name: skyblock-refs
-description: Use when you need to know how other Hypixel SkyBlock mods (Skyblocker, SkyHanni, Firmament), the Hypixel Mod API or NEU-REPO data solve or represent something (chat patterns, scoreboard parsing, item ids, dungeon logic, mixin targets). Token-efficient lookup in references/.
+description: Use when you need to know how other Hypixel SkyBlock mods (Skyblocker, SkyHanni, Firmament), the Hypixel Mod API, the Hypixel public API (v2) or NEU-REPO data solve or represent something (chat patterns, scoreboard parsing, item ids, dungeon logic, mixin targets). Token-efficient lookup in references/ and docs/api/.
 ---
 
 # Looking things up in reference mods
@@ -15,6 +15,7 @@ source file: `path | declared types`.
 | `references/firmament` | Firmament (clean modern Fabric code) | Kotlin |
 | `references/hypixel-mod-api` | Official Mod API: packets and fields | Java |
 | `references/neu-repo` | Item/mob/constant data (JSON) | Data |
+| `docs/api/INDEX.md` | The Hypixel public API (v2): the endpoints, the key and the shape of the answers (the spec is `docs/api/hypixel-swagger.json`) | Doc |
 
 If `references/` is missing or stale: `node tools/refs/sync.mjs` (or `node tools/refs/sync.mjs skyhanni`).
 
