@@ -1,0 +1,28 @@
+{
+  "uuid": "01234567-89ab-cdef-0123-456789abcdef",
+  "name": "TNOZamas",
+  "mining": {
+    "perks": {
+      "mining_speed": 50,
+      "compact_mining": 3
+    },
+    "toggles": {
+      "mining_speed": true,
+      "compact_mining": false
+    },
+    "ability": "pickobulus",
+    "powder": {
+      "mithril": 1234,
+      "gemstone": 56
+    }
+  },
+  "dungeons": {
+    "catacombs": {
+      "completed": 3
+    }
+  },
+  "currencies": {
+    "coin": 42
+  },
+  "fetched_at": 1700000000000
+}

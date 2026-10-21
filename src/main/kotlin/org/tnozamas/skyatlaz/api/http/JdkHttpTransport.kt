@@ -25,16 +25,37 @@ class JdkHttpTransport(
     override fun get(
         url: String,
         headers: Map<String, String>,
-    ): HttpResponse {
-        val request =
+    ): HttpResponse = send(request(url, headers) { it.GET() })
+
+    override fun post(
+        url: String,
+        headers: Map<String, String>,
+        body: String,
+    ): HttpResponse =
+        send(
+            request(url, headers) {
+                it.header("Content-Type", "application/json")
+                it.POST(HttpRequest.BodyPublishers.ofString(body))
+            },
+        )
+
+    private fun request(
+        url: String,
+        headers: Map<String, String>,
+        body: (HttpRequest.Builder) -> Unit,
+    ): HttpRequest {
+        val builder =
             HttpRequest
                 .newBuilder(URI.create(url))
                 .timeout(TIMEOUT)
                 .header("User-Agent", userAgent)
                 .header("Accept-Encoding", "gzip")
                 .apply { headers.forEach { (name, value) -> header(name, value) } }
-                .GET()
-                .build()
+        body(builder)
+        return builder.build()
+    }
+
+    private fun send(request: HttpRequest): HttpResponse {
         val response = client.send(request, BodyHandlers.ofByteArray())
         val responseHeaders =
             response

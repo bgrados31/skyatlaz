@@ -18,6 +18,8 @@ import org.tnozamas.skyatlaz.api.repo.NeuDebugCommands
 import org.tnozamas.skyatlaz.api.repo.NeuRepository
 import org.tnozamas.skyatlaz.api.repo.PriceDebugCommands
 import org.tnozamas.skyatlaz.api.repo.PriceRepository
+import org.tnozamas.skyatlaz.api.service.ServiceClient
+import org.tnozamas.skyatlaz.api.service.ServiceDebugCommands
 import org.tnozamas.skyatlaz.core.command.BuiltinCommands
 import org.tnozamas.skyatlaz.core.command.CommandHelp
 import org.tnozamas.skyatlaz.core.command.CommandInstaller
@@ -117,11 +119,15 @@ object Skyatlaz : ClientModInitializer {
             .orElse("dev")
     }
 
+    /** The one network client of the mod. */
+    @JvmField
+    val TRANSPORT = JdkHttpTransport("skyatlaz/$VERSION (Hypixel SkyBlock mod)")
+
     /** All downloads: shared client, disk cache in `<game dir>/skyatlaz/cache`, results on the client thread. */
     @JvmField
     val HTTP =
         HttpService(
-            transport = JdkHttpTransport("skyatlaz/$VERSION (Hypixel SkyBlock mod)"),
+            transport = TRANSPORT,
             cache =
                 HttpCache(
                     FabricLoader
@@ -144,6 +150,13 @@ object Skyatlaz : ClientModInitializer {
     /** NEU-REPO item pages and recipes, fetched per item on demand. */
     @JvmField
     val NEU = NeuRepository(HTTP, onProblem = { message -> LOGGER.warn(message) })
+
+    /**
+     * The skyatlaz service: the only holder of the Hypixel developer key. The mod signs a challenge with the
+     * Minecraft profile key pair and reads the profile of the player, never a key.
+     */
+    @JvmField
+    val SERVICE = ServiceClient(TRANSPORT, SCHEDULER) { GeneralConfig.serviceUrl.value }
 
     /** Parsed SkyBlock state (area, profile, purse...); features read `SKYBLOCK.state` or its change events. */
     @JvmField
@@ -224,6 +237,7 @@ object Skyatlaz : ClientModInitializer {
         HttpDebugCommands(HTTP).register(COMMANDS)
         PriceDebugCommands(PRICES, SCHEDULER, EVENTS).register(COMMANDS)
         NeuDebugCommands(NEU).register(COMMANDS)
+        ServiceDebugCommands(SERVICE, SCHEDULER).register(COMMANDS)
         // A core binding: save the state as a dump. It fires with a screen open, because some states (the Heart of the
         // Mountain tree) only exist while an inventory is open, and then the chat is blocked.
         KEYBINDS.register(KeyBind(CAPTURE_KEYBIND, KeyCombo(InputConstants.KEY_F7), worksInScreen = true)) {
