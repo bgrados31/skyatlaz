@@ -10,6 +10,20 @@ their own key is not a thing a mod can ask. The file is here to know what exists
 
 ## The rules of Hypixel about the keys (https://developer.hypixel.net/policies)
 
+The developer dashboard says it even more plainly, in the "App Type" section:
+
+> **"API Keys are not intended to be used and shared with 3rd party mods or services, we will not grant
+> applications for this purpose."**
+> **"API Applications must first be reviewed and approved before they can be used."**
+> A **Personal** key is "suitable for individual, non-monetized projects, including public websites, that do not need
+> team management or increased rate limits"; a **Production** key is "for monetized projects, team-managed projects,
+> and applications that need to request increased rate limits" and "need to be reviewed before they can be used".
+
+→ A mod that other people install is a third party service, so Hypixel would not approve an application for it. The
+API is for **a service of your own** (a website, a bot, a dashboard for your own profile), not for a client mod. That
+is not a detail of the mod: it is the reason no feature can depend on the API.
+
+The rest of the policy that shapes the decision:
 - **"Do not share your API key with 3rd parties, such as entering them into a website or a mod. This applies to any
   publicly available mod, regardless of it being allowed on the Hypixel Server."** and **"Do not include your API key
   in your code, especially if you plan to distribute a binary or have the code available publicly"**.
