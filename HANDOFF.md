@@ -11,9 +11,10 @@ time, reusing the shape proven by the first one.
 ## Done
 - **One rhythm** (`ui.theme.Spacing`): `TIGHT`, `GAP`, `GAP_WIDE`, `PAD`, `PAD_WIDE`, `MARGIN`. The widget kit
   (`UiMetrics`), the HUD cards (`StatusHud`, `DebugHudPreview`) and the settings screen take their values from it.
-- **`ui.render`**: `Shapes` (fill/outline/panel/text with theme colors, no raw ARGB in features) and `CachedText`
-  (builds a component when the value changes, reuses it every frame; 3 tests). `KeyNames` writes a combination
-  ("Shift + F9") with the vanilla key names.
+- **`ui.render`**: `KeyNames` writes a key combination ("Shift + F9") with the vanilla key names. The drawing
+  primitives that used to be here (`Shapes`, `CachedText`) are gone: no card used them (the cards draw with the theme
+  colors directly) and the alpha of the panel and the border of a card now lives in the theme
+  (`Theme.cardPanel()`, `Theme.cardBorder()`), so it is written once and not in every card.
 - **Key bindings** (`core.keybind`): `KeyCombo` (key code + modifiers, packed into one config number), `KeyBind`
   (id + default + texts) and `KeyBindManager` (registry, persistence in `keybind.<id>.key`, conflict detection, one
   poll per client tick). Features bind through `ctx.keyBind(bind) { }`; a binding only exists while the feature runs,
@@ -119,7 +120,7 @@ time, reusing the shape proven by the first one.
 - `NumberStyle` moved to `util` (it is shared by two features now).
 ## Files
 - `src/main/kotlin/org/tnozamas/skyatlaz/ui/theme/Spacing.kt` - the shared rhythm.
-- `src/main/kotlin/org/tnozamas/skyatlaz/ui/render/` - `Shapes`, `CachedText`, `KeyNames`.
+- `src/main/kotlin/org/tnozamas/skyatlaz/ui/render/` - `KeyNames`.
 - `src/main/kotlin/org/tnozamas/skyatlaz/core/keybind/` - `KeyCombo`, `KeyBind`, `KeyBindManager`, `KeyModifiers`.
 - `src/main/kotlin/org/tnozamas/skyatlaz/ui/component/UiKeyBind.kt` - the row that captures a key.
 - `src/main/kotlin/org/tnozamas/skyatlaz/ui/config/ConfigScreen.kt` - the "Controls" tab, the search field in the

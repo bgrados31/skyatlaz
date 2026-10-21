@@ -48,7 +48,7 @@ Update this file at the end of every session: what changed, what is next, open q
   the item features can be tried offline. It also loads the `hub` dump when the world is not on SkyBlock (the price
   module only runs on SkyBlock), and the chat says when the prices arrive.
 - The base is closed: `ui.theme.Spacing` owns the rhythm of every layout (the widget kit, the HUD cards and the
-  settings screen take their gaps from it), `ui.render` has the shared drawing primitives (`Shapes`, `CachedText`)
+  settings screen take their gaps from it), `ui.render` has `KeyNames` (the name of a key combination)
   and `core.keybind` is a full key binding system (registry, persistence in `keybind.<id>.key`, conflicts, one poll
   per tick, rebinding in the settings screen). 189 tests, all green.
 - Key bindings are ours, not the vanilla `KeyMapping`: a binding only exists while its feature runs, fires on the

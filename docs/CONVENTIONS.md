@@ -29,7 +29,7 @@ create a shared component first:
 | Hypixel server data | `api.hypixel` |
 | Game state (island, profile...) | `skyblock` |
 | Threads, delays, throttling | `core.scheduler` |
-| Text/chat/item parsing, number format | `util`: `ChatPattern` (prefilter + regex), `Numbers`, `LegacyText`, `RarityLine`, `SkyBlockItemData` |
+| Text/chat/item parsing, number format | `util`: `ChatPattern` (prefilter + regex), `Numbers`, `LegacyText`, `SkyBlockItemData` |
 | Price lines (the price of an item as rows) | `util.PriceLines` (shared: two features cannot import each other) |
 | User-facing text | `i18n.Tr` |
 | Gradient text | `Component.withGradient(Theme.X_GRADIENT)` |

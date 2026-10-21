@@ -37,10 +37,10 @@ ui/
                                slider, choice, text field, key bind, button; focus and keyboard navigation
   config/            [done]    ConfigScreen backed by ConfigEntry metadata; ConfigCommand (`/skyatlaz config`)
   palette/           [done]    CommandPaletteScreen: fuzzy search over the command tree (Ctrl+K) + its pure search
-  render/            [done]    Shapes (drawing primitives with theme colors) + CachedText (text built on change).
+  render/            [done]    KeyNames (the name of a key combination).
                                 World rendering waits: 26.2 has no Fabric world render event yet
 util/                [done]    LegacyText, Numbers (parse/compact/grouped/roman), ChatPattern (+ ctx.onChat),
-                               RarityLine + Rarity, SkyBlockItemData (custom_data), PriceLines (the price of an
+                               Rarity, SkyBlockItemData (custom_data), PriceLines (the price of an
                                item as translatable rows, shared by the price features)
 mixin/ (Java)        [done]    Mixins: accessors, or guard + forward to Kotlin; no logic. PlayerTabOverlayAccessor,
                                 ScreenTooltipMixin, CreativeTooltipMixin (item tooltip lines)
@@ -212,8 +212,9 @@ override fun onEnable(ctx: ModuleContext) {
 ## Rendering [partial]
 - HUD elements re-compute their content when their data changes, not every frame. Rendering only draws.
 - No allocations per frame: reuse buffers, precompute strings/components, cache text widths.
-- `ui.render` holds the shared drawing primitives (`Shapes`, with theme colors instead of raw ARGB) and
-  `CachedText`, which builds a component when its value changes and reuses it every frame.
+- `ui.render` holds `KeyNames`, which writes a key combination with the vanilla key names. The cards draw with the
+  theme colors directly and the alpha of a card panel comes from the theme (`Theme.cardPanel()`), so there is one
+  place where the look of a card is written.
 - World render helpers are still missing: 26.2 replaced the old render events and Fabric does not expose the new
   submit-node API yet, so nothing in the mod needs them for now.
 

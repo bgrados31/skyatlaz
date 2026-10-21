@@ -37,8 +37,8 @@ class StatusHud : HudElement("skyblock.statushud", defaultX = 0.01, defaultY = 0
         if (dirty) rebuild()
         if (texts.isEmpty()) return
         val font = Minecraft.getInstance().font
-        context.fill(0, 0, width, height, Theme.argb(Theme.SURFACE, 190))
-        context.outline(0, 0, width, height, Theme.argb(Theme.BORDER, 140))
+        context.fill(0, 0, width, height, Theme.cardPanel())
+        context.outline(0, 0, width, height, Theme.cardBorder())
         var y = PADDING
         for (index in texts.indices) {
             val color = if (index == 0) Theme.TEXT else Theme.TEXT_MUTED

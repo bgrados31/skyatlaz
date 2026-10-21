@@ -63,4 +63,13 @@ object Theme {
         rgb: Int,
         alpha: Int = 255,
     ): Int = (alpha.coerceIn(0, 255) shl 24) or (rgb and 16777215)
+
+    /**
+     * The panel of a card on the screen, with its alpha. Every card draws the same one, so the alpha lives here
+     * and not in the cards.
+     */
+    fun cardPanel(): Int = argb(SURFACE, 190)
+
+    /** The border of a card on the screen, with its alpha. */
+    fun cardBorder(): Int = argb(BORDER, 140)
 }
