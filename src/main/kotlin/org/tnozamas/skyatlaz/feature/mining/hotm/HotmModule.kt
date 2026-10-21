@@ -2,80 +2,71 @@ package org.tnozamas.skyatlaz.feature.mining.hotm
 
 import net.minecraft.client.Minecraft
 import org.tnozamas.skyatlaz.SkyAtlaz
-import org.tnozamas.skyatlaz.api.profile.ProfileMining
 import org.tnozamas.skyatlaz.api.repo.HotmLayout
+import org.tnozamas.skyatlaz.core.debug.SnapshotCapture
 import org.tnozamas.skyatlaz.core.module.FeatureCategory
 import org.tnozamas.skyatlaz.core.module.Module
 import org.tnozamas.skyatlaz.core.module.ModuleContext
-import org.tnozamas.skyatlaz.util.NumberStyle
+import org.tnozamas.skyatlaz.util.LegacyText
 
 /**
- * Shows the mining tree of the player: the perks that matter, the ability that is equipped and the powder that is
- * left, as a card on the HUD.
+ * Shows the mining tree of the player: the perks that matter and the ability that is equipped, as a card on the HUD.
  *
- * Hypixel rules tier: Allowed. It reads the profile of the player with the API key of the player (their own data,
- * the same one the game shows in the tree) and the community layout of the tree; it never touches the data of
- * another player.
+ * Hypixel rules tier: Allowed. It reads the menu of the tree that the player has open, the same information the game
+ * shows, and the community layout of the tree (the names and the maximum levels of the perks). It never touches the
+ * data of another player and it never asks the Hypixel API for anything.
  *
- * The card needs the developer API key of the player (in the general settings). Without it the feature stays quiet
- * and the card shows nothing. The profile is read from the network once every few minutes and the card is rebuilt
- * only when it changes.
+ * The tree is an inventory, so the perks are only there while the menu is open: the module reads the open menu once
+ * a second and the card follows it. It costs nothing when the menu is closed (a title check per second).
  */
 object HotmModule : Module("mining.hotm", FeatureCategory.MINING) {
     override val config: HotmConfig = HotmConfig
 
-    /** It needs the API key of the player, so it does not start on its own. */
-    override val enabledByDefault: Boolean = false
+    /** It only shows what the player has open, so it is safe and useful for everyone. */
+    override val enabledByDefault: Boolean = true
 
     override fun isActive(): Boolean = SkyAtlaz.SKYBLOCK.state.onSkyBlock
 
     override fun onEnable(ctx: ModuleContext) {
         val hud = HotmHud()
         ctx.hud(hud)
-        val profile = ctx.useProfile()
         val neu = ctx.useNeu()
 
         var layout: HotmLayout? = null
-        var mining: ProfileMining? = null
+        var perks: List<HotmPerk> = emptyList()
 
         fun rebuild() {
-            val tree = layout
-            val data = mining
-            val content =
-                if (tree == null || data == null) {
-                    HotmContent.EMPTY
-                } else {
-                    HotmLogic.buildCard(data, tree, options())
+            hud.update(HotmLogic.buildCard(perks, layout, options()))
+        }
+
+        // The layout only adds the maximum of the perks that are at their maximum; the lore of the others says it.
+        neu.loadLayout { loaded ->
+            layout = loaded
+            rebuild()
+        }
+
+        ctx.every(READ_TICKS) {
+            val container = SnapshotCapture.container(Minecraft.getInstance())
+            val title = container?.title?.let { LegacyText.strip(it) }
+            if (title != HotmLogic.TITLE) {
+                if (perks.isNotEmpty()) {
+                    perks = emptyList()
+                    rebuild()
                 }
-            hud.update(content)
-        }
-
-        fun load() {
-            neu.loadLayout { loaded ->
-                layout = loaded
-                rebuild()
+                return@every
             }
-            profile.loadMining(Minecraft.getInstance().user.name) { loaded ->
-                mining = loaded
+            val open = HotmLogic.parse(container.slots.values.toList())
+            if (open != perks) {
+                perks = open
                 rebuild()
             }
         }
 
-        ctx.every(REFRESH_TICKS) { load() }
-        ctx.watch(HotmConfig.showPowders) { rebuild() }
         ctx.watch(HotmConfig.showAbility) { rebuild() }
-        ctx.watch(HotmConfig.numberStyle) { rebuild() }
-
-        load()
     }
 
-    private fun options(): HotmOptions =
-        HotmOptions(
-            showPowders = HotmConfig.showPowders.value,
-            showAbility = HotmConfig.showAbility.value,
-            numberStyle = HotmConfig.numberStyle.value,
-        )
+    private fun options(): HotmOptions = HotmOptions(showAbility = HotmConfig.showAbility.value)
 }
 
-/** Five minutes between reads; the profile of a player changes slowly. */
-private const val REFRESH_TICKS = 6000
+/** A second between reads: the menu does not change faster than that and the tree is read only while it is open. */
+private const val READ_TICKS = 20

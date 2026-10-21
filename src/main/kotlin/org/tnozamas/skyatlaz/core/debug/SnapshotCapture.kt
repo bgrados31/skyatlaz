@@ -73,7 +73,7 @@ object SnapshotCapture {
     }
 
     /** The open chest-like menu without the player's own inventory slots. */
-    private fun container(minecraft: Minecraft): Snapshot.Container? {
+    fun container(minecraft: Minecraft): Snapshot.Container? {
         val screen = minecraft.gui.screen() as? AbstractContainerScreen<*> ?: return null
         val slots = HashMap<Int, Snapshot.Item>()
         var size = 0

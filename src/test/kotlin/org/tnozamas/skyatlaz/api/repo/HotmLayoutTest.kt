@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 /** The layout of the mining tree, read from the community data. */
 class HotmLayoutTest {
     private val layout: HotmLayout =
-        requireNotNull(javaClass.getResource("/fixtures/profile/hotmlayout.json")).readText().let(HotmLayout::parse)
+        requireNotNull(javaClass.getResource("/fixtures/skyblock/hotmlayout.json")).readText().let(HotmLayout::parse)
 
     @Test
     fun `the perks of the tree are read`() {

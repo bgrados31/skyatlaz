@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.tnozamas.skyatlaz.api.http.HttpResponse
 import org.tnozamas.skyatlaz.api.http.HttpService
-import org.tnozamas.skyatlaz.api.profile.ProfileClient
 import org.tnozamas.skyatlaz.api.repo.NeuRepository
 import org.tnozamas.skyatlaz.api.repo.PriceRepository
 import org.tnozamas.skyatlaz.core.command.CommandRegistry
@@ -62,13 +61,12 @@ class ModuleManagerTest {
     private val http = HttpService({ _, _ -> HttpResponse(503, "") }, null, scheduler)
     private val prices = PriceRepository(http, scheduler, bus, onProblem = {})
     private val neu = NeuRepository(http, onProblem = {})
-    private val profiles = ProfileClient(http, { "" }, onProblem = {})
     private val commands =
         CommandRegistry("test", "command.root", { true }, {}, { _, error -> throw AssertionError("command failed", error) })
     private val hud = HudManager(config)
     private val keybinds = KeyBindManager(config) { _, _ -> }
     private val manager =
-        ModuleManager(ModuleServices(bus, scheduler, commands, config, prices, hud, keybinds, neu, profiles)) { module, error ->
+        ModuleManager(ModuleServices(bus, scheduler, commands, config, prices, hud, keybinds, neu)) { module, error ->
             failures.add(module.id to error)
         }
     private val module = TestModule().also(manager::register)

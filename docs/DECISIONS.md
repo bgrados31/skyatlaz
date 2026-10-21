@@ -249,20 +249,23 @@ A single Fabric `HudElement` (`skyatlaz:hud`) draws all elements, which keeps th
 "no elements = no work" a single empty-list check. The editor hides the normal HUD to avoid double drawing and
 uses the same placement math as gameplay, so what is dragged is exactly what renders. Debug mode may add a
 `DebugHudPreview` element: it is the development fixture for the editor, not a player-facing feature.
+## 2026-10-21 - The mining tree is read out of the game, not from the Hypixel API
+The public API of Hypixel needs a developer key: the old v1 endpoint answers Unknown endpoint (it is gone) and the
+v2 one answers Missing API-Key header. The policy of Hypixel about the keys (https://developer.hypixel.net/policies)
+closes the door: "Do not share your API key with 3rd parties, such as entering them into a website or a mod. This
+applies to any publicly available mod" and "Do not include your API key in your code, especially if you plan to
+distribute a binary". The key of the owner of the mod can never travel inside it, and a key per player would ask
+every player to register an application in the developer portal, so no feature can depend on it.
 
-## 2026-10-21 - The profile of the player comes from the Hypixel API, with the developer key of the player
-The old v1 endpoint (/skyblock/profile/<uuid>) answers Unknown endpoint: it is gone, and the v2 one
-(/v2/skyblock/profiles?uuid=) answers Missing API-Key header, so a developer key is mandatory. The key of the
-player is a setting of the mod (general.api_key), never in the code and never in the repository; it travels in a
-header, so it never reaches the URL, the disk cache or a log. The uuid comes from the Mojang API with the name of
-the session (the same way Skyblocker does it) and is asked only once.
+So the tree of the Heart of the Mountain is read out of the menu that the player has open: the lore of the items
+gives the name, the level, the maximum and the state of every perk the menu shows (the pattern is the one Skyblocker
+uses), and the community layout of the tree (constants/hotmlayout.json of NEU-REPO, fetched on demand like the item
+pages) gives the names and the maximum levels of all the perks. The module reads the open menu once a second and the
+card follows it; it costs nothing when the menu is closed.
 
-The perks of the Heart of the Mountain come from that answer (skill_tree.nodes.mining_1..5, with the level of
-every perk and 	oggle_<id> for the ones that are switched off). The names and the maximum levels come from the
-community layout of the tree (constants/hotmlayout.json in NEU-REPO), fetched on demand like the item pages.
-The tree is still parsed out of the menu lore as well (eature/mining/hotm/HotmLogic): it is the path that works
-without a key and the only one that tells apart the perks that are locked from the ones that are bought.
+The API route was written and thrown away (the commit that added it is in the history). The spec and an index of the
+endpoints stay in docs/api, with the policy that stops us from using them, so nobody tries it again.
 
-Consequence: the mining card needs the key of the player; without it the feature stays quiet instead of asking
-for something it cannot have. The feature is Allowed (it shows the data of the player, the same the game shows in
-the tree) but it stays off by default because it needs a key.
+Consequence: the mining card is Allowed (it shows what the game shows the player) and it needs no key, no network
+for the perks and no registration. The price features keep using the bazaar and the NEU-REPO, which are public and
+need no key.
