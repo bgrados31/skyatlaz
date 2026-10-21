@@ -23,6 +23,9 @@ run
 # Reference mods (read-only study material, see tools/refs)
 references/
 
+# The index of the code graph (tooling, not part of the project)
+.codebase-memory/
+
 # Local secrets / machine config
 local.properties
 *.env

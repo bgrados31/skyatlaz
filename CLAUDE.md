@@ -1,4 +1,4 @@
-# SkyAtlaz
+# skyatlaz
 
 All-in-one client mod for Hypixel SkyBlock. Kotlin, Fabric, Minecraft 26.2 (unobfuscated, Mojang names), Java 25.
 Private project (All Rights Reserved), author `tnozamas`, package `org.tnozamas.skyatlaz`.

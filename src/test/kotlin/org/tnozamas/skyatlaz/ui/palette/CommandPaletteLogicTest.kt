@@ -8,10 +8,10 @@ import org.junit.jupiter.api.Test
 class CommandPaletteLogicTest {
     private val entries =
         listOf(
-            PaletteEntry("config", "Open SkyAtlaz settings", "/skyatlaz config", false),
+            PaletteEntry("config", "Open skyatlaz settings", "/skyatlaz config", false),
             PaletteEntry("hud", "Open the HUD editor", "/skyatlaz hud", false),
             PaletteEntry("debug price <id>", "Show bazaar, auction and NPC prices of an item", "/skyatlaz debug price", true),
-            PaletteEntry("version", "Show the installed SkyAtlaz version", "/skyatlaz version", false),
+            PaletteEntry("version", "Show the installed skyatlaz version", "/skyatlaz version", false),
         )
 
     @Test

@@ -27,7 +27,7 @@ If `references/` is missing or stale: `node tools/refs/sync.mjs` (or `node tools
 4. Compare 2 mods when it matters; note which approach is cheaper at runtime.
 
 ## Rules
-- **Never copy code.** The references are LGPL; SkyAtlaz is private. Understand the approach, then write our own
+- **Never copy code.** The references are LGPL; skyatlaz is private. Understand the approach, then write our own
   implementation that fits our architecture (events, shared state, theme, i18n).
 - Data facts (item ids, chat message formats, coordinates) are fine to reuse as data; still write our own code.
 - Chat formats found here become test fixtures in `src/test/resources/fixtures/`.

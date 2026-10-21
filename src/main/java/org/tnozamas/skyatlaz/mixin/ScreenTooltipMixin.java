@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.tnozamas.skyatlaz.core.tooltip.TooltipLines;
 
-/** Adds the lines SkyAtlaz features provide (prices) to the vanilla item tooltip. */
+/** Adds the lines skyatlaz features provide (prices) to the vanilla item tooltip. */
 @Mixin(Screen.class)
 public class ScreenTooltipMixin {
     @Inject(method = "getTooltipFromItem", at = @At("RETURN"), cancellable = true)

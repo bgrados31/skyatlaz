@@ -1,7 +1,7 @@
 package org.tnozamas.skyatlaz.ui.theme
 
 /**
- * The rhythm every SkyAtlaz surface shares: gaps, paddings and margins. One scale, so a HUD card, a chat line and a
+ * The rhythm every skyatlaz surface shares: gaps, paddings and margins. One scale, so a HUD card, a chat line and a
  * settings row breathe the same way, and changing a value here moves the whole mod at once.
  *
  * Sizes that belong to a single widget (a row height, a button height) stay with that widget; only the rhythm of

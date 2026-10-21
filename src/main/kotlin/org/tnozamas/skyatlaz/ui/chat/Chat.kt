@@ -10,7 +10,7 @@ import org.tnozamas.skyatlaz.ui.theme.Gradient
 import org.tnozamas.skyatlaz.ui.theme.Theme
 
 /**
- * The only way the mod writes to the player's chat. A message reads `SkyAtlaz › text`: brand name, a quiet
+ * The only way the mod writes to the player's chat. A message reads `skyatlaz › text`: brand name, a quiet
  * separator and text painted with the gradient of its kind, so the tone is clear at a glance without icons or a
  * wall of color. Messages are client-side only.
  *
@@ -35,7 +35,7 @@ object Chat {
 
     fun error(message: Component) = send(Kind.ERROR, message)
 
-    /** `SkyAtlaz › ` in brand colors; also used by panels that want the mark on a line. */
+    /** `skyatlaz › ` in brand colors; also used by panels that want the mark on a line. */
     fun prefix(): MutableComponent =
         Tr
             .tr("chat.prefix")

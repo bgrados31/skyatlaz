@@ -5,4 +5,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "SkyAtlaz"
+rootProject.name = "skyatlaz"

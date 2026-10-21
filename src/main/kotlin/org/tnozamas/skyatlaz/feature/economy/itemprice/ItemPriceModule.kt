@@ -1,6 +1,6 @@
 package org.tnozamas.skyatlaz.feature.economy.itemprice
 
-import org.tnozamas.skyatlaz.SkyAtlaz
+import org.tnozamas.skyatlaz.Skyatlaz
 import org.tnozamas.skyatlaz.api.repo.PricesUpdatedEvent
 import org.tnozamas.skyatlaz.core.config.GeneralConfig
 import org.tnozamas.skyatlaz.core.module.FeatureCategory
@@ -24,7 +24,7 @@ object ItemPriceModule : Module("economy.itemprice", FeatureCategory.ECONOMY) {
     /** Allowed and useful for everyone, so it starts on. */
     override val enabledByDefault: Boolean = true
 
-    override fun isActive(): Boolean = SkyAtlaz.SKYBLOCK.state.onSkyBlock
+    override fun isActive(): Boolean = Skyatlaz.SKYBLOCK.state.onSkyBlock
 
     override fun onEnable(ctx: ModuleContext) {
         val provider = ItemPriceProvider(ctx.usePrices())

@@ -1,6 +1,6 @@
 package org.tnozamas.skyatlaz.feature.skyblock.statushud
 
-import org.tnozamas.skyatlaz.SkyAtlaz
+import org.tnozamas.skyatlaz.Skyatlaz
 import org.tnozamas.skyatlaz.core.module.FeatureCategory
 import org.tnozamas.skyatlaz.core.module.Module
 import org.tnozamas.skyatlaz.core.module.ModuleContext
@@ -21,13 +21,13 @@ object StatusHudModule : Module("skyblock.statushud", FeatureCategory.SKYBLOCK) 
     /** Allowed and useful for everyone, so it starts on. */
     override val enabledByDefault: Boolean = true
 
-    override fun isActive(): Boolean = SkyAtlaz.SKYBLOCK.state.onSkyBlock
+    override fun isActive(): Boolean = Skyatlaz.SKYBLOCK.state.onSkyBlock
 
     override fun onEnable(ctx: ModuleContext) {
         val hud = StatusHud()
         ctx.hud(hud)
 
-        val refresh = { hud.update(StatusHudLogic.build(SkyAtlaz.SKYBLOCK.state, options())) }
+        val refresh = { hud.update(StatusHudLogic.build(Skyatlaz.SKYBLOCK.state, options())) }
         ctx.on<SkyBlockStateChangeEvent> { refresh() }
         ctx.watch(StatusHudConfig.showArea) { refresh() }
         ctx.watch(StatusHudConfig.showProfile) { refresh() }

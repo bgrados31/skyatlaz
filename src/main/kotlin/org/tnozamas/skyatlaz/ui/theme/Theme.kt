@@ -4,7 +4,7 @@ package org.tnozamas.skyatlaz.ui.theme
  * Every color in the mod lives here (enforced by the `no-hardcoded-color` rule). Change a token and the whole
  * UI follows. Colors are 0xRRGGBB.
  *
- * The palette is deliberately soft (pastel, mid lightness) so SkyAtlaz output is recognizable without shouting
+ * The palette is deliberately soft (pastel, mid lightness) so skyatlaz output is recognizable without shouting
  * over Hypixel's own colorful chat. Semantic colors keep the hues players read without thinking: green = success,
  * amber = warning, red = error, blue = info.
  */

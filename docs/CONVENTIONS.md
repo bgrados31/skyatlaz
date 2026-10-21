@@ -34,7 +34,7 @@ create a shared component first:
 | User-facing text | `i18n.Tr` |
 | Gradient text | `Component.withGradient(Theme.X_GRADIENT)` |
 | Chat messages | `ui.chat.Chat` (info/success/warning/error) |
-| Commands | `ctx.command { }` in modules, `SkyAtlaz.COMMANDS` in core (never Fabric/Brigadier directly) |
+| Commands | `ctx.command { }` in modules, `Skyatlaz.COMMANDS` in core (never Fabric/Brigadier directly) |
 | Settings | `ConfigSection` objects (`override val config` on the module), `ctx.watch(entry)` to react |
 
 ## Performance

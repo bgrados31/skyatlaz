@@ -1,6 +1,6 @@
 package org.tnozamas.skyatlaz.core.command
 
-import org.tnozamas.skyatlaz.SkyAtlaz
+import org.tnozamas.skyatlaz.Skyatlaz
 import org.tnozamas.skyatlaz.i18n.Tr
 import org.tnozamas.skyatlaz.ui.chat.Chat
 
@@ -16,7 +16,7 @@ object BuiltinCommands {
             literal("version") {
                 category(CommandCategory.GENERAL)
                 description("command.version")
-                executes { Chat.info(Tr.tr("command.version.result", Tr.verbatim(SkyAtlaz.VERSION))) }
+                executes { Chat.info(Tr.tr("command.version.result", Tr.verbatim(Skyatlaz.VERSION))) }
             }
         }
     }

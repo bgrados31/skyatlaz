@@ -14,11 +14,11 @@ import org.tnozamas.skyatlaz.ui.theme.Theme
 /**
  * Renders [CommandRegistry.helpFor] as a chat panel. Hierarchy comes from typography, not decoration:
  * ```
- * ────────────────── SkyAtlaz ──────────────────
+ * ────────────────── skyatlaz ──────────────────
  *
  *   General
  *       help        List every available command
- *       version     Show the installed SkyAtlaz version
+ *       version     Show the installed skyatlaz version
  *
  *   Debug
  *       debug ›     Developer and offline testing tools

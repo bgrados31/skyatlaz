@@ -117,7 +117,7 @@ class ConfigManager(
         val values = root.getAsJsonObject(VALUES_KEY) ?: JsonObject()
         val version = root.get(VERSION_KEY)?.takeIf { it.isJsonPrimitive }?.asInt ?: CURRENT_VERSION
         if (version > CURRENT_VERSION) {
-            onProblem("Config file is from a newer SkyAtlaz (version $version); unknown settings are kept", null)
+            onProblem("Config file is from a newer skyatlaz (version $version); unknown settings are kept", null)
         }
         for (step in version until CURRENT_VERSION) {
             migrations.filter { it.fromVersion == step }.forEach { it.migrate(values) }

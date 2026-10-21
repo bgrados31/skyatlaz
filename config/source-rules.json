@@ -3,7 +3,7 @@
   "rules": [
     {
       "id": "no-console-print",
-      "message": "Use the logger (SkyAtlaz.LOGGER or a module logger) instead of printing.",
+      "message": "Use the logger (Skyatlaz.LOGGER or a module logger) instead of printing.",
       "pattern": "\\bprintln\\(|\\bprint\\(|System\\.(out|err)",
       "extensions": ["kt", "java"],
       "allowedIn": []

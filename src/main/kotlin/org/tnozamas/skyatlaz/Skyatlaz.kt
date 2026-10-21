@@ -54,7 +54,7 @@ import org.tnozamas.skyatlaz.ui.openScreenAfterChat
 import org.tnozamas.skyatlaz.ui.palette.CommandPaletteScreen
 
 /** Client entrypoint. Only wires core services together; features register through the module system. */
-object SkyAtlaz : ClientModInitializer {
+object Skyatlaz : ClientModInitializer {
     const val MOD_ID = "skyatlaz"
 
     /** The binding that opens the command palette. */
@@ -121,7 +121,7 @@ object SkyAtlaz : ClientModInitializer {
     @JvmField
     val HTTP =
         HttpService(
-            transport = JdkHttpTransport("SkyAtlaz/$VERSION (Hypixel SkyBlock mod)"),
+            transport = JdkHttpTransport("skyatlaz/$VERSION (Hypixel SkyBlock mod)"),
             cache =
                 HttpCache(
                     FabricLoader

@@ -6,7 +6,7 @@ import net.minecraft.network.chat.Component
 import org.tnozamas.skyatlaz.ui.theme.Theme
 
 /**
- * The drawing primitives every SkyAtlaz surface shares: HUD elements, chat and screens.
+ * The drawing primitives every skyatlaz surface shares: HUD elements, chat and screens.
  *
  * They take a theme token instead of a raw color and build the ARGB value here, so a feature never repeats
  * `Theme.argb(...)` and every surface keeps the same look. Nothing here allocates: the methods only forward to the

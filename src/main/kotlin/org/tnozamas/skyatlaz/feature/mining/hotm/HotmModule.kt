@@ -1,7 +1,7 @@
 package org.tnozamas.skyatlaz.feature.mining.hotm
 
 import net.minecraft.client.Minecraft
-import org.tnozamas.skyatlaz.SkyAtlaz
+import org.tnozamas.skyatlaz.Skyatlaz
 import org.tnozamas.skyatlaz.api.repo.HotmLayout
 import org.tnozamas.skyatlaz.core.debug.SnapshotCapture
 import org.tnozamas.skyatlaz.core.module.FeatureCategory
@@ -25,7 +25,7 @@ object HotmModule : Module("mining.hotm", FeatureCategory.MINING) {
     /** It only shows what the player has open, so it is safe and useful for everyone. */
     override val enabledByDefault: Boolean = true
 
-    override fun isActive(): Boolean = SkyAtlaz.SKYBLOCK.state.onSkyBlock
+    override fun isActive(): Boolean = Skyatlaz.SKYBLOCK.state.onSkyBlock
 
     override fun onEnable(ctx: ModuleContext) {
         val hud = HotmHud()

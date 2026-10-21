@@ -3,7 +3,7 @@ package org.tnozamas.skyatlaz.feature.economy.heldprice
 import net.minecraft.client.Minecraft
 import net.minecraft.core.component.DataComponents
 import net.minecraft.world.item.ItemStack
-import org.tnozamas.skyatlaz.SkyAtlaz
+import org.tnozamas.skyatlaz.Skyatlaz
 import org.tnozamas.skyatlaz.api.repo.PricesUpdatedEvent
 import org.tnozamas.skyatlaz.core.module.FeatureCategory
 import org.tnozamas.skyatlaz.core.module.Module
@@ -28,7 +28,7 @@ object HeldPriceModule : Module("economy.heldprice", FeatureCategory.ECONOMY) {
     /** Allowed and useful for everyone, so it starts on. */
     override val enabledByDefault: Boolean = true
 
-    override fun isActive(): Boolean = SkyAtlaz.SKYBLOCK.state.onSkyBlock
+    override fun isActive(): Boolean = Skyatlaz.SKYBLOCK.state.onSkyBlock
 
     override fun onEnable(ctx: ModuleContext) {
         val prices = ctx.usePrices()

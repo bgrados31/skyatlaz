@@ -1,9 +1,9 @@
 ---
 name: new-feature
-description: Use when adding a new SkyAtlaz feature/module (HUD, overlay, timer, solver, chat tweak, etc.). Gives the mandatory checklist and file template so every feature has the same shape.
+description: Use when adding a new skyatlaz feature/module (HUD, overlay, timer, solver, chat tweak, etc.). Gives the mandatory checklist and file template so every feature has the same shape.
 ---
 
-# Adding a feature to SkyAtlaz
+# Adding a feature to skyatlaz
 
 ## 1. Before writing code
 1. Classify it in `docs/HYPIXEL_RULES.md` (Allowed / Gray / Forbidden). Forbidden -> stop and tell the user.

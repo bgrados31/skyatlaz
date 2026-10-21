@@ -1,6 +1,6 @@
 # Development Rules — Minecraft Mod (generic template)
 
-Adapted from the SkyAtlaz ruleset, with all SkyBlock/Hypixel-specific content removed.
+Adapted from the skyatlaz ruleset, with all SkyBlock/Hypixel-specific content removed.
 Copy it to the root of the new mod project as `AGENTS.md` (and/or `CLAUDE.md`) and fill in the `<...>`
 placeholders in section 0. It applies to any Minecraft mod (Fabric, NeoForge, Forge, Quilt) and any
 language (Kotlin, Java).

@@ -2,7 +2,7 @@ package org.tnozamas.skyatlaz.i18n
 
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
-import org.tnozamas.skyatlaz.SkyAtlaz
+import org.tnozamas.skyatlaz.Skyatlaz
 
 /**
  * Single entry point for every user-facing text. Keys are relative to the mod namespace:
@@ -11,7 +11,7 @@ import org.tnozamas.skyatlaz.SkyAtlaz
  * Never build user-facing text with `Component.literal` or string literals. See docs/I18N.md.
  */
 object Tr {
-    private const val PREFIX = SkyAtlaz.MOD_ID + "."
+    private const val PREFIX = Skyatlaz.MOD_ID + "."
 
     /** Full translation key for [key]. */
     fun key(key: String): String = PREFIX + key

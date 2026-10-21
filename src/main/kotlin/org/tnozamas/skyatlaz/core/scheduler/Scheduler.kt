@@ -161,7 +161,7 @@ class Scheduler(
             val threads = (Runtime.getRuntime().availableProcessors() / 2).coerceIn(2, 4)
             val counter = AtomicInteger()
             return Executors.newFixedThreadPool(threads) { runnable ->
-                Thread(runnable, "SkyAtlaz-Worker-${counter.incrementAndGet()}").apply { isDaemon = true }
+                Thread(runnable, "skyatlaz-Worker-${counter.incrementAndGet()}").apply { isDaemon = true }
             }
         }
     }

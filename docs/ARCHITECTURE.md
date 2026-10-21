@@ -9,7 +9,7 @@ Status markers: **[done]** exists in code, **[planned]** target design, implemen
 
 ## Package layout (`org.tnozamas.skyatlaz`)
 ```
-SkyAtlaz.kt          [done]    Client entrypoint. Only wires core services.
+Skyatlaz.kt          [done]    Client entrypoint. Only wires core services.
 i18n/                [done]    Tr: the only way to create user-facing text. withGradient(Gradient)
 core/
   module/            [done]    Module, ModuleManager, ModuleContext, FeatureCategory
@@ -25,7 +25,7 @@ core/
   tooltip/           [done]    TooltipLines: where a feature adds its own lines to the vanilla item tooltip
 api/
   hypixel/           [done]    HypixelModApi (only Mod API user) -> HypixelSession (location, party), events
-  http/              [done]    HttpService (SkyAtlaz.HTTP): async, disk cache + ETag/304, stale fallback, dedupe
+  http/              [done]    HttpService (Skyatlaz.HTTP): async, disk cache + ETag/304, stale fallback, dedupe
   repo/              [done]    PriceRepository (bazaar + item catalog, demand driven via ctx.usePrices);
                                NeuRepository (NEU-REPO item pages + recipes, fetched per item on demand)
 skyblock/            [done]    SkyBlockTracker: area, sub-area, profile, purse, bits, bank, level from scoreboard/tab
@@ -56,7 +56,7 @@ abstract class Module(val id: String, val category: FeatureCategory) {   // id: 
     protected open fun onDisable() {}                    // release anything not tracked by ctx
 }
 ```
-- Global instances live in the entrypoint: `SkyAtlaz.EVENTS` (bus) and `SkyAtlaz.MODULES` (manager).
+- Global instances live in the entrypoint: `Skyatlaz.EVENTS` (bus) and `Skyatlaz.MODULES` (manager).
   Both are client-thread only.
 - `ModuleManager` owns lifecycle. Enabling calls `onEnable` with a `ModuleContext`; every registration made
   through the context (events, HUD elements, commands, scheduled tasks) is tracked and **automatically removed on
@@ -119,7 +119,7 @@ object ScoreHudModule : Module("dungeons.scorehud", FeatureCategory.DUNGEONS) {
 - The player changes a key in the settings screen (the "Controls" tab): click a row, press a key, done. Escape
   cancels. Two bindings on the same key are reported once in chat.
 ## Commands [done]
-All commands live under `/skyatlaz` in one `CommandRegistry` (`SkyAtlaz.COMMANDS`). Nothing is wired by hand:
+All commands live under `/skyatlaz` in one `CommandRegistry` (`Skyatlaz.COMMANDS`). Nothing is wired by hand:
 ```kotlin
 ctx.command {                                   // module commands exist only while the module runs
     literal("pets") {
@@ -145,7 +145,7 @@ ctx.command {                                   // module commands exist only wh
 - Errors inside a command are logged and reported in chat (`command.failed`), never crash the client.
 
 ## SkyBlock state [done]
-- Single source of truth (`skyblock.SkyBlockTracker`, `SkyAtlaz.SKYBLOCK`) built from the scoreboard and tab list;
+- Single source of truth (`skyblock.SkyBlockTracker`, `Skyatlaz.SKYBLOCK`) built from the scoreboard and tab list;
   the Hypixel Mod API location complements it (island id, map) and chat/profile lines can be added as sources.
 - The scoreboard and tab list are captured at most every 10 ticks (0.5 s) and only parsed when their content
   differs from the previous capture. Parsing (`SkyBlockParser`) is pure and tested from `Snapshot` dumps.
@@ -160,11 +160,11 @@ ctx.command {                                   // module commands exist only wh
 - **Mod API** (`net.hypixel:mod-api`, compileOnly; users install the `hypixel-mod-api` Fabric mod): location,
   party info, player info. Only `HypixelModApi` talks to it; it translates packets into `HypixelLocation` /
   `HypixelParty`, posts `LocationChangeEvent` / `PartyInfoEvent` on the client thread and keeps the current state in
-  `SkyAtlaz.HYPIXEL.session` (cleared on disconnect). Party requests are throttled (5 s cooldown, one pending), so responses
+  `Skyatlaz.HYPIXEL.session` (cleared on disconnect). Party requests are throttled (5 s cooldown, one pending), so responses
   are cached and shared.
 - **Public API v2**: SkyBlock resources, bazaar and auctions endpoints need no key. Endpoints needing a key
   (profiles) cannot be used from a distributed mod with a dev key; we do not ship keys.
-- All network calls go through `SkyAtlaz.HTTP` (`api.http.HttpService`): `get(url, maxAge, parse) { result }`. Fresh
+- All network calls go through `Skyatlaz.HTTP` (`api.http.HttpService`): `get(url, maxAge, parse) { result }`. Fresh
   cache = no request; expired = conditional request (304 reuses the body); network failure = last copy marked
   `stale`; one download per URL at a time; parsing off the client thread. Cache in `<game dir>/skyatlaz/cache`.
 

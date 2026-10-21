@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.tnozamas.skyatlaz.core.tooltip.TooltipLines;
 
 /**
- * Adds the lines SkyAtlaz features provide (prices) to the creative inventory tooltip. That screen builds its own
+ * Adds the lines skyatlaz features provide (prices) to the creative inventory tooltip. That screen builds its own
  * tooltip instead of using {@code Screen.getTooltipFromItem}, so it needs its own hook.
  */
 @Mixin(CreativeModeInventoryScreen.class)

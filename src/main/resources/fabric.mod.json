@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "skyatlaz",
   "version": "${version}",
-  "name": "SkyAtlaz",
+  "name": "skyatlaz",
   "description": "All-in-one quality of life mod for Hypixel SkyBlock.",
   "authors": ["tnozamas"],
   "contact": {},
@@ -12,7 +12,7 @@
     "client": [
       {
         "adapter": "kotlin",
-        "value": "org.tnozamas.skyatlaz.SkyAtlaz"
+        "value": "org.tnozamas.skyatlaz.Skyatlaz"
       }
     ]
   },

@@ -1,4 +1,4 @@
-# SkyAtlaz
+# skyatlaz
 
 All-in-one quality of life mod for Hypixel SkyBlock. Fabric, Kotlin, Minecraft 26.2.
 
