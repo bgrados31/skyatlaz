@@ -269,3 +269,35 @@ endpoints stay in docs/api, with the policy that stops us from using them, so no
 Consequence: the mining card is Allowed (it shows what the game shows the player) and it needs no key, no network
 for the perks and no registration. The price features keep using the bazaar and the NEU-REPO, which are public and
 need no key.
+
+## 2026-10-21 - The profile comes from our own service, the key never enters the mod
+The previous decision (read the tree out of the game, never touch the API) stays true for the mod itself: the
+developer key of the owner can never travel inside a binary that other people install. What changes is that the key
+does not have to be useless: it can live in a service we run, and the mod can talk to that service.
+
+So there is a second project, `skyatlaz-service` (Rust, axum, in `../skyatlaz-service`): a small proxy that holds
+the Hypixel key in its environment, reads the profile of a player and answers with the parts a feature needs (the
+mining tree, the dungeon statistics, the currencies). The raw profile is around a megabyte; the slim one is a few
+kilobytes, which is also what the cache keeps.
+
+The mod proves who it is with the Minecraft profile key pair, the same way Skyblocker does it: the service hands out
+a single use nonce, the mod signs it with the private key of the account (`SHA256withRSA`) and sends the public key
+plus the signature Mojang produced over it. The service checks both, so it knows that the caller owns the private key
+and that Mojang issued the public key for that uuid. Only then it hands out a session token, and `/v1/profile` only
+answers the profile of the player that owns that token. There is no endpoint that takes a uuid from the caller, so
+the service cannot be used to read somebody else's profile. Nothing secret leaves the game and no key is ever asked
+of the player.
+
+The rules of Hypixel are the reason the service exists and the reason it is shaped this way: "API Keys are not
+intended to be used and shared with 3rd party mods or services", "Do not share your API key with 3rd parties", "All
+projects that make use of authenticated API endpoints must be registered in our Hypixel Developer Portal" and "You
+may not create an application for the purpose of proxying the Public API to 3rd party developers". A service of our
+own that answers the authenticated player of our own mod is the model Skyblocker and SkyHanni use (hysky.de), not a
+proxy open to third party developers. The application still has to be registered and approved in the developer
+portal (a Personal key is enough), and the profile answers are cached (5 minutes per player) so the rate limit is
+never touched by a mod that polls.
+
+The game stays the primary source: the mining card still reads the menu that the player has open, because that is
+what the player sees and it costs no network. The service is for what the game does not show (the museum, the
+garden, the history of the dungeons, the exact state of the tree without opening the menu). A feature that uses it
+must degrade when the service is down, and it may not become a requirement for anything else.

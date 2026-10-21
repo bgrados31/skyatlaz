@@ -1,6 +1,6 @@
-# Handoff - SkyAtlaz base closed, phase 4 running
+# Handoff - skyatlaz base closed, phase 4 running
 
-Updated: 2026-10-21 (later). Read `CLAUDE.md` first; this file is the short state of the current task.
+Updated: 2026-10-21 (later, the self-hosted service). Read `CLAUDE.md` first; this file is the short state of the current task.
 
 ## Objective
 The base (phases 0-3) is closed and phase 4 is running: three vertical slices work end to end
@@ -51,10 +51,32 @@ time, reusing the shape proven by the first one.
   of the items gives the name, the level, the maximum and the state of each perk) and the names and the maximum
   levels of all the perks come from the community layout of the tree (`constants/hotmlayout.json` of NEU-REPO, fetched
   on demand like the item pages). The module reads the open menu once a second. No key, no network for the perks.
-- **The public API of Hypixel is not used**: it needs a developer key and the policy
+- **The public API of Hypixel is not used by the mod**: it needs a developer key and the policy
   (https://developer.hypixel.net/policies) forbids sharing a key with 3rd parties or putting it in a mod. The spec
   and an index of the endpoints are in `docs/api`, with the policy that stops us.
-- `.\gradlew spotlessApply check` green: **234 tests, 0 failures**.
+- **Our own service reads the API instead**: `skyatlaz-service` (Rust, axum, in `../skyatlaz-service`, 21 tests of
+  its own) holds the developer key in its environment and answers with a slim profile (the mining tree, the dungeons,
+  the currencies). The mod signs a challenge with the Minecraft profile key pair (`SHA256withRSA`, like Skyblocker)
+  and gets a token that only works for that player; `/v1/profile` never takes a uuid from the caller. In the mod:
+  `api/service` (`ServiceClient`, `ProfileKeyMaterial`, `ServiceProfile` + `ServiceProfileLogic`), the setting
+  `general.service_url` (default `http://127.0.0.1:8080`) and `/skyatlaz debug service`. The transport grew a
+  `post` (`api/http/HttpTransport`).
+- **The service and the mod stay in sync with a contract**: the service publishes it at `/openapi.json`,
+  `tools/service/sync.ps1` writes the copy in `docs/api/skyatlaz-service.json` and prints the endpoints, and
+  `ServiceContractTest` fails when the service adds a field the mod does not read. A change in the API breaks the
+  build, not the game.
+- **The project is `skyatlaz` in lowercase**: gradle project, name of the mod, jar, entry point class (`Skyatlaz`,
+  file `Skyatlaz.kt`), the service next to it and the docs. The package and the mod id were already lowercase.
+- **The service respects the rate limit of the key** (`src/ratelimit.rs`): it reads `RateLimit-Limit`,
+  `RateLimit-Remaining` and `RateLimit-Reset`, refuses to ask when the limit is used up and shows the state in
+  `/health`.
+- **The map of the nonces is bounded** (`MAX_CHALLENGES` in `src/auth.rs`): the challenge endpoint is open to
+  anybody, so a flood of calls could eat all the memory of the service. The owner wrote the deployment guide
+  (`../skyatlaz-service/deploy`: Oracle Cloud Always Free, systemd, Caddy with TLS) and flagged this one.
+- `/skyatlaz debug key` writes the profile key pair of the account to `<game dir>/skyatlaz/dumps/service-key.json`.
+  That file is what tells which byte layout Mojang signed (the service tries the known ones): it has the uuid, the
+  base64 public key, the base64 signature of Mojang and the expiry.
+- `.\gradlew spotlessApply check` green: **241 tests, 0 failures**.
 - `ModuleManager.refreshActivation()` is now really called (the entrypoint wires `SkyBlockStateChangeEvent` to it),
   so a module with an activation condition starts and stops with the shared state.
 - The UI sandbox (`ui/prototype`, `/skyatlaz debug ui`) is deleted with the owner's confirmation.
@@ -75,7 +97,14 @@ time, reusing the shape proven by the first one.
 4. The owner still owes the `/skyatlaz debug hypixel` output (Mod API location + party).
 5. World rendering is still missing: 26.2 replaced the old render events and Fabric does not expose the new
    submit-node API yet, so `ui.render` covers the GUI only.
-6. Commit only when the owner asks. HEAD is `f5ff499`.
+6. **The service needs the owner**: register the application in the Hypixel developer portal (a Personal key is
+   enough) and put `HYPIXEL_API_KEY` in the environment of the service. Until then the service can only answer
+   `/health`. The exact byte layout Mojang signs over a profile key is not public, so the service tries the known
+   layouts (`src/keys.rs`); if none matches, the real data (uuid + public key + key signature + expiry) will say
+   which one it is.
+7. Commit only when the owner asks. HEAD is `f5ff499`.
+8. The folder of the repository is still `SkyAtlaz`: IntelliJ IDEA holds it open, so Windows refuses the rename. Close
+   the IDE and rename it to `skyatlaz` (everything inside is already lowercase).
 
 - **Second vertical slice** `feature/economy/itemprice`: the price of an item in its tooltip (bazaar instant sell,
   lowest BIN, NPC price; each one can be turned off). The lines are added by a mixin on
@@ -103,19 +132,27 @@ time, reusing the shape proven by the first one.
 - `src/main/kotlin/org/tnozamas/skyatlaz/feature/mining/hotm/HotmLogic.kt` - the perks of the HOTM read from the lore
   of the container and the rows of the card.
 - `src/main/kotlin/org/tnozamas/skyatlaz/api/repo/HotmLayout.kt` - the layout of the tree (names, maximum levels).
-- `docs/api/` - the spec of the public API of Hypixel and its index (not used, and why).
+- `docs/api/` - the spec of the public API of Hypixel, its index and the contract of our service.
+- `tools/service/sync.ps1` - refreshes the copy of the contract of the service in `docs/api/`.
+- `src/main/kotlin/org/tnozamas/skyatlaz/api/service/` - the client of our service, the profile key material, the
+  profile model and its reader, and the debug command.
+- `../skyatlaz-service/` - the Rust service (axum): the challenge/verify, the Hypixel client, the cache, the
+  contract at `openapi.json`, 21 tests.
 - `src/main/kotlin/org/tnozamas/skyatlaz/core/tooltip/TooltipLines.kt` - where features add lines to the item tooltip.
 - `src/main/java/org/tnozamas/skyatlaz/mixin/ScreenTooltipMixin.java` + `CreativeTooltipMixin.java` - the mixins that
   merge those lines (the creative screen builds its own tooltip and needs its own hook).
 - `src/main/kotlin/org/tnozamas/skyatlaz/util/NumberStyle.kt` - the shared number format choice.
 - `src/main/kotlin/org/tnozamas/skyatlaz/core/module/ModuleContext.kt` - `keyBind(bind) { }`.
-- `src/main/kotlin/org/tnozamas/skyatlaz/SkyAtlaz.kt` - `KEYBINDS`, the tick, the core "open settings" binding.
+- `src/main/kotlin/org/tnozamas/skyatlaz/Skyatlaz.kt` - `KEYBINDS`, the tick, the core "open settings" binding.
 - `src/main/resources/assets/skyatlaz/lang/en_us.json` - `keybind.*`, `config.tab.controls`,
   `config.keybind.open_settings.*`.
 - `docs/PROGRESS.md`, `docs/ARCHITECTURE.md`, `docs/CONVENTIONS.md`, `docs/DECISIONS.md` - updated.
 
 ## Commands
-- `.\gradlew check` - Spotless + 215 tests.
+- `.\gradlew check` - Spotless + 241 tests.
+- `.\tools\service\sync.ps1` - refreshes the contract of the service in `docs/api/` (the service has to be running).
+- `& "$env:USERPROFILE\.cargo\bin\cargo.exe" test` - the tests of the service (24). The toolchain is in
+  `%USERPROFILE%\.cargo\bin` (rustup, minimal profile; the linker is the MSVC of VS 2022 Community).
 - `.\gradlew runWorld` - dev client; agent mods need `skyatlaz.agentMods=true`.
 - `node tools/agent/bridge.mjs` - MCP Fabric bridge on `127.0.0.1:25599` (`cmd`, `chat`, `screenshot`, `call`).
 - `.\run\agent-input.ps1 -X <clientX> -Y <clientY>` - Win32 click/keys/typing for the dev window (git-ignored

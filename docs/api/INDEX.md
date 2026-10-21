@@ -4,9 +4,16 @@ The official spec is `docs/api/hypixel-swagger.json` (OpenAPI 3.0.3, the file Hy
 dashboard). This file is the index: what each endpoint gives, which ones need a key and how the answers look. Grep
 here before reading the spec.
 
-**SkyAtlaz does not use this API.** The policy of Hypixel about the keys (below) makes it unusable for a mod: the
+**The mod never touches this API.** The policy of Hypixel about the keys (below) makes it unusable inside a mod: the
 key of the developer can never travel inside the mod, and asking every player to register an application to paste
-their own key is not a thing a mod can ask. The file is here to know what exists and why we do not use it.
+their own key is not a thing a mod can ask.
+
+**Our own service does, for one thing only.** `skyatlaz-service` (Rust, in `../skyatlaz-service`) holds a developer
+key of ours in its environment and answers with the profile of the player that is asking for it, never the profile of
+somebody else: the mod signs a challenge with the Minecraft profile key pair and the service answers with a token
+that only works for that player. That is the model of Skyblocker and SkyHanni (hysky.de), it needs an application
+registered in the developer portal, and the answers are cached so the rate limit is never in danger. See
+`docs/DECISIONS.md` (2026-10-21) and the README of the service.
 
 ## The rules of Hypixel about the keys (https://developer.hypixel.net/policies)
 
@@ -40,13 +47,16 @@ The rest of the policy that shapes the decision:
   → The mod reads the game, not the API: the tree of the Heart of the Mountain is read out of the menu that the
   player has open (`feature/mining/hotm`), which is the same information the game shows.
 - **"You may not create an application for the purpose of proxying the Public API to 3rd party developers."**
-  → No proxy of ours in the middle either.
+  → Our service is not open to third party developers: it only answers the authenticated player of our own mod, with
+    our own application. It is the rule to keep in mind if the service ever grows.
 
 What the mod uses instead:
 - The **lore of the open menu** for the perks of the tree (`feature/mining/hotm/HotmLogic`): the level, the maximum
   and the state of every perk the menu shows.
 - The **community layout** of the tree (`constants/hotmlayout.json` in NEU-REPO, fetched on demand like the item
   pages) for the names and the maximum levels of all the perks: `api/repo/HotmLayout.kt`.
+- The **skyatlaz service** (`api/service` in the mod, `skyatlaz-service` next to it) for what the game does not show:
+  the museum, the garden, the history of the dungeons, the exact state of the tree without opening the menu.
 
 ## Basics
 
@@ -105,7 +115,7 @@ What the mod uses instead:
 
 `GET /v2/skyblock/profiles?uuid=<uuid>` answers `{"success": true, "profiles": [ ... ]}`. Every profile holds
 `profile_id`, `cute_name`, `selected`, `community_upgrades`, `banking`, `game_mode` and `members`, a map keyed by the
-uuid of each member (a co-op profile has more than one). The member is free-form; the paths SkyAtlaz reads:
+uuid of each member (a co-op profile has more than one). The member is free-form; the paths skyatlaz reads:
 
 | Path | What |
 |---|---|
@@ -138,9 +148,9 @@ Reading the code of the reference mods (see `references/`):
   with the profile key of the account. The key of Hypixel lives in their server, never in the mod, and the answer is
   cached there. Hypixel allows it because the website and the mod are "the same service" of one application.
 - **Everything else, from the game.** The scoreboard, the tab, the chat and the lore of the menus. That is what
-  SkyAtlaz does.
+  skyatlaz does.
 
-## What SkyAtlaz does
+## What skyatlaz does
 
 - The prices come from the public data (the NEU-REPO and the bazaar), no key.
 - The mining tree comes from the lore of the menu that the player has open.

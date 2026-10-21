@@ -5,6 +5,31 @@ Update this file at the end of every session: what changed, what is next, open q
 ## Current phase: 4 - First features (first vertical slice done)
 
 ## Where we left off (2026-10-20)
+- **The map of the nonces of the service is bounded** (10 000): the challenge endpoint is open to anybody and a flood
+  of calls could eat all the memory of the service. The deployment guide (`../skyatlaz-service/deploy`) asks for a
+  per IP limit in Caddy as well before the URL is public.
+- **`/skyatlaz debug key`** writes the profile key pair of the account to `<game dir>/skyatlaz/dumps/service-key.json`
+  (uuid, public key, the signature of Mojang and the expiry). The service checks the signature Mojang produced over
+  the public key, and the bytes Mojang signed are not public, so this file is what tells which layout is the right
+  one (the service tries the known ones). Nothing secret goes into it: the public key and the signature of Mojang
+  travel to every server the player joins.
+- **The service respects the rate limit of the key**: it reads `RateLimit-Limit`, `RateLimit-Remaining` and
+  `RateLimit-Reset` of every answer, refuses to ask when the limit is used up and shows the state in `/health`.
+- **The project is now `skyatlaz` in lowercase** everywhere: the gradle project, the name of the mod, the jar, the
+  class of the entry point (`Skyatlaz`, the file `Skyatlaz.kt`), the service next to it (`skyatlaz-service`) and
+  the docs. The package was already lowercase (`org.tnozamas.skyatlaz`) and so is the mod id.
+- **The service and the mod stay in sync with a contract**: the service publishes its own contract at
+  `/openapi.json` (OpenAPI 3.1), `tools/service/sync.ps1` downloads it into `docs/api/skyatlaz-service.json` and
+  prints the endpoints and the fields, and the test `ServiceContractTest` fails when the service adds a field that
+  the mod does not read yet. So a change in the API breaks the build instead of the game.
+- The profile of the player can now come from **our own service**: `skyatlaz-service` (Rust, axum, in
+  `../skyatlaz-service`) holds the Hypixel developer key in its environment and answers with a slim profile (the
+  mining tree, the dungeons, the currencies). The mod never sees a key: it signs a challenge with the Minecraft
+  profile key pair (`SHA256withRSA`, the same way Skyblocker does it) and the service answers with a token that only
+  works for that player. In the mod: `api/service` (`ServiceClient`, `ProfileKeyMaterial`, `ServiceProfile` +
+  `ServiceProfileLogic`), a `service_url` setting (default `http://127.0.0.1:8080`) and `/skyatlaz debug service` to
+  try the whole chain. The transport grew a `post` (`api/http/HttpTransport`). The application still has to be
+  registered in the Hypixel developer portal before the service can read anything.
 - Command palette: `ui/palette` opens with Ctrl+K (a key binding, rebindable in the "Controls" tab) and shows every
   command of the mod in a fuzzy search: type a few letters and the commands that match appear, best first. Enter runs
   the selected one; a command that needs an argument is typed into the chat instead. The search is pure
@@ -112,7 +137,7 @@ Update this file at the end of every session: what changed, what is next, open q
 - 2026-10-19 (Opus 5.5): `core.command` (declarative registry, generated clickable help, categories, module
   commands via `ctx.command`, debug-only commands), `ModuleServices`. MCP Fabric bridge in `runWorld` only;
   verified `/skyatlaz`, `/skyatlaz debug`, `debug theme`, `version` in game via screenshots. 62 tests.
-- 2026-10-19 (Opus 5.5): Chat redesign: soft palette, `SkyAtlaz › icon text` messages, `ChatLayout` (rules,
+- 2026-10-19 (Opus 5.5): Chat redesign: soft palette, `skyatlaz › icon text` messages, `ChatLayout` (rules,
   pixel-aligned columns), help with breadcrumb title, relative names, rich hover, click to open/run/type.
   Game now runs on the RTX 4050 (Windows GPU preference for the toolchain java.exe).
 - 2026-10-19 (Opus 5.5): Semantic gradients deepen within their hue; icons (ⓘ ✔ ⚠ ✖, category icons, hover
