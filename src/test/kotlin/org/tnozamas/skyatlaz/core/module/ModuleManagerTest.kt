@@ -11,6 +11,10 @@ import org.tnozamas.skyatlaz.api.http.HttpResponse
 import org.tnozamas.skyatlaz.api.http.HttpService
 import org.tnozamas.skyatlaz.api.repo.NeuRepository
 import org.tnozamas.skyatlaz.api.repo.PriceRepository
+import org.tnozamas.skyatlaz.api.service.ServiceApi
+import org.tnozamas.skyatlaz.api.service.ServiceProfile
+import org.tnozamas.skyatlaz.api.service.ServiceRepository
+import org.tnozamas.skyatlaz.api.service.ServiceSession
 import org.tnozamas.skyatlaz.core.command.CommandRegistry
 import org.tnozamas.skyatlaz.core.config.ConfigEntry
 import org.tnozamas.skyatlaz.core.config.ConfigManager
@@ -21,6 +25,7 @@ import org.tnozamas.skyatlaz.core.event.Registration
 import org.tnozamas.skyatlaz.core.keybind.KeyBindManager
 import org.tnozamas.skyatlaz.core.scheduler.Scheduler
 import org.tnozamas.skyatlaz.ui.hud.HudManager
+import java.io.IOException
 import java.nio.file.Path
 
 class ModuleManagerTest {
@@ -65,8 +70,23 @@ class ModuleManagerTest {
         CommandRegistry("test", "command.root", { true }, {}, { _, error -> throw AssertionError("command failed", error) })
     private val hud = HudManager(config)
     private val keybinds = KeyBindManager(config) { _, _ -> }
+    private val service =
+        ServiceRepository(
+            object : ServiceApi {
+                override fun authenticate(callback: (Result<ServiceSession>) -> Unit) =
+                    callback(Result.failure(IOException("no service in a test")))
+
+                override fun fetchProfile(
+                    session: ServiceSession,
+                    callback: (Result<ServiceProfile>) -> Unit,
+                ) = callback(Result.failure(IOException("no service in a test")))
+            },
+            scheduler,
+            bus,
+            onProblem = {},
+        )
     private val manager =
-        ModuleManager(ModuleServices(bus, scheduler, commands, config, prices, hud, keybinds, neu)) { module, error ->
+        ModuleManager(ModuleServices(bus, scheduler, commands, config, prices, hud, keybinds, neu, service)) { module, error ->
             failures.add(module.id to error)
         }
     private val module = TestModule().also(manager::register)

@@ -2,6 +2,7 @@ package org.tnozamas.skyatlaz.core.module
 
 import org.tnozamas.skyatlaz.api.repo.NeuRepository
 import org.tnozamas.skyatlaz.api.repo.PriceRepository
+import org.tnozamas.skyatlaz.api.service.ServiceRepository
 import org.tnozamas.skyatlaz.core.command.CommandRegistry
 import org.tnozamas.skyatlaz.core.config.ConfigManager
 import org.tnozamas.skyatlaz.core.event.EventBus
@@ -22,4 +23,5 @@ class ModuleServices(
     val hud: HudManager,
     val keybinds: KeyBindManager,
     val neu: NeuRepository,
+    val service: ServiceRepository,
 )

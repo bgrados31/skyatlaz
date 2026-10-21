@@ -17,6 +17,21 @@ data class ServiceSession(
 )
 
 /**
+ * The two calls the repository needs from the service. The client implements it and a fake implements it in the
+ * tests, so the repository can be checked without a server.
+ */
+interface ServiceApi {
+    /** Authenticates with the profile key pair. The callback runs on the client thread. */
+    fun authenticate(callback: (Result<ServiceSession>) -> Unit)
+
+    /** Reads the profile of the session. The callback runs on the client thread. */
+    fun fetchProfile(
+        session: ServiceSession,
+        callback: (Result<ServiceProfile>) -> Unit,
+    )
+}
+
+/**
  * Talks to the skyatlaz service, the only holder of the Hypixel developer key.
  *
  * The player never sees a key: the mod signs a challenge with the Minecraft profile key pair and the service
@@ -26,17 +41,15 @@ class ServiceClient(
     private val transport: HttpTransport,
     private val scheduler: Scheduler,
     private val baseUrl: () -> String,
-) {
-    /** Authenticates with the profile key pair. The callback runs on the client thread. */
-    fun authenticate(callback: (Result<ServiceSession>) -> Unit) {
+) : ServiceApi {
+    override fun authenticate(callback: (Result<ServiceSession>) -> Unit) {
         scheduler.async(
             work = { authenticateBlocking() },
             onError = { callback(Result.failure(it)) },
         ) { session -> callback(Result.success(session)) }
     }
 
-    /** Reads the profile of the session. The callback runs on the client thread. */
-    fun fetchProfile(
+    override fun fetchProfile(
         session: ServiceSession,
         callback: (Result<ServiceProfile>) -> Unit,
     ) {

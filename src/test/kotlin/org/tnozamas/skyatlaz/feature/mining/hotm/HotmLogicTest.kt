@@ -21,11 +21,52 @@ class HotmLogicTest {
 
     private fun perk(name: String): HotmPerk? = perks.firstOrNull { it.name == name }
 
+    private val layout: HotmLayout =
+        requireNotNull(javaClass.getResource("/fixtures/skyblock/hotmlayout.json"))
+            .readText()
+            .let(HotmLayout::parse)
+
     @Test
     fun `the tree of the owner is read`() {
         assertEquals("Heart of the Mountain", LegacyText.strip(container.title))
 
         assertTrue(perks.isNotEmpty())
+    }
+
+    @Test
+    fun `the profile of the service builds the tree`() {
+        val fromProfile =
+            HotmLogic.perksFromProfile(
+                levels = mapOf("mining_speed" to 50, "mining_fortune" to 12),
+                toggles = mapOf("mining_speed" to true),
+                ability = "pickobulus",
+                layout = layout,
+            )
+
+        val speed = fromProfile.first { it.name == "Mining Speed" }
+        assertEquals(50, speed.level)
+        assertEquals(50, speed.maxLevel)
+        assertEquals(HotmPerk.State.ACTIVE, speed.state)
+
+        val fortune = fromProfile.first { it.name == "Mining Fortune" }
+        assertEquals(12, fortune.level)
+        assertEquals(HotmPerk.State.LOCKED, fortune.state)
+
+        val ability = fromProfile.first { it.state == HotmPerk.State.SELECTED }
+        assertEquals("Pickobulus", ability.name)
+    }
+
+    @Test
+    fun `without the layout of the tree the profile is not enough`() {
+        val fromProfile =
+            HotmLogic.perksFromProfile(
+                levels = mapOf("mining_speed" to 50),
+                toggles = emptyMap(),
+                ability = null,
+                layout = null,
+            )
+
+        assertTrue(fromProfile.isEmpty())
     }
 
     @Test

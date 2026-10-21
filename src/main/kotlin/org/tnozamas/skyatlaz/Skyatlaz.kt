@@ -20,6 +20,7 @@ import org.tnozamas.skyatlaz.api.repo.PriceDebugCommands
 import org.tnozamas.skyatlaz.api.repo.PriceRepository
 import org.tnozamas.skyatlaz.api.service.ServiceClient
 import org.tnozamas.skyatlaz.api.service.ServiceDebugCommands
+import org.tnozamas.skyatlaz.api.service.ServiceRepository
 import org.tnozamas.skyatlaz.core.command.BuiltinCommands
 import org.tnozamas.skyatlaz.core.command.CommandHelp
 import org.tnozamas.skyatlaz.core.command.CommandInstaller
@@ -156,7 +157,17 @@ object Skyatlaz : ClientModInitializer {
      * Minecraft profile key pair and reads the profile of the player, never a key.
      */
     @JvmField
-    val SERVICE = ServiceClient(TRANSPORT, SCHEDULER) { GeneralConfig.serviceUrl.value }
+    val SERVICE_CLIENT = ServiceClient(TRANSPORT, SCHEDULER) { GeneralConfig.serviceUrl.value }
+
+    /** The profile of the player, read from the service. Only while a feature wants it. */
+    @JvmField
+    val SERVICE =
+        ServiceRepository(
+            SERVICE_CLIENT,
+            SCHEDULER,
+            EVENTS,
+            onProblem = { message -> LOGGER.warn(message) },
+        )
 
     /** Parsed SkyBlock state (area, profile, purse...); features read `SKYBLOCK.state` or its change events. */
     @JvmField
@@ -176,7 +187,7 @@ object Skyatlaz : ClientModInitializer {
     /** Module lifecycle. A failing module is stopped, logged and announced in chat; the game keeps running. */
     @JvmField
     val MODULES =
-        ModuleManager(ModuleServices(EVENTS, SCHEDULER, COMMANDS, CONFIG, PRICES, HUD, KEYBINDS, NEU)) { module, error ->
+        ModuleManager(ModuleServices(EVENTS, SCHEDULER, COMMANDS, CONFIG, PRICES, HUD, KEYBINDS, NEU, SERVICE)) { module, error ->
             LOGGER.error("Module {} failed and was disabled", module.id, error)
             Chat.error(Tr.tr("error.module_disabled", module.id))
         }
@@ -237,7 +248,7 @@ object Skyatlaz : ClientModInitializer {
         HttpDebugCommands(HTTP).register(COMMANDS)
         PriceDebugCommands(PRICES, SCHEDULER, EVENTS).register(COMMANDS)
         NeuDebugCommands(NEU).register(COMMANDS)
-        ServiceDebugCommands(SERVICE, SCHEDULER).register(COMMANDS)
+        ServiceDebugCommands(SERVICE_CLIENT, SCHEDULER).register(COMMANDS)
         // A core binding: save the state as a dump. It fires with a screen open, because some states (the Heart of the
         // Mountain tree) only exist while an inventory is open, and then the chat is blocked.
         KEYBINDS.register(KeyBind(CAPTURE_KEYBIND, KeyCombo(InputConstants.KEY_F7), worksInScreen = true)) {

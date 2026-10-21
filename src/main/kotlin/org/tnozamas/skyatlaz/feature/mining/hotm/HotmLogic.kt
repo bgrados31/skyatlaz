@@ -177,4 +177,53 @@ object HotmLogic {
         if (lines.isEmpty()) return HotmContent.EMPTY
         return HotmContent(TITLE_KEY, lines)
     }
+
+    /**
+     * The perks of the tree, read from the profile of the skyatlaz service.
+     *
+     * The service knows the level of every perk and which ones are giving their effect, but not how the tree is
+     * called. The layout of the tree (the community data) gives the name and the maximum of every perk, so the two
+     * together are the tree of the player, and the card works even when the menu is closed.
+     *
+     * The ability that is equipped is not a leveled perk, so it is not in the levels: it comes with the profile.
+     *
+     * @param levels the level of every perk, keyed by the id of the perk.
+     * @param toggles which perks are giving their effect, keyed by the id of the perk.
+     * @param ability the id of the pickaxe ability that is equipped.
+     */
+    fun perksFromProfile(
+        levels: Map<String, Int>,
+        toggles: Map<String, Boolean>,
+        ability: String?,
+        layout: HotmLayout?,
+    ): List<HotmPerk> {
+        if (layout == null) return emptyList()
+        val perks = ArrayList<HotmPerk>(layout.perks.size)
+        for (perk in layout.perks) {
+            val level = levels[perk.id] ?: continue
+            val state =
+                when {
+                    ability == perk.id -> HotmPerk.State.SELECTED
+                    toggles[perk.id] == true -> HotmPerk.State.ACTIVE
+                    else -> HotmPerk.State.LOCKED
+                }
+            perks +=
+                HotmPerk(
+                    name = perk.name,
+                    level = level,
+                    maxLevel = perk.maxLevel,
+                    state = state,
+                )
+        }
+        val equipped = ability?.let { id -> layout.perk(id) }
+        if (equipped != null && perks.none { it.name == equipped.name }) {
+            perks +=
+                HotmPerk(
+                    name = equipped.name,
+                    state = HotmPerk.State.SELECTED,
+                    ability = true,
+                )
+        }
+        return perks
+    }
 }

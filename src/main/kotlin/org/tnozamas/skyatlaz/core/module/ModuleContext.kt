@@ -2,6 +2,7 @@ package org.tnozamas.skyatlaz.core.module
 
 import org.tnozamas.skyatlaz.api.repo.NeuRepository
 import org.tnozamas.skyatlaz.api.repo.PriceRepository
+import org.tnozamas.skyatlaz.api.service.ServiceRepository
 import org.tnozamas.skyatlaz.core.command.CommandBuilder
 import org.tnozamas.skyatlaz.core.config.ConfigEntry
 import org.tnozamas.skyatlaz.core.event.ChatReceivedEvent
@@ -70,6 +71,16 @@ class ModuleContext internal constructor(
      * lazy: a page is downloaded only when a feature asks for it, so nothing has to be released.
      */
     fun useNeu(): NeuRepository = services.neu
+
+    /**
+     * The profile of the player, read from the skyatlaz service. It is only read while the module runs: the
+     * repository authenticates with the profile key, polls the service and keeps the token until it expires.
+     * Listen to `ServiceProfileEvent` to recompute displays when a new profile arrives.
+     */
+    fun useService(): ServiceRepository {
+        track(services.service.use())
+        return services.service
+    }
 
     /** Shows [element] on the HUD and lets the player move it with `/skyatlaz hud` while the module runs. */
     fun hud(element: HudElement) {
