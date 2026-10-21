@@ -5,6 +5,9 @@ Update this file at the end of every session: what changed, what is next, open q
 ## Current phase: 4 - First features (first vertical slice done)
 
 ## Where we left off (2026-10-20)
+- **The developer key works**: the service reads it from its `.env` and answers with the profile of the player. The
+  byte layout that Mojang signs is known (the uuid, the expiry in milliseconds and the DER public key, with SHA1 and
+  RSA), so the service verifies the profile key of the caller exactly instead of guessing.
 - **The mining tree also comes from our service**: the repository (`api/service/ServiceRepository`) authenticates with
   the profile key, keeps the session token until it is about to expire and polls the service only while a feature
   wants it. The card falls back to the profile of the service when the menu of the tree is closed, and the last

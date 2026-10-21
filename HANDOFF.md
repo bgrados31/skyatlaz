@@ -74,9 +74,9 @@ time, reusing the shape proven by the first one.
 - **The map of the nonces is bounded** (`MAX_CHALLENGES` in `src/auth.rs`): the challenge endpoint is open to
   anybody, so a flood of calls could eat all the memory of the service. The owner wrote the deployment guide
   (`../skyatlaz-service/deploy`: Oracle Cloud Always Free, systemd, Caddy with TLS) and flagged this one.
-- `/skyatlaz debug key` writes the profile key pair of the account to `<game dir>/skyatlaz/dumps/service-key.json`.
-  That file is what tells which byte layout Mojang signed (the service tries the known ones): it has the uuid, the
-  base64 public key, the base64 signature of Mojang and the expiry.
+- `/skyatlaz debug key` writes the profile key pair of the account to `<game dir>/skyatlaz/dumps/service-key.json`
+  (the uuid, the base64 public key, the base64 signature of Mojang and the expiry). It is not needed to make the
+  service work, but it is what a regression test with real data would use.
 - **The mining tree also comes from our service**: `api/service/ServiceRepository` authenticates with the profile
   key, keeps the session token until it is about to expire, polls only while a feature wants it and keeps the last
   known profile when the service is down. The card falls back to it when the menu of the tree is closed
@@ -104,11 +104,10 @@ time, reusing the shape proven by the first one.
 4. The owner still owes the `/skyatlaz debug hypixel` output (Mod API location + party).
 5. World rendering is still missing: 26.2 replaced the old render events and Fabric does not expose the new
    submit-node API yet, so `ui.render` covers the GUI only.
-6. **The service needs the owner**: register the application in the Hypixel developer portal (a Personal key is
-   enough) and put `HYPIXEL_API_KEY` in the environment of the service. Until then the service can only answer
-   `/health`. The exact byte layout Mojang signs over a profile key is not public, so the service tries the known
-   layouts (`src/keys.rs`); if none matches, the real data (uuid + public key + key signature + expiry) will say
-   which one it is.
+6. **The service needs the owner**: the developer key is registered and works (the service reads it from its `.env`).
+   The byte layout Mojang signs is **known**: the uuid (16 bytes, big endian), the expiry in milliseconds (8 bytes)
+   and the DER public key, signed with SHA1 and RSA. The service verifies exactly that (`src/keys.rs`), so it is no
+   longer a guess. What is left is to run `/skyatlaz debug service` with the service up, to see the chain end to end.
 7. Commit only when the owner asks. HEAD is `f5ff499`.
 8. The folder of the repository is still `SkyAtlaz`: IntelliJ IDEA holds it open, so Windows refuses the rename. Close
    the IDE and rename it to `skyatlaz` (everything inside is already lowercase).
