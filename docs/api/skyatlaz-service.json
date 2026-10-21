@@ -49,7 +49,20 @@
                                                                                                                                                                                            "limit",
                                                                                                                                                                                            "remaining"
                                                                                                                                                                                        ]
-                                                                                                                                                                      }
+                                                                                                                                                                      },
+                                                                                                                                                       "cache":  {
+                                                                                                                                                                     "type":  "object",
+                                                                                                                                                                     "description":  "How many profiles the cache holds right now, so the memory use can be watched.",
+                                                                                                                                                                     "properties":  {
+                                                                                                                                                                                        "entries":  {
+                                                                                                                                                                                                        "type":  "integer",
+                                                                                                                                                                                                        "format":  "int64"
+                                                                                                                                                                                                    }
+                                                                                                                                                                                    },
+                                                                                                                                                                     "required":  [
+                                                                                                                                                                                      "entries"
+                                                                                                                                                                                  ]
+                                                                                                                                                                 }
                                                                                                                                                    },
                                                                                                                                     "required":  [
                                                                                                                                                      "ok",
@@ -158,6 +171,35 @@
                                                                             },
                                                                     "401":  {
                                                                                 "description":  "The token is missing or expired.",
+                                                                                "content":  {
+                                                                                                "application/json":  {
+                                                                                                                         "schema":  {
+                                                                                                                                        "$ref":  "#/components/schemas/Error"
+                                                                                                                                    }
+                                                                                                                     }
+                                                                                            }
+                                                                            },
+                                                                    "404":  {
+                                                                                "description":  "The player has no SkyBlock profile the service can read.",
+                                                                                "content":  {
+                                                                                                "application/json":  {
+                                                                                                                         "schema":  {
+                                                                                                                                        "$ref":  "#/components/schemas/Error"
+                                                                                                                                    }
+                                                                                                                     }
+                                                                                            }
+                                                                            },
+                                                                    "503":  {
+                                                                                "description":  "The key used up its Hypixel rate limit. The answer carries Retry-After with the seconds to wait.",
+                                                                                "headers":  {
+                                                                                                "Retry-After":  {
+                                                                                                                    "description":  "How many seconds to wait before asking again.",
+                                                                                                                    "schema":  {
+                                                                                                                                   "type":  "integer",
+                                                                                                                                   "format":  "int32"
+                                                                                                                               }
+                                                                                                                }
+                                                                                            },
                                                                                 "content":  {
                                                                                                 "application/json":  {
                                                                                                                          "schema":  {

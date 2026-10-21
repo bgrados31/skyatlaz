@@ -5,9 +5,16 @@ Update this file at the end of every session: what changed, what is next, open q
 ## Current phase: 4 - First features (first vertical slice done)
 
 ## Where we left off (2026-10-20)
-- **The map of the nonces of the service is bounded** (10 000): the challenge endpoint is open to anybody and a flood
-  of calls could eat all the memory of the service. The deployment guide (`../skyatlaz-service/deploy`) asks for a
-  per IP limit in Caddy as well before the URL is public.
+- **The mining tree also comes from our service**: the repository (`api/service/ServiceRepository`) authenticates with
+  the profile key, keeps the session token until it is about to expire and polls the service only while a feature
+  wants it. The card falls back to the profile of the service when the menu of the tree is closed, and the last
+  known profile stays when the service is down. 230 tests, `check` green.
+- **Dead code removed**: `ui/render/Shapes`, `ui/render/CachedText` and `util/RarityLine` had no caller in the mod
+  (only their own tests), so they are gone. The alpha of the panel and the border of a card now lives in the theme
+  (`Theme.cardPanel()`, `Theme.cardBorder()`) instead of being repeated in the three cards.
+- **The service limits the challenges per address** (30 per minute) and bounds the map of the nonces (10 000), so
+  the open endpoint cannot eat the memory of the service. The service also grew a Dockerfile, its continuous
+  integration and the deployment files.
 - **`/skyatlaz debug key`** writes the profile key pair of the account to `<game dir>/skyatlaz/dumps/service-key.json`
   (uuid, public key, the signature of Mojang and the expiry). The service checks the signature Mojang produced over
   the public key, and the bytes Mojang signed are not public, so this file is what tells which layout is the right

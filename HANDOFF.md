@@ -77,7 +77,13 @@ time, reusing the shape proven by the first one.
 - `/skyatlaz debug key` writes the profile key pair of the account to `<game dir>/skyatlaz/dumps/service-key.json`.
   That file is what tells which byte layout Mojang signed (the service tries the known ones): it has the uuid, the
   base64 public key, the base64 signature of Mojang and the expiry.
-- `.\gradlew spotlessApply check` green: **241 tests, 0 failures**.
+- **The mining tree also comes from our service**: `api/service/ServiceRepository` authenticates with the profile
+  key, keeps the session token until it is about to expire, polls only while a feature wants it and keeps the last
+  known profile when the service is down. The card falls back to it when the menu of the tree is closed
+  (`HotmLogic.perksFromProfile` + the layout of the tree).
+- **Dead code removed**: `ui/render/Shapes`, `ui/render/CachedText` and `util/RarityLine` had no caller in the mod.
+  The alpha of a card panel lives in the theme now (`Theme.cardPanel()`).
+- `.\gradlew spotlessApply check` green: **230 tests, 0 failures**.
 - `ModuleManager.refreshActivation()` is now really called (the entrypoint wires `SkyBlockStateChangeEvent` to it),
   so a module with an activation condition starts and stops with the shared state.
 - The UI sandbox (`ui/prototype`, `/skyatlaz debug ui`) is deleted with the owner's confirmation.
