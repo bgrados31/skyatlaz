@@ -1,0 +1,82 @@
+name: Bug report
+description: Something in skyatlaz does not work the way it should
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Before writing it, search the [issue tracker](https://github.com/bgrados31/skyatlaz/issues)
+        for the same symptom: an existing issue is a better place for extra logs.
+
+        A capture made with `F7` in the moment of the bug turns "it does not work" into a fix.
+  - type: input
+    id: version
+    attributes:
+      label: skyatlaz version
+      description: The version from the mod list, or the jar name of the release you downloaded.
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: input
+    id: mc-version
+    attributes:
+      label: Minecraft version
+      description: From the main menu, bottom left.
+      placeholder: 26.2
+    validations:
+      required: true
+  - type: dropdown
+    id: feature
+    attributes:
+      label: Feature
+      description: Which part of the mod is involved.
+      options:
+        - Status HUD
+        - Item prices in the tooltip
+        - Held item price
+        - Heart of the Mountain
+        - Command palette
+        - HUD editor
+        - Settings screen
+        - The optional service
+        - Installation / startup
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened, and what did you expect instead?
+      description: Be specific: where you were, what you did, what the mod showed.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Join SkyBlock and go to the Mining Island
+        2. Open the Heart of the Mountain menu
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: capture
+    attributes:
+      label: Capture
+      description: The file from `F7`, or `/skyatlaz debug dump <name>` then the file from the dumps folder.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log
+      description: Drag `.minecraft/logs/latest.log` here (not the compressed one, and not a screenshot of it).
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If it is on screen, a picture is worth three paragraphs.
+  - type: textarea
+    id: other-mods
+    attributes:
+      label: Other mods in the folder
+      description: The full list, or the ones you think could be involved.

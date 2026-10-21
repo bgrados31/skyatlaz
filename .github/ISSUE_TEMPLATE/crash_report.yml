@@ -1,0 +1,65 @@
+name: Crash report
+description: The game crashes with skyatlaz in the mods folder
+labels: [crash]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A crash is usually one of three things: a mod conflict, an outdated dependency, or a bug in skyatlaz. The
+        log below tells us which, so the report goes fast.
+
+        **If the crash happens without skyatlaz too, this is the wrong place** — that is another mod's bug.
+  - type: input
+    id: version
+    attributes:
+      label: skyatlaz version
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: dropdown
+    id: moment
+    attributes:
+      label: When does it crash?
+      options:
+        - At startup, before the main menu
+        - While joining Hypixel
+        - While playing SkyBlock
+        - When opening a screen (config, HUD editor, palette)
+        - When hovering or holding an item
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: crash-reason
+    attributes:
+      label: Crash reason from the game
+      description: The first lines of the crash screen. The "Caused by" lines matter most.
+      render: txt
+    validations:
+      required: true
+  - type: textarea
+    id: crash-report-file
+    attributes:
+      label: Crash report file
+      description: The full contents of `.minecraft/crash-reports/<the-newest-one>.txt`, if there is one.
+      render: txt
+  - type: textarea
+    id: latest-log
+    attributes:
+      label: latest.log
+      description: Drag `.minecraft/logs/latest.log` here. It covers the startup that the crash report does not.
+  - type: textarea
+    id: deps
+    attributes:
+      label: Versions
+      description: Fabric Loader, Fabric API, Fabric Language Kotlin and Hypixel Mod API versions.
+      placeholder: |
+        Loader 0.19.5, Fabric API 0.161.0+26.2, Fabric Language Kotlin 1.14.2+kotlin.2.4.21, Hypixel Mod API 1.0.2
+    validations:
+      required: true
+  - type: checkboxes
+    id: solo
+    attributes:
+      label: Isolation
+      options:
+        - label: I tried with only skyatlaz and its dependencies, and the crash goes away (or I could not, and say why above).

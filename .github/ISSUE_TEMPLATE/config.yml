@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/bgrados31/skyatlaz/security/policy
+    about: Something that puts other players' data at risk goes here, never in a public issue.
+  - name: Building and contributing
+    url: https://github.com/bgrados31/skyatlaz/blob/main/CONTRIBUTING.md
+    about: How to build the mod, the rules of the code and how a change lands.

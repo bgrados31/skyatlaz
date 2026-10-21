@@ -1,0 +1,52 @@
+name: Feature request
+description: Ask for something skyatlaz does not do yet
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The bar for a new feature: it shows the player something the game shows them (or something public), it costs
+        nothing when it is off, and it does not do the playing for anyone. Read
+        [docs/HYPIXEL_RULES.md](https://github.com/bgrados31/skyatlaz/blob/main/docs/HYPIXEL_RULES.md) if you are not
+        sure where your idea sits.
+  - type: textarea
+    id: what
+    attributes:
+      label: What should skyatlaz do?
+      description: One feature, described concretely. What is on screen, and when.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: What is it for?
+      description: Which screen, menu or chat message you open today instead, and why it is annoying.
+    validations:
+      required: true
+  - type: textarea
+    id: data
+    attributes:
+      label: Where does the data come from?
+      description: >
+        The scoreboard, the tab list, an open menu, the item lore, a public endpoint, the optional service? A feature
+        whose data does not exist yet is a bigger feature.
+  - type: textarea
+    id: mockup
+    attributes:
+      label: Mockup or screenshots
+      description: A drawing in ASCII counts. A screenshot with a rectangle drawn on it counts more.
+  - type: dropdown
+    id: other-mods
+    attributes:
+      label: Does another mod already do this?
+      options:
+        - "No, I have not seen it anywhere"
+        - "Skyblocker, but I want it here too"
+        - "SkyHanni, but I want it here too"
+        - "Another mod (say which below)"
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else
