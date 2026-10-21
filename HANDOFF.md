@@ -117,11 +117,15 @@ time, reusing the shape proven by the first one.
    The byte layout Mojang signs is **known**: the uuid (16 bytes, big endian), the expiry in milliseconds (8 bytes)
    and the DER public key, signed with SHA1 and RSA. The service verifies exactly that (`src/keys.rs`), so it is no
    longer a guess. What is left is to run `/skyatlaz debug service` with the service up, to see the chain end to end.
-7. Commit only when the owner asks. HEAD is `6c913f3` (5 commits this round, all pushed to `origin`). The release
-   is cut by pushing a tag (`git tag v0.1.0 && git push origin v0.1.0`): the workflow checks, builds and leaves a
-   **draft** GitHub release with the jar and the generated notes, ready to read before publishing.
-8. The folder of the repository is still `SkyAtlaz`: IntelliJ IDEA holds it open, so Windows refuses the rename. Close
-   the IDE and rename it to `skyatlaz` (everything inside is already lowercase).
+7. Commit only when the owner asks, and **never on `main`**: it is protected on GitHub (ruleset `protect main`, no
+   bypass actor) — a direct push, a force push and a delete are rejected; only a pull request with the `check`
+   workflow green lands on it. Work on `feat/<name>` or `fix/<name>`, open the PR, merge. `.githooks/pre-push`
+   repeats the wall locally with the flow to follow. The first PR of the repository is #1 (the protection itself).
+   HEAD is the merge of #1.
+9. The release is cut by pushing a tag (`git tag v0.1.0 && git push origin v0.1.0`): the workflow checks, builds and
+   leaves a **draft** GitHub release with the jar and the generated notes, ready to read before publishing.
+10. The folder of the repository is still `SkyAtlaz`: IntelliJ IDEA holds it open, so Windows refuses the rename. Close
+    the IDE and rename it to `skyatlaz` (everything inside is already lowercase).
 
 - **Second vertical slice** `feature/economy/itemprice`: the price of an item in its tooltip (bazaar instant sell,
   lowest BIN, NPC price; each one can be turned off). The lines are added by a mixin on
