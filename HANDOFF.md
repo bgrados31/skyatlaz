@@ -1,6 +1,6 @@
-# Handoff - skyatlaz base closed, phase 4 running
+# Handoff - skyatlaz base closed, phase 4 running, repo on GitHub
 
-Updated: 2026-10-21 (later, the self-hosted service). Read `CLAUDE.md` first; this file is the short state of the current task.
+Updated: 2026-10-21 (later, the self-hosted service; then the repository). Read `CLAUDE.md` first; this file is the short state of the current task.
 
 ## Objective
 The base (phases 0-3) is closed and phase 4 is running: three vertical slices work end to end
@@ -83,7 +83,16 @@ time, reusing the shape proven by the first one.
   (`HotmLogic.perksFromProfile` + the layout of the tree).
 - **Dead code removed**: `ui/render/Shapes`, `ui/render/CachedText` and `util/RarityLine` had no caller in the mod.
   The alpha of a card panel lives in the theme now (`Theme.cardPanel()`).
-- `.\gradlew spotlessApply check` green: **230 tests, 0 failures**.
+- **The mod is on GitHub**: https://github.com/bgrados31/skyatlaz (private, `main`, pushed as `origin`). Built like
+  the big mods: README for the players (features, installation, commands, building, tier per feature), CONTRIBUTING,
+  CODE_OF_CONDUCT (Contributor Covenant 2.1), SECURITY, issue templates (bug / crash / feature + config), pull request
+  template, and a `release.yml` that publishes a draft GitHub release with the jar when a `v*` tag is pushed (build
+  + release workflows are active on GitHub).
+- **The mod is LGPL-3.0-or-later now**: the old LICENSE.txt (all rights reserved) is replaced by the LGPL-3.0 text,
+  and `fabric.mod.json` says `LGPL-3.0-or-later` with the contact URLs of the repo. Owner's choice (same as
+  Skyblocker). The service stays MIT (its own repo) and is not published yet.
+- **The service commits of this round**: `/metrics` (Prometheus text, fixed label names, no per-player counter),
+  the retry with jitter on a transient upstream failure, and the verification of the exact payload Mojang signs.
 - `ModuleManager.refreshActivation()` is now really called (the entrypoint wires `SkyBlockStateChangeEvent` to it),
   so a module with an activation condition starts and stops with the shared state.
 - The UI sandbox (`ui/prototype`, `/skyatlaz debug ui`) is deleted with the owner's confirmation.
@@ -108,7 +117,9 @@ time, reusing the shape proven by the first one.
    The byte layout Mojang signs is **known**: the uuid (16 bytes, big endian), the expiry in milliseconds (8 bytes)
    and the DER public key, signed with SHA1 and RSA. The service verifies exactly that (`src/keys.rs`), so it is no
    longer a guess. What is left is to run `/skyatlaz debug service` with the service up, to see the chain end to end.
-7. Commit only when the owner asks. HEAD is `f5ff499`.
+7. Commit only when the owner asks. HEAD is `6c913f3` (5 commits this round, all pushed to `origin`). The release
+   is cut by pushing a tag (`git tag v0.1.0 && git push origin v0.1.0`): the workflow checks, builds and leaves a
+   **draft** GitHub release with the jar and the generated notes, ready to read before publishing.
 8. The folder of the repository is still `SkyAtlaz`: IntelliJ IDEA holds it open, so Windows refuses the rename. Close
    the IDE and rename it to `skyatlaz` (everything inside is already lowercase).
 
@@ -155,9 +166,9 @@ time, reusing the shape proven by the first one.
 - `docs/PROGRESS.md`, `docs/ARCHITECTURE.md`, `docs/CONVENTIONS.md`, `docs/DECISIONS.md` - updated.
 
 ## Commands
-- `.\gradlew check` - Spotless + 241 tests.
+- `.\gradlew check` - Spotless + 230 tests.
 - `.\tools\service\sync.ps1` - refreshes the contract of the service in `docs/api/` (the service has to be running).
-- `& "$env:USERPROFILE\.cargo\bin\cargo.exe" test` - the tests of the service (24). The toolchain is in
+- `& "$env:USERPROFILE\.cargo\bin\cargo.exe" test` - the tests of the service (69). The toolchain is in
   `%USERPROFILE%\.cargo\bin` (rustup, minimal profile; the linker is the MSVC of VS 2022 Community).
 - `.\gradlew runWorld` - dev client; agent mods need `skyatlaz.agentMods=true`.
 - `node tools/agent/bridge.mjs` - MCP Fabric bridge on `127.0.0.1:25599` (`cmd`, `chat`, `screenshot`, `call`).
