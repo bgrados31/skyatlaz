@@ -1,0 +1,29 @@
+# Keeps the actions of the two workflows (build, release) current. Same shape
+# as the service (../skyatlaz-service/.github/dependabot.yml): one pull request
+# for a week of releases, not one per action.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    groups:
+      actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+  # Gradle is deliberately absent. Every version in gradle.properties moves in
+  # lockstep with the minecraft version Hypixel accepts (docs/DECISIONS.md), so
+  # a bot that bumps fabric-api, fabric-language-kotlin or fabric-loader alone
+  # proposes something that cannot compile, and bumping minecraft is a decision,
+  # not a chore. The plugins of build.gradle.kts are in the same boat:
+  # fabric-loom follows minecraft, kotlin follows fabric-language-kotlin, and
+  # spotless would reformat the whole codebase in one pull request. The check
+  # workflow and the protection of main would stop a bad bump, but the noise of
+  # closing them is ours to pay. Add the ecosystem the day its versions stop
+  # being tied to minecraft, or add it with ignore rules for the minecraft
+  # family (the service did exactly that for the rsa family).

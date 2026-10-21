@@ -93,6 +93,9 @@ time, reusing the shape proven by the first one.
   Skyblocker). The service stays MIT (its own repo) and is not published yet.
 - **The service commits of this round**: `/metrics` (Prometheus text, fixed label names, no per-player counter),
   the retry with jitter on a transient upstream failure, and the verification of the exact payload Mojang signs.
+- **Dependabot watches the actions only** (`.github/dependabot.yml`, weekly on monday, one grouped PR): the CI
+  already deprecated `setup-java@v4`. Gradle is deliberately absent and the file says why: every version moves with
+  the minecraft one Hypixel accepts, so a bot bump cannot compile, and bumping minecraft is a decision.
 - `ModuleManager.refreshActivation()` is now really called (the entrypoint wires `SkyBlockStateChangeEvent` to it),
   so a module with an activation condition starts and stops with the shared state.
 - The UI sandbox (`ui/prototype`, `/skyatlaz debug ui`) is deleted with the owner's confirmation.
