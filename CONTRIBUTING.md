@@ -28,13 +28,20 @@ Thank you for wanting to make this mod better. This file is the short version; t
 
 ## How a change lands
 
+`main` is protected on GitHub: a direct push, a force push and a delete are all rejected. Only a pull request with a
+green `check` workflow lands on it, with no bypass for anyone. That is the flow:
+
 1. `git clone` your fork and open it in IntelliJ. The first Gradle build installs the git hooks.
-2. Write the code following [docs/CONVENTIONS.md](docs/CONVENTIONS.md). New features get a package under
+2. Branch: `git switch -c feat/<name>` (or `fix/<name>`, `docs/<name>`...). Never work on `main`.
+3. Write the code following [docs/CONVENTIONS.md](docs/CONVENTIONS.md). New features get a package under
    `feature/` with a `Module` object, a `*Logic.kt` for the reasoning and a test next to the logic.
-3. Run `./gradlew spotlessApply check`. If it fails, read what it says: it is the same command CI runs.
-4. For UI changes, run the game (`./gradlew runClient`) and look at your change. Screenshots in the pull request are
+4. Run `./gradlew spotlessApply check`. If it fails, read what it says: it is the same command CI runs.
+5. For UI changes, run the game (`./gradlew runClient`) and look at your change. Screenshots in the pull request are
    how a UI review starts.
-5. Open the pull request against `main`. Say what it does, how you tested it and which Hypixel tier it has.
+6. Push the branch and open the pull request (`gh pr create --fill` works). Say what it does, how you tested it and
+   which Hypixel tier it has.
+7. When the `check` workflow is green, merge. One commit per pull request gets squashed; a pull request with several
+   logical commits is merged as it is.
 
 ## Reporting bugs
 

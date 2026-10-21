@@ -67,4 +67,14 @@ Scope is the area: `core`, `event`, `config`, `hud`, `i18n`, `api`, `dungeons`, 
 One logical change per commit. Body (optional) explains why.
 
 ## Branches
-`main` is always green. Work on `feat/<name>`, `fix/<name>`; merge when `./gradlew check` passes.
+`main` is always green, and it is protected on GitHub (ruleset `protect main`): a direct push is rejected, a force
+push is rejected, a delete is rejected. Only a pull request lands on main, and the `check` workflow has to be green
+before the merge. No exception, not even for the owner — the ruleset has no bypass actor.
+
+Work on `feat/<name>` or `fix/<name>`; open the pull request against `main`; merge it when `./gradlew check` passes.
+`.githooks/pre-push` repeats the same wall locally, so a stray `git push origin main` gets an explanation instead of
+a bare `GH013` from the server.
+
+Emergency (a broken workflow blocking every merge, for instance): edit the ruleset at
+https://github.com/bgrados31/skyatlaz/rules, add yourself as a bypass actor, fix, remove the bypass again. Do not
+delete the ruleset.
