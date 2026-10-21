@@ -5,8 +5,12 @@
   "name": "skyatlaz",
   "description": "All-in-one quality of life mod for Hypixel SkyBlock.",
   "authors": ["tnozamas"],
-  "contact": {},
-  "license": "All-Rights-Reserved",
+  "contact": {
+    "homepage": "https://github.com/bgrados31/skyatlaz",
+    "sources": "https://github.com/bgrados31/skyatlaz",
+    "issues": "https://github.com/bgrados31/skyatlaz/issues"
+  },
+  "license": "LGPL-3.0-or-later",
   "environment": "client",
   "entrypoints": {
     "client": [
