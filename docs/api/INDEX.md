@@ -124,7 +124,28 @@ shown with the name and the maximum level of the layout. The uuid of the player 
 name of the session (`https://api.mojang.com/users/profiles/minecraft/<name>` -> `id`, without dashes), the same way
 Skyblocker does it.
 
-## What the API would give (not used)
+## How the public mods get the data without asking for a key
+
+Reading the code of the reference mods (see `references/`):
+
+- **The keyless endpoints, straight from the mod.** SkyHanni calls `api.hypixel.net/v2/skyblock/bazaar`,
+  `/v2/resources/skyblock/items`, `/v2/resources/skyblock/election` and `/v2/resources/skyblock/bingo` directly, and
+  Firmament uses the same base URL. Those endpoints need no key, so anyone can use them.
+- **The data of a player, through a service of their own.** Skyblocker does not call the Hypixel API from the mod:
+  `Http.sendHypixelRequest` sends the request to **its own server** (`https://hysky.de/api/hypixel/v2/...`) with the
+  header `Hysky-Authorization: Bearer <token>`. That token is not the API key: `ApiAuthentication` asks
+  `hysky.de/api/aaron/authenticate` for it and proves the caller really is a Minecraft player by signing a challenge
+  with the profile key of the account. The key of Hypixel lives in their server, never in the mod, and the answer is
+  cached there. Hypixel allows it because the website and the mod are "the same service" of one application.
+- **Everything else, from the game.** The scoreboard, the tab, the chat and the lore of the menus. That is what
+  SkyAtlaz does.
+
+## What SkyAtlaz does
+
+- The prices come from the public data (the NEU-REPO and the bazaar), no key.
+- The mining tree comes from the lore of the menu that the player has open.
+- The dungeon score and the purse come from the game (the chat, the tab and the scoreboard).
+- The public API with a key is not used, and no feature may depend on it.
 
 - `/v2/skyblock/profiles` - the whole profile of the player: the mining tree, the dungeons, the currencies.
 - `/v2/skyblock/museum` and `/v2/skyblock/garden` - the museum and the garden of a profile.
